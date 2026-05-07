@@ -10,7 +10,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
-<title>Moja miejscowość — Siedliszcze · mini-klik.pl</title>
+<title>Nazwa strony · mini-klik.pl</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -925,6 +925,30 @@ footer{
 }
 
 /* Style dla treści Markdown */
+.detail-content .opis-tytul{
+  font-family:'Cormorant Garamond',serif;
+  color:var(--gold);
+  font-size:26px;font-weight:700;
+  line-height:1.25;
+  margin:0 0 14px;
+  letter-spacing:0.3px;
+  text-shadow:0 1px 0 rgba(255,255,255,0.5);
+  border-bottom:1px solid rgba(160,69,16,0.25);
+  padding-bottom:10px;
+}
+.detail-content .opis-tytul.srodek{text-align:center}
+.detail-content .opis-tytul.duzy{font-size:32px}
+.detail-content .opis-tytul.srodek::after{
+  content:'⁕';display:block;color:var(--gold);
+  font-size:14px;margin-top:6px;font-weight:400;
+}
+.detail-content .opis-tekst{
+  font-family:'EB Garamond',serif;color:var(--ink);
+  line-height:1.75;font-size:16px;
+}
+.detail-content .opis-tekst p{margin:0 0 14px}
+.detail-content .opis-tekst p:last-child{margin-bottom:0}
+
 .detail-content .opis-md{
   font-family:'EB Garamond',serif;color:var(--ink);
   line-height:1.7;font-size:16px;
@@ -1286,6 +1310,337 @@ footer{
   background:var(--emerald)!important;
 }
 
+/* === EDYTOR OPISU (tryb admin) === */
+/* WAŻNE: nadpisujemy globalne .admin-helper button które jest fioletowe.
+   Używamy zwiększonej specyfiki (.admin-helper .opis-toggle-btn) zamiast !important. */
+
+/* Tryb pełnoekranowy edytora - ukrywa wszystkie inne elementy panelu */
+.admin-helper.edytuje-opis > *:not(.opis-edytor){
+  display:none !important;
+}
+.admin-helper.edytuje-opis{
+  /* Edytor zajmuje całą dostępną przestrzeń, scroll wewnątrz */
+  max-height:90vh;
+  overflow:hidden;
+  padding:14px;
+}
+.admin-helper.edytuje-opis .opis-edytor{
+  display:flex !important;
+  flex-direction:column;
+  max-height:calc(90vh - 30px);
+  margin:0;
+}
+.admin-helper.edytuje-opis .opis-pole-tekst{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.admin-helper.edytuje-opis .opis-pole-tekst textarea{
+  flex:1;
+  min-height:120px;
+}
+/* Tryb podglądu - ukrywa edytor, pokazuje tylko podgląd */
+.admin-helper.edytuje-opis.tryb-podglad .opis-pole-tytul,
+.admin-helper.edytuje-opis.tryb-podglad .opis-pole-tekst{
+  display:none !important;
+}
+.admin-helper.edytuje-opis.tryb-podglad .opis-podglad{
+  flex:1;
+  overflow-y:auto;
+  max-height:60vh;
+}
+
+/* Zwinięty stan: ładny przycisk "Dodaj opis" w stylu pergaminu */
+.opis-zwiniety{margin:14px 0 8px}
+.admin-helper .opis-toggle-btn{
+  width:100%;
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  background:linear-gradient(180deg,var(--paper-2),var(--paper-3));
+  border:1.5px dashed var(--gold);
+  border-radius:6px;
+  color:var(--gold);
+  font-family:'EB Garamond',serif;font-size:14px;
+  cursor:pointer;
+  transition:all 0.25s;
+  text-align:left;
+  position:relative;
+  flex:none;
+  min-width:0;
+  text-transform:none;
+  letter-spacing:normal;
+}
+.admin-helper .opis-toggle-btn:hover{
+  background:linear-gradient(180deg,#fff5dc,var(--paper-2));
+  border-style:solid;
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(160,69,16,0.15);
+}
+.opis-toggle-ikona{
+  font-size:22px;
+  filter:sepia(0.3);
+}
+.opis-toggle-tekst{flex:1;display:flex;flex-direction:column;gap:2px}
+.opis-toggle-tekst strong{
+  font-family:'Cinzel',serif;font-size:13px;
+  font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--gold);
+}
+.opis-toggle-tekst small{
+  font-family:'EB Garamond',serif;font-size:12px;
+  font-style:italic;color:var(--ink-soft);
+}
+.opis-toggle-strzalka{
+  font-size:24px;color:var(--gold);
+  font-family:serif;
+  transition:transform 0.25s;
+}
+.opis-toggle-btn:hover .opis-toggle-strzalka{transform:translateX(4px)}
+
+/* Stan "ma zapisany opis" - inna barwa */
+.opis-toggle-btn.ma-opis{
+  background:linear-gradient(180deg,#f5e6c8,#ead7a8);
+  border-style:solid;
+  border-color:var(--gold);
+}
+.opis-toggle-btn.ma-opis .opis-toggle-tekst strong{color:#5a3818}
+
+/* Rozwinięty edytor */
+.opis-edytor{
+  display:none;
+  margin:12px 0;
+  background:linear-gradient(180deg,#fffaee,var(--paper-2));
+  border:1.5px solid var(--gold);
+  border-radius:8px;
+  padding:14px 16px 12px;
+  position:relative;
+  box-shadow:inset 0 0 30px rgba(160,69,16,0.05),0 4px 12px rgba(60,40,20,0.1);
+}
+.opis-edytor.visible{display:block}
+.opis-edytor::before,.opis-edytor::after{
+  content:'';position:absolute;width:14px;height:14px;
+  border:1.5px solid var(--gold);
+  pointer-events:none;
+}
+.opis-edytor::before{top:5px;left:5px;border-right:none;border-bottom:none}
+.opis-edytor::after{bottom:5px;right:5px;border-left:none;border-top:none}
+
+.opis-edytor-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(160,69,16,0.25);
+}
+.opis-edytor-tytul{
+  font-family:'Cinzel',serif;font-size:14px;
+  letter-spacing:2px;color:var(--gold);font-weight:600;
+  text-transform:uppercase;
+}
+.admin-helper .opis-edytor-zamknij{
+  background:transparent;
+  border:1px solid var(--gold);
+  color:var(--gold);
+  padding:6px 12px;
+  border-radius:4px;
+  font-family:'EB Garamond',serif;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:0.5px;
+  text-transform:none;
+  cursor:pointer;
+  display:flex;align-items:center;gap:4px;
+  transition:all 0.2s;
+  flex:none;min-width:0;
+}
+.admin-helper .opis-edytor-zamknij:hover{
+  background:var(--gold);color:var(--paper-2);
+  transform:translateX(-2px);
+  box-shadow:none;
+}
+.opis-zamknij-strzalka{
+  font-size:18px;line-height:1;font-weight:700;
+}
+
+/* Pole tytułu */
+.opis-pole-tytul{margin-bottom:14px}
+.opis-pole-tytul label,
+.opis-pole-tekst label{
+  display:block;
+  font-family:'Cinzel',serif;font-size:11px;
+  letter-spacing:2px;color:var(--gold);
+  margin-bottom:5px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+.opis-pole-tytul input{
+  width:100%;
+  background:#fffefa;
+  border:1px solid rgba(160,69,16,0.4);
+  border-radius:4px;
+  padding:10px 12px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:#3a2614;
+  letter-spacing:0.3px;
+  box-sizing:border-box;
+  transition:all 0.2s;
+}
+.opis-pole-tytul input:focus{
+  outline:none;
+  border-color:var(--gold);
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(160,69,16,0.15);
+}
+.opis-tytul-opcje{
+  display:flex;gap:14px;margin-top:8px;
+  padding-left:2px;
+}
+.opis-checkbox{
+  display:flex;align-items:center;gap:5px;
+  font-family:'EB Garamond',serif;font-size:12px;
+  color:var(--ink-soft);
+  cursor:pointer;
+  user-select:none;
+}
+.opis-checkbox input[type="checkbox"]{
+  cursor:pointer;
+  accent-color:var(--gold);
+  margin:0;
+}
+
+/* Pole opisu */
+.opis-pole-tekst{margin-bottom:10px}
+.opis-pole-tekst textarea{
+  width:100%;
+  background:#fffefa;
+  border:1px solid rgba(160,69,16,0.4);
+  border-radius:4px;
+  padding:10px 12px;
+  font-family:'EB Garamond',serif;
+  font-size:14px;line-height:1.6;color:#3a2614;
+  resize:vertical;
+  min-height:140px;
+  box-sizing:border-box;
+  transition:all 0.2s;
+}
+.opis-pole-tekst textarea:focus{
+  outline:none;
+  border-color:var(--gold);
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(160,69,16,0.15);
+}
+.opis-licznik{
+  text-align:right;
+  font-family:'EB Garamond',serif;font-size:11px;
+  color:var(--ink-muted);
+  margin-top:4px;font-style:italic;
+}
+
+/* Podgląd */
+.opis-podglad-toggle{margin-bottom:10px;text-align:center}
+.admin-helper .opis-podglad-toggle button{
+  background:transparent;
+  border:1px dashed var(--ink-soft);
+  color:var(--ink-soft);
+  padding:6px 14px;border-radius:4px;
+  font-family:'EB Garamond',serif;font-size:12px;
+  cursor:pointer;font-style:italic;
+  transition:all 0.2s;
+  flex:none;min-width:0;
+  text-transform:none;
+  letter-spacing:normal;
+  font-weight:500;
+}
+.admin-helper .opis-podglad-toggle button:hover{
+  background:var(--paper-3);
+  border-style:solid;
+  box-shadow:none;
+  transform:none;
+}
+.opis-podglad{
+  background:#fdf6e0;
+  border:1px solid rgba(160,69,16,0.3);
+  border-left:3px solid var(--gold);
+  border-radius:4px;
+  padding:14px 16px;
+  margin-bottom:12px;
+}
+.opis-podglad-label{
+  font-family:'Cinzel',serif;font-size:10px;
+  letter-spacing:2px;color:var(--gold);
+  margin-bottom:8px;font-weight:600;
+  text-transform:uppercase;
+  border-bottom:1px solid rgba(160,69,16,0.25);
+  padding-bottom:5px;
+}
+.opis-podglad-tresc{
+  font-family:'EB Garamond',serif;
+  font-size:14px;line-height:1.7;color:var(--ink);
+}
+.opis-podglad-tresc h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:700;
+  color:var(--gold);
+  margin:0 0 10px;line-height:1.3;
+  text-shadow:0 1px 0 rgba(255,255,255,0.5);
+}
+.opis-podglad-tresc h2.duzy{font-size:28px}
+.opis-podglad-tresc h2.srodek{text-align:center}
+.opis-podglad-tresc p{margin:0 0 10px}
+.opis-podglad-tresc p:last-child{margin-bottom:0}
+
+/* Akcje */
+.opis-edytor-akcje{
+  display:flex;gap:8px;margin-bottom:8px;
+}
+.admin-helper .opis-zapisz-btn,
+.admin-helper .opis-wyczysc-btn{
+  flex:1;
+  padding:9px 12px;
+  border-radius:5px;
+  font-family:'Cinzel',serif;font-size:12px;
+  letter-spacing:1.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-transform:uppercase;
+  min-width:0;
+}
+.admin-helper .opis-zapisz-btn{
+  background:linear-gradient(180deg,var(--gold),#8a3a0e);
+  color:var(--paper-2);
+  border:1px solid #6e2d0a;
+}
+.admin-helper .opis-zapisz-btn:hover{
+  background:linear-gradient(180deg,#b54e15,#9a3f10);
+  transform:translateY(-1px);
+  box-shadow:0 3px 8px rgba(160,69,16,0.35);
+}
+.admin-helper .opis-zapisz-btn.zapisany{
+  background:linear-gradient(180deg,#22c55e,#16a34a)!important;
+  border-color:#15803d!important;
+}
+.admin-helper .opis-wyczysc-btn{
+  background:transparent;
+  color:var(--crimson);
+  border:1px solid var(--crimson);
+  flex:0 0 auto;padding:9px 14px;
+}
+.admin-helper .opis-wyczysc-btn:hover{
+  background:var(--crimson);color:#fff;
+  transform:none;
+  box-shadow:none;
+}
+
+.opis-info{
+  margin:0;
+  font-family:'EB Garamond',serif;font-size:11px;
+  font-style:italic;
+  color:var(--ink-muted);
+  text-align:center;
+  line-height:1.4;
+}
+
 /* Kropka tymczasowa - pokazuje gdzie kliknąłeś */
 .kropka-temp{background:transparent!important;border:none!important}
 .kropka-temp-inner{
@@ -1320,17 +1675,66 @@ footer{
   position:absolute;
   top:14px;right:14px;
   z-index:600;
-  background:var(--paper-2);
+  /* Pełne, nieprzezroczyste tło - nie zostawiamy zmiennej CSS, żadnej przezroczystości */
+  background:#fff8eb;
+  background:linear-gradient(180deg,#fff8eb,#f5ecd5);
   border:2px solid #7c3aed;
   border-radius:6px;
   padding:10px 14px;
   font-family:'EB Garamond',serif;
   font-size:12px;color:var(--ink);
-  box-shadow:var(--shadow-md);
+  box-shadow:0 6px 20px rgba(60,40,20,0.25),0 2px 6px rgba(60,40,20,0.15);
   display:none;
-  max-width:200px;
+  max-width:220px;
+  /* Wysokość ograniczona do widocznej części okna - jeśli przyciski + rozwinięte
+     edytory się nie mieszczą, panel scrolluje wewnątrz zamiast wystawać pod ramkę */
+  max-height:calc(100vh - 28px);
+  overflow-y:auto;
+  /* Łap wszystkie kliknięcia żeby nie przelatywały do mapy pod spodem */
+  pointer-events:auto;
 }
 .admin-list.visible{display:block}
+
+/* Tryb pełnoekranowy edytora opisu strony - chowa wszystko inne w panelu admin.
+   Analogicznie do .edytuje-opis w edytorze miejsca. */
+.admin-list.edytuje-opis-strony > *:not(#opisStronyEdytor){
+  display:none !important;
+}
+.admin-list.edytuje-opis-strony{
+  max-height:90vh;
+  max-width:340px;
+  overflow:hidden;
+  padding:14px;
+  display:flex !important;
+  flex-direction:column;
+}
+.admin-list.edytuje-opis-strony #opisStronyEdytor{
+  display:flex !important;
+  flex-direction:column;
+  flex:1;
+  max-height:calc(90vh - 30px);
+  margin:0;
+}
+.admin-list.edytuje-opis-strony #opisStronyEdytor textarea{
+  flex:1;
+  min-height:120px;
+  margin-bottom:8px;
+}
+
+/* Tryb pełnoekranowy edytora kategorii - analogicznie jak dla opisu strony */
+.admin-list.edytuje-kategorie > *:not(#kategorieEdytor){
+  display:none !important;
+}
+.admin-list.edytuje-kategorie{
+  max-height:90vh;
+  max-width:340px;
+  overflow-y:auto;
+  padding:14px;
+}
+.admin-list.edytuje-kategorie #kategorieEdytor{
+  display:block !important;
+  margin:0;
+}
 .admin-list .admin-list-title{
   font-family:'Cinzel',serif;font-size:10px;
   color:#7c3aed;letter-spacing:1.5px;
@@ -1351,7 +1755,285 @@ footer{
 .admin-list button.danger{background:transparent;color:var(--crimson);border:1px solid var(--crimson)}
 .admin-list button.danger:hover{background:var(--crimson);color:#fff}
 
+/* === EDYTOR NAZWY STRONY (rozwijana ramka w panelu admin) === */
+.nazwa-edytor{
+  display:none;
+  margin-top:8px;
+  padding:10px;
+  background:linear-gradient(180deg,#fffaee,var(--paper-2));
+  border:1.5px solid var(--gold);
+  border-radius:5px;
+  position:relative;
+  box-shadow:inset 0 0 12px rgba(160,69,16,0.06);
+}
+.nazwa-edytor.visible{display:block}
+.nazwa-edytor::before,.nazwa-edytor::after{
+  content:'';position:absolute;width:8px;height:8px;
+  border:1px solid var(--gold);
+  pointer-events:none;
+}
+.nazwa-edytor::before{top:3px;left:3px;border-right:none;border-bottom:none}
+.nazwa-edytor::after{bottom:3px;right:3px;border-left:none;border-top:none}
+
+.nazwa-edytor-label{
+  display:block;
+  font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:1.5px;color:var(--gold);
+  margin-bottom:5px;font-weight:600;
+  text-transform:uppercase;
+}
+.nazwa-edytor input[type="text"]{
+  width:100%;
+  background:#fffefa;
+  border:1px solid rgba(160,69,16,0.4);
+  border-radius:3px;
+  padding:7px 9px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;font-weight:600;color:#3a2614;
+  box-sizing:border-box;
+  margin-bottom:8px;
+  transition:all 0.2s;
+}
+.nazwa-edytor input[type="text"]:focus{
+  outline:none;
+  border-color:var(--gold);
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(160,69,16,0.15);
+}
+.nazwa-edytor textarea{
+  width:100%;
+  background:#fffefa;
+  border:1px solid rgba(160,69,16,0.4);
+  border-radius:3px;
+  padding:7px 9px;
+  font-family:'EB Garamond',serif;
+  font-size:13px;line-height:1.5;color:#3a2614;
+  box-sizing:border-box;
+  margin-bottom:8px;
+  resize:vertical;
+  min-height:120px;
+  transition:all 0.2s;
+}
+.nazwa-edytor textarea:focus{
+  outline:none;
+  border-color:var(--gold);
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(160,69,16,0.15);
+}
+.nazwa-edytor code{
+  font-family:'Courier New',monospace;
+  background:rgba(160,69,16,0.1);
+  padding:1px 4px;
+  border-radius:2px;
+  font-size:10px;
+  color:var(--gold);
+}
+.nazwa-edytor-akcje{
+  display:flex;gap:6px;
+}
+/* Specyfika podniesiona — nadpisuje globalne .admin-list button (fioletowe) */
+.admin-list .nazwa-edytor button.nazwa-zapisz,
+.admin-list .nazwa-edytor button.nazwa-anuluj{
+  flex:1;margin-top:0;
+  font-family:'Cinzel',serif;font-size:10px;
+  letter-spacing:1px;font-weight:600;
+  padding:7px 6px;border-radius:3px;
+  cursor:pointer;text-transform:uppercase;
+  transition:all 0.2s;
+}
+.admin-list .nazwa-edytor button.nazwa-zapisz{
+  background:linear-gradient(180deg,var(--gold),#8a3a0e);
+  color:var(--paper-2);
+  border:1px solid #6e2d0a;
+}
+.admin-list .nazwa-edytor button.nazwa-zapisz:hover{
+  background:linear-gradient(180deg,#b54e15,#9a3f10);
+}
+.admin-list .nazwa-edytor button.nazwa-zapisz.zapisany{
+  background:linear-gradient(180deg,#22c55e,#16a34a)!important;
+  border-color:#15803d!important;
+}
+.admin-list .nazwa-edytor button.nazwa-anuluj{
+  background:transparent;
+  color:var(--ink-soft);
+  border:1px solid var(--ink-soft);
+}
+.admin-list .nazwa-edytor button.nazwa-anuluj:hover{
+  background:var(--ink-soft);color:var(--paper-2);
+}
+.nazwa-edytor-info{
+  margin:8px 0 0;
+  font-family:'EB Garamond',serif;font-size:10px;
+  font-style:italic;
+  color:var(--ink-muted);
+  text-align:center;
+  line-height:1.3;
+}
 /* === PANEL ODTWARZANIA AUDIO === */
+/* === RADAR PANEL "📡 W zasięgu" (Krok B) === */
+.radar-panel{
+  position:absolute;
+  bottom:14px;
+  right:14px;
+  z-index:500;
+  background:linear-gradient(180deg, var(--paper-2) 0%, var(--paper-3) 100%);
+  border:1px solid var(--gold);
+  border-radius:8px;
+  box-shadow:var(--shadow-deep);
+  min-width:220px;
+  max-width:300px;
+  overflow:hidden;
+  font-family:'EB Garamond', serif;
+  display:none; /* domyślnie ukryty - pojawi się gdy są kropki w zasięgu */
+}
+.radar-panel.visible{display:block}
+
+/* Mini state - tylko liczba, klikany */
+.radar-mini{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:background 0.15s;
+}
+.radar-mini:hover{background:rgba(160,69,16,0.05)}
+.radar-mini:active{background:rgba(160,69,16,0.1)}
+.radar-icon{font-size:18px;flex-shrink:0}
+.radar-mini-text{
+  flex:1;
+  font-family:'Cinzel', serif;
+  font-size:12px;
+  letter-spacing:1px;
+  color:var(--gold);
+  font-weight:600;
+  text-transform:uppercase;
+}
+#radarCount{font-size:14px;color:var(--ink)}
+.radar-arrow{
+  color:var(--ink-muted);
+  font-size:11px;
+  transition:transform 0.3s;
+  flex-shrink:0;
+}
+.radar-panel.expanded .radar-arrow{transform:rotate(180deg)}
+
+/* Lista (rozwijana) */
+.radar-lista{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.3s ease-out;
+}
+.radar-panel.expanded .radar-lista{max-height:60vh; overflow-y:auto}
+
+.radar-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-top:1px solid rgba(160,69,16,0.15);
+  background:var(--paper-2);
+}
+.radar-item.gra{background:var(--gold-pale)}
+.radar-item-info{
+  flex:1;
+  min-width:0;
+}
+.radar-item-numer{
+  font-family:'Cinzel', serif;
+  font-size:10px;
+  color:var(--gold);
+  letter-spacing:1px;
+}
+.radar-item-nazwa{
+  font-size:14px;
+  color:var(--ink);
+  line-height:1.3;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.radar-item-btn{
+  background:var(--paper-3);
+  border:1px solid var(--gold);
+  color:var(--gold);
+  border-radius:4px;
+  padding:6px 10px;
+  font-size:13px;
+  cursor:pointer;
+  transition:all 0.15s;
+  -webkit-tap-highlight-color:transparent;
+  flex-shrink:0;
+  min-width:38px;
+  font-family:inherit;
+}
+.radar-item-btn:hover{background:var(--gold);color:var(--paper-2)}
+.radar-item-btn:active{transform:scale(0.95)}
+.radar-item-btn.gra{
+  background:var(--gold);
+  color:var(--paper-2);
+}
+
+/* Pasek auto-odsłuchu nad listą kropek */
+.radar-auto-bar{
+  padding:10px 14px;
+  background:var(--paper-2);
+  border-top:1px solid rgba(160,69,16,0.15);
+  display:flex;
+  justify-content:center;
+}
+.radar-auto-btn{
+  width:100%;
+  background:var(--paper-3);
+  border:1.5px solid var(--gold);
+  color:var(--gold);
+  border-radius:4px;
+  padding:10px 14px;
+  font-size:13px;
+  font-family:'Cinzel', serif;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:all 0.15s;
+  -webkit-tap-highlight-color:transparent;
+  font-weight:500;
+}
+.radar-auto-btn:hover{background:var(--gold);color:var(--paper-2)}
+.radar-auto-btn:active{transform:scale(0.98)}
+.radar-auto-btn.aktywny{
+  background:#7c3aed;
+  border-color:#7c3aed;
+  color:#fff;
+  animation:pulseAuto 1.6s ease-in-out infinite;
+}
+.radar-auto-btn.aktywny:hover{background:#6b2fd9}
+@keyframes pulseAuto{
+  0%, 100%{box-shadow:0 0 0 0 rgba(124,58,237,0.4)}
+  50%{box-shadow:0 0 0 6px rgba(124,58,237,0)}
+}
+
+/* Mobile - panel na całą szerokość (działa w obu orientacjach) */
+@media (max-width: 1024px) and (pointer: coarse) {
+  .radar-panel{
+    left:14px !important;
+    right:14px !important;
+    min-width:auto !important;
+    max-width:none !important;
+    bottom:calc(env(safe-area-inset-bottom, 0px) + 100px) !important;
+  }
+  .radar-mini-text{font-size:13px}
+  .radar-item-nazwa{font-size:15px}
+  .radar-item-btn{
+    padding:10px 14px;
+    min-width:48px;
+    min-height:44px;
+    font-size:16px;
+  }
+}
+
+/* === KONIEC RADAR PANEL === */
+
 .audio-player{
   position:absolute;
   bottom:14px;right:14px;
@@ -1685,11 +2367,13 @@ footer{
 
 /* =============================================================== */
 /* === MOBILE TOUCH PORTRAIT (telefon + tablet w pionie) === */
-/* Reguła: max-width: 768px AND pointer: coarse (palec, nie myszka) */
-/* Pointer: coarse = niemozliwe do oszukania - tylko prawdziwe      */
-/* urządzenia dotykowe. Komputer NIGDY nie spełni tego warunku.     */
+/* Reguła: max-width: 1024px AND pointer: coarse (palec, nie myszka)        */
+/* Pointer: coarse = niemozliwe do oszukania - tylko prawdziwe              */
+/* urządzenia dotykowe. Komputer NIGDY nie spełni tego warunku.             */
+/* Reguły działają w OBU orientacjach (pion i poziom) - dawniej tylko       */
+/* portrait, ale w landscape telefon dostawał styl desktopowy = chaos.      */
 /* =============================================================== */
-@media (max-width: 1024px) and (pointer: coarse) and (orientation: portrait) {
+@media (max-width: 1024px) and (pointer: coarse) {
 
   /* === KROK 2: MAPA PEŁEN EKRAN === */
 
@@ -1845,25 +2529,42 @@ footer{
     color: var(--paper-2);
   }
 
-  /* GPS - PRAWY DOLNY RÓG (przesuwam istniejący .gps-btn) */
+  /* NAWIGACJA + WYŚRODKUJ - wycentrowane obok siebie NA GÓRZE mapy.
+     Wcześniej były na dole - kolidowały z listą radaru "W zasięgu"
+     gdy lista miała 3+ kropek i sięgała w dół ekranu.
+     Teraz: górna belka zajęta - hamburger lewo, mapa prawo, 🧭 + ⊙ środek. */
   .gps-btn {
     position: absolute !important;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 22px) !important;
-    right: 14px !important;
-    left: auto !important;
-    top: auto !important;
-    width: 50px !important;
-    height: 50px !important;
+    top: 14px !important;
+    bottom: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(calc(-100% - 6px)) !important;
+    width: 46px !important;
+    height: 46px !important;
     border-radius: 50% !important;
     box-shadow: 0 3px 12px rgba(0,0,0,0.25) !important;
     border: 0.5px solid rgba(160,69,16,0.3) !important;
     background: var(--paper-2) !important;
-    font-size: 22px !important;
+    font-size: 20px !important;
     z-index: 600;
   }
   .gps-btn.active {
     background: var(--gold) !important;
     color: var(--paper-2) !important;
+  }
+
+  /* Center-btn (⊙ wyśrodkuj) - tuż obok 🧭, prawo od środka góry */
+  .center-btn {
+    position: absolute !important;
+    top: 14px !important;
+    bottom: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(6px) !important;
+    width: 46px !important;
+    height: 46px !important;
+    z-index: 600;
   }
 
   /* Gwiazdki ✨ - LEWY DOLNY RÓG (nad trybem wędrowca) */
@@ -2057,13 +2758,9 @@ footer{
 
   /* Mapa - rezerwujemy miejsce na bottom sheet (80px = wysokość mini) */
   /* Ale ponieważ bottom sheet jest fixed, mapa może być pełnoekranowa */
-  /* Jednak GPS i FAB-y dolne muszą być WYŻEJ niż bottom sheet mini */
-  .gps-btn,
+  /* gps-btn i center-btn są teraz NA GÓRZE - tu zostaje tylko mobile-fab-tourist */
   .mobile-fab-tourist {
     bottom: calc(env(safe-area-inset-bottom, 0px) + 100px) !important;
-  }
-  .mobile-fab-center {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 168px) !important;
   }
   .hint-btn {
     bottom: calc(env(safe-area-inset-bottom, 0px) + 168px) !important;
@@ -2236,15 +2933,207 @@ footer{
   }
 
 }
+
+/* ============================================================
+   === PANEL RYSOWANIA NA MAPIE (admin only) ==================
+   ============================================================ */
+#panelRysowania{
+  display:none;
+  background:linear-gradient(180deg,var(--paper-2) 0%,var(--paper-3) 100%);
+  border:1px solid rgba(160,69,16,0.4);
+  border-radius:6px;
+  padding:12px 14px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow-soft);
+  position:relative;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+}
+#panelRysowania.visible{display:flex}
+
+#panelRysowania::before,#panelRysowania::after{
+  content:'';position:absolute;width:14px;height:14px;
+  border:2px solid var(--gold);
+}
+#panelRysowania::before{top:5px;left:5px;border-right:none;border-bottom:none}
+#panelRysowania::after{bottom:5px;right:5px;border-left:none;border-top:none}
+
+.panel-rys-label{
+  font-family:'Cinzel',serif;font-size:11px;color:var(--gold);
+  letter-spacing:2px;text-transform:uppercase;font-weight:600;
+  padding:0 8px 0 4px;
+}
+.panel-rys-divider{
+  width:1px;height:24px;background:rgba(160,69,16,0.25);
+}
+
+.btn-narzedzie{
+  background:var(--paper-2);
+  color:var(--ink);
+  border:1px solid rgba(160,69,16,0.4);
+  border-radius:4px;
+  padding:8px 12px;
+  font-family:'EB Garamond',serif;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.2s;
+  letter-spacing:0.3px;
+}
+.btn-narzedzie:hover{
+  background:var(--paper-3);
+  border-color:var(--gold);
+  transform:translateY(-1px);
+}
+.btn-narzedzie.active{
+  background:var(--gold);
+  color:var(--paper-2);
+  border-color:var(--gold);
+  box-shadow:0 2px 8px rgba(160,69,16,0.4);
+  font-weight:600;
+}
+
+.panel-rys-kolor{
+  width:36px;height:36px;
+  border:2px solid var(--gold);
+  border-radius:4px;
+  cursor:pointer;
+  background:transparent;
+  padding:2px;
+}
+
+#panelRysowaniaInfo{
+  font-family:'EB Garamond',serif;
+  font-size:13px;
+  font-style:italic;
+  color:var(--ink-soft);
+  flex-basis:100%;
+  padding-top:6px;
+  border-top:1px dashed rgba(160,69,16,0.25);
+}
+
+/* Kursor "krzyżyk" gdy tryb rysowania aktywny */
+.leaflet-container.tryb-rysowania{cursor:crosshair !important}
+
+/* Etykieta tekstowa wstawiona na mapę */
+.rysunek-etykieta{
+  background:var(--paper-2);
+  border:1px solid var(--gold);
+  border-radius:4px;
+  padding:4px 10px;
+  font-family:'EB Garamond',serif;
+  font-size:14px;
+  font-weight:500;
+  color:var(--ink);
+  box-shadow:0 2px 8px rgba(60,40,20,0.2);
+  white-space:nowrap;
+}
+.rysunek-etykieta-marker{
+  background:transparent !important;
+  border:none !important;
+}
+
+/* =========================================================
+   === WYMUSZENIE PIONOWEJ ORIENTACJI (mobile landscape) ===
+   =========================================================
+   Telefonowe przeglądarki nie pozwalają zablokować obrotu
+   programatycznie - ale możemy pokazać pełnoekranowy
+   komunikat który zasłania całą stronę dopóki user nie
+   obróci telefonu z powrotem na pionowo.
+   Aktywuje się tylko gdy:
+     - max-width: 1024px (telefon/tablet)
+     - pointer: coarse (dotykowe, nie myszka)
+     - orientation: landscape (poziomo)
+*/
+#obrocTelefon{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:linear-gradient(135deg,#3d2817 0%,#1a0e08 100%);
+  color:#f5e8c8;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:30px;
+  font-family:'EB Garamond',serif;
+}
+#obrocTelefon-inner{
+  max-width:340px;
+}
+#obrocTelefon-ikona{
+  font-size:80px;
+  margin-bottom:20px;
+  display:block;
+  animation:obrocAnim 2.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes obrocAnim{
+  0%, 50%, 100%{transform:rotate(0deg)}
+  25%{transform:rotate(-90deg)}
+  75%{transform:rotate(0deg)}
+}
+#obrocTelefon h2{
+  font-family:'Cinzel',serif;
+  font-size:24px;
+  margin:0 0 14px 0;
+  color:#d4a574;
+  letter-spacing:2px;
+}
+#obrocTelefon p{
+  font-size:17px;
+  line-height:1.5;
+  margin:0 0 8px 0;
+  color:#e8d5a8;
+}
+#obrocTelefon-mala{
+  font-size:14px !important;
+  font-style:italic;
+  opacity:0.7;
+  margin-top:20px !important;
+}
+#obrocTelefon-ozdoba{
+  color:#d4a574;
+  letter-spacing:8px;
+  font-size:18px;
+  margin:18px 0;
+}
+
+/* Aktywacja: telefon w landscape */
+@media (max-width: 1024px) and (pointer: coarse) and (orientation: landscape) {
+  #obrocTelefon{
+    display:flex !important;
+  }
+  /* Wyłącz scroll body żeby nic nie wystawało */
+  body{
+    overflow:hidden !important;
+  }
+}
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     === WYMUSZENIE PIONOWEJ ORIENTACJI (mobile landscape) =====
+     ============================================================
+     Pełnoekranowy komunikat - widoczny tylko gdy telefon obrócony
+     poziomo. CSS @media zarządza widocznością. -->
+<div id="obrocTelefon">
+  <div id="obrocTelefon-inner">
+    <span id="obrocTelefon-ikona">📱</span>
+    <h2>Obróć telefon</h2>
+    <div id="obrocTelefon-ozdoba">❦ ❦ ❦</div>
+    <p>Mapa działa tylko<br>w pionowym ułożeniu telefonu.</p>
+    <p id="obrocTelefon-mala">Obróć urządzenie, by korzystać z mapy.</p>
+  </div>
+</div>
 
 <!-- BANER POWITALNY (pojawia się po zeskanowaniu QR) -->
 <div class="qr-welcome" id="qrWelcome">
   <div class="qr-ornament">❦ ❦ ❦</div>
   <span class="ikona-qr" id="qrWelcomeIkona">📍</span>
-  <h2 id="qrWelcomeNazwa">Witaj w Siedliszczu</h2>
+  <h2 id="qrWelcomeNazwa">Witaj na mapie</h2>
   <p class="opis-qr" id="qrWelcomeOpis">Tu jesteś — zobacz więcej miejsc w pobliżu na mapie.</p>
   <button onclick="zamknijQrWelcome()">Zobacz mapę</button>
   <a class="small-link" id="qrWelcomeWiecej" onclick="zobaczOpisPelny()">Pełny opis miejsca →</a>
@@ -2292,7 +3181,7 @@ footer{
 <div class="wrapper">
 
   <header>
-    <h1>Siedliszcze</h1>
+    <h1>Nazwa strony</h1>
   </header>
 
   <!-- KONTROLKI -->
@@ -2330,28 +3219,64 @@ footer{
       <button class="btn-size" id="btn-size-l" onclick="zmienRozmiar('l', this)" title="Duża mapa">📊</button>
     </div>
 
-    <div class="controls-divider"></div>
+  </div>
 
-    <!-- TRYB TURYSTY -->
-    <button class="tourist-btn" id="touristBtn" onclick="toggleTrybTurysty()" title="Tryb turysty - GPS + sortowanie po dystansie">🥾 Tryb turysty</button>
+  <!-- ============================================================
+       === PANEL RYSOWANIA NA MAPIE (admin only) ==================
+       ============================================================ -->
+  <div id="panelRysowania">
+    <span class="panel-rys-label">🎨 Rysuj</span>
+    <button class="btn-narzedzie" data-narzedzie="linia" onclick="wybierzNarzedzie('linia')">✏️ Linia</button>
+    <button class="btn-narzedzie" data-narzedzie="kolo" onclick="wybierzNarzedzie('kolo')">⭕ Koło</button>
+    <button class="btn-narzedzie" data-narzedzie="tekst" onclick="wybierzNarzedzie('tekst')">📝 Tekst</button>
+    <button class="btn-narzedzie" data-narzedzie="gumka" onclick="wybierzNarzedzie('gumka')">🧽 Gumka</button>
 
+    <span class="panel-rys-divider"></span>
+
+    <input type="color" id="rysKolor" class="panel-rys-kolor" value="#a04510" title="Kolor rysunku">
+
+    <span class="panel-rys-divider"></span>
+
+    <button class="btn-narzedzie" onclick="zakonczLinie()" id="btnZakonczLinie" style="display:none">✓ Zakończ linię</button>
+    <button class="btn-narzedzie" onclick="eksportujRysunki()" title="Pobierz wszystkie rysunki jako plik .json">💾 Eksport</button>
+    <button class="btn-narzedzie" onclick="document.getElementById('rysImportFile').click()" title="Wczytaj rysunki z pliku .json">📂 Import</button>
+    <input type="file" id="rysImportFile" accept=".json" style="display:none" onchange="importujRysunki(event)">
+    <button class="btn-narzedzie" onclick="wyczyscWszystkieRysunki()" style="background:#8b2030;color:#fff;border-color:#8b2030">🗑 Wyczyść wszystko</button>
+
+    <div id="panelRysowaniaInfo">Wybierz narzędzie i klikaj na mapie. Rysunki zapisują się automatycznie.</div>
   </div>
 
   <div class="layout">
     <div id="mapa">
-      <button class="gps-btn" id="gpsBtn" onclick="obsluzKlikGPSlubAudio()" title="Pokaż mnie na mapie">📍</button>
-      <button class="hint-btn" id="hintBtn" onclick="toggleAudioHints()" title="Pokaż gwiazdki — kropki audio w pobliżu (300m)">✨</button>
+      <button class="gps-btn" id="gpsBtn" onclick="obsluzKlikGPSlubAudio()" title="Włącz nawigację (GPS + audio + fioletowe kropki)">🧭</button>
       <button class="center-btn" id="centerBtn" onclick="wysrodkujNaMnie()" title="Wyśrodkuj mapę na mojej pozycji GPS" style="display:none">⊙</button>
 
       <!-- MOBILE FAB BUTTONS (widoczne tylko na mobile portrait dzięki CSS) -->
       <button class="mobile-fab mobile-fab-menu" id="mobileFabMenu" onclick="otworzMobilneMenu()" title="Menu">☰</button>
       <button class="mobile-fab mobile-fab-layer" id="mobileFabLayer" onclick="toggleWarstwyMobile()" title="Zmień warstwę mapy">🗺️</button>
-      <button class="mobile-fab mobile-fab-tourist" id="mobileFabTourist" onclick="toggleTrybTurysty()" title="Tryb wędrowca">🥾</button>
-      <button class="mobile-fab mobile-fab-center" id="mobileFabCenter" onclick="wysrodkujNaMnie()" title="Wyśrodkuj na mojej pozycji" style="display:none">⊙</button>
 
       <div class="gps-status" id="gpsStatus"></div>
-      <!-- PANEL ODTWARZANIA AUDIO -->
-      <div class="audio-player" id="audioPlayer">
+
+      <!-- ============================================================== -->
+      <!-- NOWY PANEL "📡 W ZASIĘGU" (Radar wielowarstwowy, Krok B) ====== -->
+      <!-- ============================================================== -->
+      <!-- Pokazuje listę WSZYSTKICH stref w których turysta JEST teraz.  -->
+      <!-- Akordeon: mini state = tylko liczba, klik = rozwija listę.     -->
+      <!-- Klik [▶] na wpisie = odtwarza audio (przerywa poprzednie).     -->
+      <!-- Wpisy znikają same gdy turysta wyjdzie ze strefy.              -->
+      <div class="radar-panel" id="radarPanel">
+        <div class="radar-mini" id="radarMini" onclick="toggleRadarPanel()">
+          <span class="radar-icon">📡</span>
+          <span class="radar-mini-text">W zasięgu: <span id="radarCount">0</span></span>
+          <span class="radar-arrow" id="radarArrow">▼</span>
+        </div>
+        <div class="radar-lista" id="radarLista"></div>
+      </div>
+
+      <!-- Stary panel audio - ZACHOWANY w kodzie ale UKRYTY (display:none) -->
+      <!-- Funkcje JS jeszcze go używają (toggleAudioPauza itp), zatem zostaje -->
+      <!-- jako "niewidzialny odtwarzacz". Zostanie kompletnie usunięty w przyszłości -->
+      <div class="audio-player" id="audioPlayer" style="display:none !important">
         <div class="audio-title">Słuchasz</div>
         <div class="audio-info" id="audioInfo">—</div>
         <div class="audio-strefa-info" id="audioStrefaInfo" style="display:none"></div>
@@ -2368,8 +3293,65 @@ footer{
         <div>Zmiany kropek: <span class="admin-list-count" id="adminListCount" style="color:#22c55e">0</span></div>
         <div style="font-size:11px;color:var(--ink-muted);margin-top:4px">Klik w mapę = dodaj<br>Klik w pinezkę → 🛠 = edytuj</div>
         <button onclick="pobierzNowyIndex()" style="background:#22c55e;font-size:11px">💾 Pobierz nowy index.html</button>
-        <button id="adminExportBtn" onclick="exportujZaplanowane()" disabled style="opacity:0.5;font-size:10px">📋 Eksportuj kropki (0)</button>
-        <button class="danger" onclick="wyczyscZaplanowane()" style="font-size:10px">🗑 Wyczyść kropki</button>
+        <button id="nazwaStronyBtn" onclick="otworzEdytorNazwy()" style="background:#a04510;font-size:11px">✏️ Nazwa strony</button>
+
+        <!-- Rozwijana ramka edycji nazwy strony -->
+        <div class="nazwa-edytor" id="nazwaEdytor">
+          <label class="nazwa-edytor-label">Nazwa strony:</label>
+          <input type="text" id="nazwaStronyInput" maxlength="60" placeholder="np. Siedliszcze">
+          <div class="nazwa-edytor-akcje">
+            <button class="nazwa-zapisz" onclick="zapiszNazweStrony()">✓ Zapisz</button>
+            <button class="nazwa-anuluj" onclick="zamknijEdytorNazwy()">Anuluj</button>
+          </div>
+          <p class="nazwa-edytor-info">Zmiana zostanie zapisana w pliku po pobraniu nowego index.html.</p>
+        </div>
+
+        <button id="opisStronyBtn" onclick="otworzEdytorOpisuStrony()" style="background:#a04510;font-size:11px">📜 Opis strony</button>
+
+        <!-- Rozwijana ramka edycji opisu strony (akordeon pod mapą) -->
+        <div class="nazwa-edytor" id="opisStronyEdytor">
+          <label class="nazwa-edytor-label">Tytuł sekcji:</label>
+          <input type="text" id="opisStronyTytulInput" maxlength="80" placeholder="np. O Siedliszczu">
+          <label class="nazwa-edytor-label" style="margin-top:8px">Treść (akapity oddziel pustą linią):</label>
+          <textarea id="opisStronyTrescInput" rows="8" placeholder="Tekst akapit po akapicie. Pustą linią oddzielisz jeden akapit od drugiego.&#10;&#10;Możesz używać **pogrubienia** dla wyróżnień."></textarea>
+          <div class="nazwa-edytor-akcje">
+            <button class="nazwa-zapisz" onclick="zapiszOpisStrony()">✓ Zapisz</button>
+            <button class="nazwa-anuluj" onclick="zamknijEdytorOpisuStrony()">Anuluj</button>
+          </div>
+          <p class="nazwa-edytor-info">Pogrubianie: <code>**tekst**</code>. Akapity rozdziel pustą linią.</p>
+        </div>
+
+        <button id="kategorieBtn" onclick="otworzEdytorKategorii()" style="background:#a04510;font-size:11px">🏷️ Nazwy kategorii</button>
+
+        <!-- Rozwijana ramka edycji kategorii -->
+        <div class="nazwa-edytor" id="kategorieEdytor">
+          <label class="nazwa-edytor-label" style="margin-bottom:8px">Edytuj nazwy i ikony zakładek (klucze techniczne pozostają takie same):</label>
+
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+            <input type="text" id="katIkona_zabytek" maxlength="4" style="width:48px;text-align:center;font-size:18px" placeholder="🏰">
+            <input type="text" id="katNazwa_zabytek" maxlength="30" style="flex:1" placeholder="Zabytki">
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+            <input type="text" id="katIkona_sakral" maxlength="4" style="width:48px;text-align:center;font-size:18px" placeholder="⛪">
+            <input type="text" id="katNazwa_sakral" maxlength="30" style="flex:1" placeholder="Sakralne">
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+            <input type="text" id="katIkona_przyroda" maxlength="4" style="width:48px;text-align:center;font-size:18px" placeholder="🌳">
+            <input type="text" id="katNazwa_przyroda" maxlength="30" style="flex:1" placeholder="Przyroda">
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+            <input type="text" id="katIkona_urzad" maxlength="4" style="width:48px;text-align:center;font-size:18px" placeholder="🏛️">
+            <input type="text" id="katNazwa_urzad" maxlength="30" style="flex:1" placeholder="Instytucje">
+          </div>
+
+          <div class="nazwa-edytor-akcje" style="margin-top:10px">
+            <button class="nazwa-zapisz" onclick="zapiszKategorie()">✓ Zapisz</button>
+            <button class="nazwa-anuluj" onclick="zamknijEdytorKategorii()">Anuluj</button>
+          </div>
+          <p class="nazwa-edytor-info">Wpisz emoji w lewe pole, nazwę w prawe. Klucz techniczny (np. <code>zabytek</code>) zostaje — wszystkie miejsca w tej kategorii zachowują przypisanie. Zmiany trwałe po pobraniu nowego index.html.</p>
+        </div>
+
+        <button onclick="toggleRysowanie()" id="btnRysowanie" style="font-size:10px;background:#3a6a4a;color:#fff;border-color:#3a6a4a">🎨 Rysuj na mapie</button>
         <button class="danger" onclick="wyczyscMiejsca()" style="font-size:10px">🗑 Wyczyść miejsca</button>
       </div>
     </div>
@@ -2391,7 +3373,7 @@ footer{
         <div class="bottom-sheet-mini-arrow" id="bsMiniArrow">▲</div>
       </div>
       <div class="bottom-sheet-body">
-        <h3 class="bottom-sheet-section-title">Miejsca w Siedliszczu</h3>
+        <h3 class="bottom-sheet-section-title">Miejsca na mapie</h3>
         <p class="bottom-sheet-section-subtitle" id="bsSectionSubtitle">Wybierz miejsce z listy</p>
         <div id="lista-miejsc-mobile"></div>
       </div>
@@ -2434,9 +3416,9 @@ footer{
 
     <div class="form-row">
       <label>Promień:</label>
-      <input type="range" id="adminPromien" min="10" max="150" step="5" value="50">
+      <input type="range" id="adminPromien" min="10" max="5000" step="10" value="50">
     </div>
-    <div class="promien-display"><span id="adminPromienVal">50</span> m</div>
+    <div class="promien-display"><span id="adminPromienVal">50 m</span></div>
 
     <div class="form-row">
       <label>Opis:</label>
@@ -2476,7 +3458,7 @@ footer{
   <!-- EDYTOR MIEJSCA (tryb admin) -->
   <div class="admin-helper" id="miejsceHelper">
     <h3 id="miejsceHelperTytul">Nowe miejsce</h3>
-    <p class="admin-subtitle">Wpisz nazwę, wybierz kategorię i ikonę. Po pobraniu pliku — wgraj zdjęcie i opis do folderów.</p>
+    <p class="admin-subtitle">Wpisz nazwę, wybierz kategorię i ikonę. Dodaj tytuł i opis, a po pobraniu pliku — wgraj zdjęcie do folderu <code>img/</code>.</p>
 
     <div class="form-row">
       <label>Nazwa:</label>
@@ -2503,10 +3485,62 @@ footer{
       <input type="text" id="miejsceKlucz" placeholder="auto" readonly style="background:var(--paper-3);font-style:italic;color:var(--ink-muted)">
     </div>
 
-    <div class="code-output" id="miejsceCodeOutput" style="font-size:11px;line-height:1.6">
-      📁 Po dodaniu i pobraniu pliku, wgraj do repo:<br>
-      <span style="color:#7c3aed">img/<b id="miejscePlikJpg">klucz</b>.jpg</span> — zdjęcie<br>
-      <span style="color:#7c3aed">opisy/<b id="miejscePlikMd">klucz</b>.md</span> — opis (Markdown)
+    <!-- PRZYCISK / EDYTOR OPISU -->
+    <div class="opis-zwiniety" id="opisZwiniety">
+      <button type="button" class="opis-toggle-btn" onclick="otworzEdytorOpisu()">
+        <span class="opis-toggle-ikona">✍️</span>
+        <span class="opis-toggle-tekst">
+          <strong id="opisToggleTytul">Dodaj opis</strong>
+          <small id="opisToggleStatus">Tytuł i tekst miejsca</small>
+        </span>
+        <span class="opis-toggle-strzalka">›</span>
+      </button>
+    </div>
+
+    <div class="opis-edytor" id="opisEdytor">
+      <div class="opis-edytor-header">
+        <span class="opis-edytor-tytul">📜 Edytor opisu</span>
+        <button type="button" class="opis-edytor-zamknij" onclick="zamknijEdytorOpisu()" title="Powrót do panelu miejsca (zachowa zmiany)">
+          <span class="opis-zamknij-strzalka">‹</span> Powrót
+        </button>
+      </div>
+
+      <div class="opis-pole-tytul">
+        <label>Tytuł</label>
+        <input type="text" id="opisTytul" placeholder="np. Historia tego miejsca" maxlength="120">
+        <div class="opis-tytul-opcje">
+          <label class="opis-checkbox">
+            <input type="checkbox" id="opisTytulSrodek"> wyśrodkuj
+          </label>
+          <label class="opis-checkbox">
+            <input type="checkbox" id="opisTytulDuzy"> powiększ
+          </label>
+        </div>
+      </div>
+
+      <div class="opis-pole-tekst">
+        <label>Opis</label>
+        <textarea id="opisTekst" placeholder="Tu wpisz właściwy opis miejsca. Możesz pisać dowolnie długo — każdy nowy akapit oddziel pustą linią." rows="10"></textarea>
+        <div class="opis-licznik"><span id="opisLicznik">0</span> znaków</div>
+      </div>
+
+      <div class="opis-podglad-toggle">
+        <button type="button" onclick="przelaczPodgladOpisu()" id="opisPodgladBtn">👁 Pokaż podgląd</button>
+      </div>
+
+      <div class="opis-podglad" id="opisPodglad" style="display:none">
+        <div class="opis-podglad-label">Podgląd:</div>
+        <div class="opis-podglad-tresc" id="opisPodgladTresc"></div>
+      </div>
+
+      <div class="opis-edytor-akcje">
+        <button type="button" class="opis-zapisz-btn" onclick="zapiszOpisRoboczo()">✓ Zapisz opis</button>
+        <button type="button" class="opis-wyczysc-btn" onclick="wyczyscOpis()">🗑 Wyczyść</button>
+      </div>
+
+      <p class="opis-info">
+        Opis zapisuje się roboczo i będzie zawarty w pliku po kliknięciu „Pobierz nowy index.html".
+      </p>
     </div>
 
     <!-- Przyciski są wstrzykiwane przez zaktualizujPrzyciskiMiejsce() -->
@@ -2522,39 +3556,116 @@ footer{
     <div class="detail-content" id="detailContent"></div>
   </div>
 
-  <!-- ACCORDION: O Siedliszczu -->
+  <!-- ACCORDION: Opis strony (edytowalny w trybie admin) -->
   <div class="accordion" id="info-accordion">
     <div class="accordion-header" onclick="toggleAccordion()">
-      <span class="title">O Siedliszczu</span>
+      <span class="title" id="opisStronyTytul">O stronie</span>
       <span class="accordion-arrow">▼</span>
     </div>
     <div class="accordion-content">
-      <div class="accordion-inner">
-        <p>Siedliszcze leży na <b>Polesiu Wołyńskim</b>, w obrębie Pagórów Chełmskich i Obniżenia Dorohuckiego. To gmina miejsko-wiejska w powiecie chełmskim, województwie lubelskim.</p>
-        <p>W latach <b>1760–1821 było miasteczkiem</b> — dlatego do dziś zachował się charakterystyczny <b>promienisty układ ulic</b> rozchodzących się z centrum, jak w średniowiecznych miastach. Sama nazwa „Siedliszcze" pochodzi od starosłowiańskiego „osiedlać się".</p>
-        <p>Od końca XVII wieku Siedliszcze należało do potężnej magnackiej rodziny <b>Rzewuskich</b>, którzy utrzymywali tu chorągiew husarską. Hetmanami koronnymi byli kolejno Stanisław Mateusz Rzewuski i jego syn Wacław (znany też jako poeta i dramatopisarz). W 1758 r. dobra przeszły w ręce <b>Wojciecha Węglińskiego</b>, ostatniego kasztelana chełmskiego — to po nim pozostał zespół pałacowo-parkowy.</p>
-        <p>🌳 <b>Dwie trzecie powierzchni gminy</b> stanowi Chełmski Obszar Chronionego Krajobrazu (utworzony w 1983 r.) — otulina Chełmskiego Parku Krajobrazowego. Region słynie z <b>torfowisk węglanowych</b>, na których żyje ponad 800 gatunków motyli (38% wszystkich w Polsce).</p>
-        <p>⛪ Siedliszcze jest siedzibą <b>Dekanatu Siedliszcze</b> w Archidiecezji Lubelskiej (od 1992 r.). Parafia Matki Bożej Częstochowskiej obejmuje 10 miejscowości — oprócz głównego kościoła parafialnego, w gminie znajdują się dwie kaplice filialne (w Anusinie i Dobromyśli) oraz licznie występujące krzyże i kapliczki przydrożne.</p>
-
-        <div class="stats">
-          <div class="stat"><div class="liczba">~6,7k</div><div class="label">mieszkańców</div></div>
-          <div class="stat"><div class="liczba">154</div><div class="label">km² powierzchni</div></div>
-          <div class="stat"><div class="liczba">34</div><div class="label">miejscowości</div></div>
-          <div class="stat"><div class="liczba">XVIII</div><div class="label">wiek pałacu</div></div>
-        </div>
+      <div class="accordion-inner" id="opisStronyTresc">
+        <p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:20px 0">opis strony</p>
       </div>
     </div>
+
   </div>
 
   <div class="bottomnav">
     <a href="../" class="back">← powrót do mini-klik</a>
   </div>
 
-  <footer>— mapa-siedliszcze · mini-klik.pl · Anno Domini 2026 —</footer>
+  <footer>— mapa miejsca · mini-klik.pl · Anno Domini 2026 —</footer>
 
 </div>
 
 <script>
+// =====================================================================
+// === KATEGORIE - edytowalne nazwy i ikony ============================
+// =====================================================================
+// Klucze ('zabytek', 'sakral', 'przyroda', 'urzad') są STAŁE - nie da się
+// ich zmienić, bo siedzą w danych miejsc. Można jednak dowolnie zmienić
+// `nazwa` (np. "Zabytki" -> "Restauracje") i `ikona` (np. 🏰 -> 🍕).
+// Edycja w trybie admin: przycisk "🏷️ Nazwy kategorii" -> modal -> zapis
+// do localStorage. "Pobierz nowy index.html" wbudowuje na stałe w plik.
+// =====================================================================
+
+// === KATEGORIE:START === (nie usuwaj tego komentarza - znacznik dla auto-eksportu)
+const kategorieDomyslne = {
+  zabytek:  { ikona: '🏰',  nazwa: 'Zabytki' },
+  sakral:   { ikona: '⛪',  nazwa: 'Sakralne' },
+  przyroda: { ikona: '🌳',  nazwa: 'Przyroda' },
+  urzad:    { ikona: '🏛️', nazwa: 'Instytucje' }
+};
+// === KATEGORIE:END ===
+
+// W trybie admin localStorage może nadpisać te wartości (do czasu eksportu pliku).
+// Goście zawsze widzą `kategorieDomyslne` (nie mają localStorage z edycjami admina).
+let kategorie = (function() {
+  try {
+    // UWAGA: const isAdmin jest deklarowane niżej, więc tu czytamy URL bezpośrednio
+    const adminTeraz = new URLSearchParams(window.location.search).get('admin') === '1';
+    if (adminTeraz) {
+      const robocze = localStorage.getItem('kategorie_robocze_v1');
+      if (robocze) {
+        const dane = JSON.parse(robocze);
+        // Zlewamy z domyślnymi - jeśli admin nie zmienił wszystkich, brakujące biorą domyślne
+        return Object.assign({}, JSON.parse(JSON.stringify(kategorieDomyslne)), dane);
+      }
+    }
+  } catch (e) {}
+  // Klonujemy żeby modyfikacje nie ruszały kategorieDomyslne
+  return JSON.parse(JSON.stringify(kategorieDomyslne));
+})();
+
+// Pomocnik: zwraca etykietę kategorii np. "Zabytki" albo "Restauracje" w zależności od edycji
+function nazwaKategorii(klucz) {
+  return (kategorie[klucz] && kategorie[klucz].nazwa) || klucz || '';
+}
+function ikonaKategorii(klucz) {
+  return (kategorie[klucz] && kategorie[klucz].ikona) || '📍';
+}
+
+// Aktualizuje WSZYSTKIE miejsca w UI gdzie pojawiają się nazwy/ikony kategorii.
+// Wywoływane przy starcie i po każdej edycji w modalu.
+function zastosujKategorie() {
+  // 1. Przyciski filtrów - pasek górny desktop
+  const mapaPrzyciskow = {
+    'btn-zabytek':  'zabytek',
+    'btn-sakral':   'sakral',
+    'btn-przyroda': 'przyroda',
+    'btn-urzad':    'urzad'
+  };
+  for (const [id, klucz] of Object.entries(mapaPrzyciskow)) {
+    const btn = document.getElementById(id);
+    if (btn) btn.textContent = ikonaKategorii(klucz) + ' ' + nazwaKategorii(klucz);
+  }
+
+  // 2. Mobilne menu - przyciski filtrów
+  document.querySelectorAll('#menuFiltryKategorii button[onclick*="filtruj"]').forEach(btn => {
+    const onclickAttr = btn.getAttribute('onclick') || '';
+    const m = onclickAttr.match(/filtruj\(['"]([^'"]+)['"]/);
+    if (m && kategorie[m[1]]) {
+      const klucz = m[1];
+      btn.textContent = ikonaKategorii(klucz) + ' ' + nazwaKategorii(klucz);
+    }
+  });
+
+  // 3. Dropdown w formularzu edycji miejsca
+  const select = document.getElementById('miejsceKategoria');
+  if (select) {
+    for (const opt of select.options) {
+      if (kategorie[opt.value]) {
+        opt.textContent = ikonaKategorii(opt.value) + ' ' + nazwaKategorii(opt.value);
+      }
+    }
+  }
+
+  // 4. Karty miejsc w sidebar i markery - odświeżają się przez przerysowanie list
+  if (typeof renderujMiejscaNaMapie === 'function') {
+    try { renderujMiejscaNaMapie(); } catch (e) {}
+  }
+}
+
 const miejsca = [
 ];
 
@@ -2563,7 +3674,7 @@ const mapa = L.map('mapa', {
   scrollWheelZoom: true,
   attributionControl: false  // wyłączamy domyślny - dodamy własny bez flagi UA
 })
-  .setView([51.1980, 23.1600], 13);
+  .setView([52.0700, 19.4800], 6);
 
 // Własny attribution - bez "Leaflet" i bez ukraińskiej flagi
 L.control.attribution({ prefix: false }).addTo(mapa);
@@ -2751,29 +3862,44 @@ async function otworzPlatek(klucz, akcja) {
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
 
-    // Spróbuj wczytać plik Markdown
-    const opis = await pobierzOpisMiejsca(klucz);
-
+    // 1. Najpierw sprawdź czy miejsce ma opis bezpośrednio w obiekcie (nowy mechanizm)
     let html = '';
-    if (opis) {
-      // Renderuj markdown
-      html += `<div class="opis-md">${markdownToHTML(opis)}</div>`;
+    const maTytul = miejsce.tytul && miejsce.tytul.trim();
+    const maOpis = miejsce.opis && miejsce.opis.trim();
+
+    if (maTytul || maOpis) {
+      // Renderuj z obiektu - dwuklik tu działa, fetch nie potrzebny
+      if (maTytul) {
+        const klasy = ['opis-tytul'];
+        if (miejsce.tytulSrodek) klasy.push('srodek');
+        if (miejsce.tytulDuzy) klasy.push('duzy');
+        html += `<h2 class="${klasy.join(' ')}">${escapeHTML(miejsce.tytul)}</h2>`;
+      }
+      if (maOpis) {
+        const akapity = miejsce.opis.split(/\n\s*\n/).map(a => a.trim()).filter(a => a);
+        const akapityHTML = akapity.map(a =>
+          `<p>${escapeHTML(a).replace(/\n/g, '<br>')}</p>`
+        ).join('');
+        html += `<div class="opis-tekst">${akapityHTML}</div>`;
+      }
     } else {
-      // Brak pliku opisu - placeholder
-      html += `<p class="opis-brak" style="color:var(--ink-muted);font-style:italic;text-align:center;padding:20px;border:1px dashed var(--ink-muted);border-radius:6px">
-        📝 Opis tego miejsca jeszcze nie został dodany.<br>
-        <small style="font-size:11px">Aby dodać opis, wgraj plik <code>opisy/${klucz}.md</code> do repo.</small>
-      </p>`;
+      // 2. Fallback: spróbuj wczytać stary plik Markdown (kompatybilność wsteczna)
+      const opis = await pobierzOpisMiejsca(klucz);
+      if (opis) {
+        html += `<div class="opis-md">${markdownToHTML(opis)}</div>`;
+      } else {
+        // 3. Brak czegokolwiek - placeholder
+        html += `<p class="opis-brak" style="color:var(--ink-muted);font-style:italic;text-align:center;padding:20px;border:1px dashed var(--ink-muted);border-radius:6px">
+          📝 Opis tego miejsca jeszcze nie został dodany.
+        </p>`;
+      }
     }
 
     html += `<div class="nav-action">
       <button class="nav-btn" onclick="pokazTraseTutaj('${klucz}')">🥾 Pokaż trasę tutaj</button>
       <button class="nav-btn secondary" onclick="prowadzMnie(${lat}, ${lng}, '${safeNazwa}')">🧭 Otwórz w mapach</button>
     </div>`;
-
-    if (watchId === null) {
-      html += `<div class="route-info">Włącz GPS (📍 w lewym dolnym rogu mapy), żeby zobaczyć trasę od swojej pozycji.</div>`;
-    }
+    // Komunikat o włączaniu GPS usunięty - obie funkcje robią to teraz automatycznie.
 
     content.innerHTML = html;
     return; // panel już otwarty wyżej
@@ -2823,7 +3949,7 @@ function renderujMiejscaNaMapie() {
     card.className = 'miejsce-card';
     card.dataset.kategoria = miejsce.kategoria;
     card.dataset.klucz = miejsce.klucz;
-    const kategoriaLabel = {sakral:'Sakralne', zabytek:'Zabytek', przyroda:'Przyroda', urzad:'Instytucja'}[miejsce.kategoria] || '';
+    const kategoriaLabel = nazwaKategorii(miejsce.kategoria);
     card.innerHTML = `<span class="ikona">${miejsce.ikona}</span>
       <div class="nazwa">${miejsce.nazwa}</div>
       <div class="opis">${miejsce.krotki || kategoriaLabel}</div>`;
@@ -2850,6 +3976,10 @@ function renderujMiejscaNaMapie() {
 // Pierwszy render - przy starcie
 renderujMiejscaNaMapie();
 
+// Zastosuj zapisane edycje kategorii (jeśli admin ma roboczą wersję w localStorage,
+// albo gdy plik ma już zedytowane kategorieDomyslne w kodzie - i tak odświeżamy UI)
+zastosujKategorie();
+
 // ============== KROPKI AUDIO ==============
 // Punkty na mapie które po zbliżeniu się GPS turysty odpalają nagranie MP3.
 // Niezależne od pinezek miejsc - administrator widzi je tylko z parametrem ?admin=1.
@@ -2866,6 +3996,29 @@ let audioWyciszony = false; // toggle 'głośnik' w trybie wędrowca - audio NIE
 let audioMarkery = []; // markery kropek audio (Leaflet)
 let aktualneAudio = null; // aktualnie odtwarzany Audio()
 let aktualnaKropkaAudio = null; // aktualnie odtwarzana kropka
+
+// =====================================================================
+// === AUTO-ODSŁUCH (playlist mode) ====================================
+// =====================================================================
+// Tryb "leci po kolei z listy w nieskończoność".
+// Klik 🔁 nad listą radaru -> startuje pętlę:
+// pierwsza z listy -> kolejna -> kolejna -> ... -> pierwsza znowu (loop).
+// W trakcie:
+//   - Lista się aktualizuje (wjeżdżasz/wyjeżdżasz ze stref) - to OK,
+//     następna kropka brana jest z BIEŻĄCEJ listy.
+//   - Wpadnie nowa do listy -> dołączy do kolejki naturalnie.
+//   - Wypadnie z listy -> jak kolejka do niej dojdzie, pomijamy.
+//   - Lista pusta -> cisza, ale tryb dalej aktywny. Wjedziesz w nową
+//     strefę -> zacznie grać.
+// Wyłącza się przez: klik 🛑 na panelu, klik ręczny ▶ na innej kropce,
+// wyłączenie nawigacji.
+let autoOdsluchAktywny = false;
+
+// Zbiór numerów kropek odtworzonych w tej sesji auto-odsłuchu.
+// Po przejściu przez całą listę nie loopujemy - czekamy na nowe kropki
+// (te które wjadą w zasięg później). User może kliknąć 🔁 ponownie żeby
+// zresetować sesję i odtworzyć aktualną listę od nowa.
+let autoSesjaOdsluchane = new Set();
 
 // NOWA LOGIKA: śledzimy w jakiej strefie jest turysta TERAZ
 // - wStrefieKropki: numer kropki w której turysta jest aktualnie (lub null)
@@ -2908,72 +4061,96 @@ function renderujKropkiAudio() {
   });
 }
 
-// Sprawdza pozycję GPS względem kropek audio
-// Logika: gdy turysta WCHODZI w strefę (wcześniej był poza) - odtwarzaj
-// Gdy WYCHODZI ze strefy - resetuj flagę żeby przy powrocie zagrało znowu
+// =====================================================================
+// === RADAR WIELOWARSTWOWY (Krok A) ====================================
+// =====================================================================
+// Stara logika: znajdź NAJBLIŻSZĄ kropkę w strefie i odtwórz auto.
+// Nowa logika: znajdź WSZYSTKIE kropki w zasięgu, wibruj tylko przy
+// pierwszym wejściu w każdą, NIE odtwarzaj automatycznie.
+// Turysta sam decyduje co kliknąć w nowym panelu "📡 W zasięgu".
+
+let kropkiWZasiegu = new Set();   // numery kropek w których turysta JEST
+let wibrowaneStrefy = new Set();  // numery kropek dla których ZAWIBROWAŁY już
+
 function sprawdzKropkiAudio() {
-  if (!audioPrzewodnikWlaczony || !userPozycja) return;
+  if (!audioPrzewodnikWlaczony || !userPozycja) {
+    aktualizujPanelRadaru();
+    return;
+  }
 
-  // Znajdź najbliższą kropkę w strefie (zawsze, niezależnie od wyciszenia)
-  let najblizszaWStrefie = null;
-  let najmniejszaOdleglosc = Infinity;
-
+  // 1. Zbierz WSZYSTKIE kropki w zasięgu (z marginesem antydrganiowym)
+  const aktualneKropki = new Set();
   for (const kropka of kropkiAudio) {
     const odl = dystans(
       userPozycja.lat, userPozycja.lng,
       kropka.pozycja[0], kropka.pozycja[1]
     );
-
-    if (odl <= kropka.promien && odl < najmniejszaOdleglosc) {
-      najblizszaWStrefie = kropka;
-      najmniejszaOdleglosc = odl;
+    if (odl <= kropka.promien) {
+      aktualneKropki.add(kropka.numer);
+    } else if (kropkiWZasiegu.has(kropka.numer) && odl <= kropka.promien + 5) {
+      // Antydrganie - jeszcze przez 5m "w zasięgu"
+      aktualneKropki.add(kropka.numer);
     }
   }
 
-  // Reset flag dla kropek z których wyszliśmy
-  // (jeśli jakaś kropka jest "odtwarzana" ale my nie jesteśmy w niej - usuń z setu)
+  // 2. Wykryj NOWE wejścia - wibracja jednorazowa
+  for (const numer of aktualneKropki) {
+    if (!wibrowaneStrefy.has(numer)) {
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      wibrowaneStrefy.add(numer);
+    }
+  }
+
+  // 3. Wykryj WYJŚCIA - reset flagi wibracji + zatrzymaj audio jeśli to ono gra
+  for (const numer of kropkiWZasiegu) {
+    if (!aktualneKropki.has(numer)) {
+      wibrowaneStrefy.delete(numer);
+      // Jeśli wyszliśmy ze strefy kropki która właśnie gra - zatrzymaj
+      if (aktualnaKropkaAudio && aktualnaKropkaAudio.numer === numer) {
+        if (aktualneAudio && !aktualneAudio.paused) {
+          aktualneAudio.pause();
+        }
+      }
+    }
+  }
+
+  // 4. Aktualizuj główny stan
+  kropkiWZasiegu = aktualneKropki;
+
+  // 5. Czyść kropkaJestOdtwarzana dla kropek poza zasięgiem
   for (const numer of Array.from(kropkaJestOdtwarzana)) {
-    const kropka = kropkiAudio.find(k => k.numer === numer);
-    if (!kropka) {
-      kropkaJestOdtwarzana.delete(numer);
-      continue;
-    }
-    const odl = dystans(
-      userPozycja.lat, userPozycja.lng,
-      kropka.pozycja[0], kropka.pozycja[1]
-    );
-    // Margines 5m żeby unikać "drgania" na granicy strefy
-    if (odl > kropka.promien + 5) {
+    if (!kropkiWZasiegu.has(numer)) {
       kropkaJestOdtwarzana.delete(numer);
     }
   }
 
-  // Aktualizuj wStrefieKropki PRZED odtworzeniem - bo odtworzKropke patrzy na ten stan
-  const poprzedniaStrefa = wStrefieKropki;
-  wStrefieKropki = najblizszaWStrefie ? najblizszaWStrefie.numer : null;
-
-  // Jeśli jesteśmy w strefie kropki która jeszcze nie zagrała tym razem - graj
-  // (chyba że audio jest wyciszone - wtedy tylko trzymamy stan strefy)
-  if (najblizszaWStrefie && !kropkaJestOdtwarzana.has(najblizszaWStrefie.numer) && !audioWyciszony) {
-    odtworzKropke(najblizszaWStrefie);
+  // 6. Zachowane dla kompatybilności - wStrefieKropki = najbliższa
+  let najblizszaW = null;
+  let minOdl = Infinity;
+  for (const numer of kropkiWZasiegu) {
+    const k = kropkiAudio.find(kk => kk.numer === numer);
+    if (!k) continue;
+    const odl = dystans(userPozycja.lat, userPozycja.lng, k.pozycja[0], k.pozycja[1]);
+    if (odl < minOdl) {
+      najblizszaW = k;
+      minOdl = odl;
+    }
   }
+  wStrefieKropki = najblizszaW ? najblizszaW.numer : null;
 
-  // Auto-hide panelu po wyjściu ze strefy
-  // (gdy turysta wyszedł całkowicie ze strefy + audio nie gra już = chowamy panel)
-  if (poprzedniaStrefa && !najblizszaWStrefie && (!aktualneAudio || aktualneAudio.paused || aktualneAudio.ended)) {
-    document.getElementById('audioPlayer').classList.remove('visible');
-  }
+  // 7. Aktualizuj nowy panel "W zasięgu"
+  aktualizujPanelRadaru();
 }
 
 function odtworzKropke(kropka) {
-  // Zatrzymaj poprzednie audio jeśli gra
+  // Zatrzymaj poprzednie audio jeśli gra (jedno na raz)
   if (aktualneAudio) {
     aktualneAudio.pause();
     aktualneAudio = null;
   }
 
-  // Wibracja
-  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  // UWAGA: Wibracja PRZENIESIONA do sprawdzKropkiAudio (Krok A radaru)
+  // Wibruje teraz przy WEJŚCIU w strefę, nie przy ręcznym kliknięciu [▶]
 
   // Podświetl markery audio (admin)
   if (isAdmin) {
@@ -3093,61 +4270,28 @@ function wlaczAudioPrzewodnik(wlacz) {
 
 // === DYNAMICZNY PRZYCISK 📍 GPS / 🔊 AUDIO ===
 // W trybie wędrowca z audio: przycisk staje się głośnikiem (toggle wycisz/odcisz)
-// Poza trybem wędrowca: zwykły przycisk GPS
+// Główny przycisk 🧭 - włącza/wyłącza nawigację (GPS + radar + audio przewodnik).
+// Audio podczas nawigacji włącza/wyłącza użytkownik klikając ▶ na liście radaru,
+// ten przycisk NIE steruje audio.
 function obsluzKlikGPSlubAudio() {
-  // W trybie wędrowca z audio - przycisk steruje audio
-  if (trybTurysta && audioPrzewodnikWlaczony) {
-    audioWyciszony = !audioWyciszony;
-    aktualizujPrzyciskGPS();
-
-    if (audioWyciszony) {
-      // Zatrzymaj aktualnie grające
-      if (aktualneAudio) {
-        aktualneAudio.pause();
-      }
-    } else {
-      // Wznów lub sprawdź czy jest coś do zagrania w obecnej pozycji
-      if (aktualneAudio && aktualneAudio.paused && aktualnaKropkaAudio) {
-        aktualneAudio.play().catch(() => {});
-      } else if (userPozycja) {
-        sprawdzKropkiAudio();
-      }
-    }
-  } else {
-    // Normalna funkcja - włącz/wyłącz GPS
-    togglePozycja();
-  }
+  toggleNawigacja();
 }
 
 function aktualizujPrzyciskGPS() {
   const btn = document.getElementById('gpsBtn');
   if (!btn) return;
 
-  if (trybTurysta && audioPrzewodnikWlaczony) {
-    // Tryb głośnika
-    btn.classList.remove('szukam', 'error');
-    if (audioWyciszony) {
-      btn.textContent = '🔇';
-      btn.classList.remove('active');
-      btn.classList.add('muted');
-      btn.title = 'Audio wyciszone — kliknij, aby włączyć';
-    } else {
-      btn.textContent = '🔊';
-      btn.classList.add('active');
-      btn.classList.remove('muted');
-      btn.title = 'Audio włączone — kliknij, aby wyciszyć';
-    }
+  if (trybTurysta) {
+    // Nawigacja włączona - przycisk pokazuje "wyłącz"
+    btn.classList.remove('muted', 'szukam', 'error');
+    btn.classList.add('active');
+    btn.textContent = '🛑';
+    btn.title = 'Wyłącz nawigację';
   } else {
-    // Tryb GPS
-    btn.classList.remove('muted');
-    btn.title = 'Pokaż mnie na mapie';
-    if (watchId !== null) {
-      btn.textContent = '📍';
-      btn.classList.add('active');
-    } else {
-      btn.textContent = '📍';
-      btn.classList.remove('active');
-    }
+    // DOMYŚLNIE: nawigacja wyłączona - kompas zachęca do uruchomienia
+    btn.classList.remove('muted', 'active', 'szukam', 'error');
+    btn.textContent = '🧭';
+    btn.title = 'Włącz nawigację';
   }
 }
 
@@ -3168,14 +4312,14 @@ function toggleAudioHints() {
   const btn = document.getElementById('hintBtn');
 
   if (audioHintsAktywne) {
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     odswiezAudioHints();
     // Jeśli nie ma jeszcze pozycji GPS - włącz GPS
     if (!userPozycja && watchId === null) {
       togglePozycja();
     }
   } else {
-    btn.classList.remove('active');
+    if (btn) btn.classList.remove('active');
     usunAudioHints();
   }
 }
@@ -3268,6 +4412,317 @@ function zapiszZaplanowane() {
   } catch(e) {}
 }
 
+// =====================================================================
+// EDYTOR NAZWY STRONY (tryb admin)
+// Nazwa strony to wielki napis na górze (np. "Siedliszcze") + tytuł zakładki.
+// Zapisywana w localStorage (robocza) i w pliku po pobraniu nowego index.html.
+// =====================================================================
+const KEY_NAZWA_STRONY = 'admin-nazwa-strony';
+
+function wczytajNazweStrony() {
+  try {
+    const raw = localStorage.getItem(KEY_NAZWA_STRONY);
+    if (raw) {
+      zastosujNazweStrony(raw);
+    }
+  } catch(e) {}
+}
+
+function zastosujNazweStrony(nazwa) {
+  if (!nazwa) return;
+  // 1. Wielki napis na górze
+  const h1 = document.querySelector('h1');
+  if (h1) h1.textContent = nazwa;
+  // 2. Tytuł zakładki w przeglądarce - próbujemy zachować suffix po " — "
+  const obecny = document.title;
+  if (obecny.includes(' — ')) {
+    // Format "Coś — NazwaMiejsca · suffix" lub "NazwaMiejsca · suffix"
+    const czesci = obecny.split(' — ');
+    if (czesci.length >= 2) {
+      // Zachowaj prefix przed " — " i podmień miejsce po
+      czesci[1] = nazwa + (czesci[1].includes('·') ? ' · ' + czesci[1].split('·').slice(1).join('·').trim() : '');
+      document.title = czesci.join(' — ');
+    } else {
+      document.title = nazwa;
+    }
+  } else if (obecny.includes('·')) {
+    const czesci = obecny.split('·');
+    document.title = nazwa + ' · ' + czesci.slice(1).join('·').trim();
+  } else {
+    document.title = nazwa;
+  }
+}
+
+function otworzEdytorNazwy() {
+  const edytor = document.getElementById('nazwaEdytor');
+  const btn = document.getElementById('nazwaStronyBtn');
+  if (!edytor) return;
+
+  // Wczytaj aktualną nazwę z H1 (lub localStorage jeśli było zmienione)
+  const aktualna = localStorage.getItem(KEY_NAZWA_STRONY)
+    || document.querySelector('h1')?.textContent
+    || '';
+  document.getElementById('nazwaStronyInput').value = aktualna.trim();
+
+  edytor.classList.add('visible');
+  if (btn) btn.style.display = 'none'; // ukryj sam przycisk gdy edytor otwarty
+  setTimeout(() => document.getElementById('nazwaStronyInput').focus(), 50);
+}
+
+function zamknijEdytorNazwy() {
+  const edytor = document.getElementById('nazwaEdytor');
+  const btn = document.getElementById('nazwaStronyBtn');
+  if (edytor) edytor.classList.remove('visible');
+  if (btn) btn.style.display = '';
+}
+
+function zapiszNazweStrony() {
+  const input = document.getElementById('nazwaStronyInput');
+  const nowa = (input?.value || '').trim();
+  if (!nowa) {
+    alert('⚠️ Nazwa strony nie może być pusta.');
+    return;
+  }
+
+  // Zastosuj na żywo + zapisz w localStorage
+  zastosujNazweStrony(nowa);
+  try { localStorage.setItem(KEY_NAZWA_STRONY, nowa); } catch(e) {}
+
+  // Wizualne potwierdzenie - selektor wewnątrz konkretnego edytora
+  const btn = document.querySelector('#nazwaEdytor .nazwa-zapisz');
+  if (btn) {
+    const original = btn.innerHTML;
+    btn.innerHTML = '✓ Zapisano!';
+    btn.classList.add('zapisany');
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.classList.remove('zapisany');
+      zamknijEdytorNazwy();
+    }, 900);
+  } else {
+    zamknijEdytorNazwy();
+  }
+}
+
+// =====================================================================
+// EDYTOR OPISU STRONY (zakładka pod mapą - "O Siedliszczu")
+// Tytuł sekcji + akapity treści. Akapity oddziela pusta linia.
+// Pogrubienie: **tekst** -> <b>tekst</b>
+// Zapis: localStorage (roboczo) + plik HTML (po "Pobierz nowy index.html")
+// =====================================================================
+const KEY_OPIS_STRONY_TYTUL = 'admin-opis-strony-tytul';
+const KEY_OPIS_STRONY_TRESC = 'admin-opis-strony-tresc';
+
+function wczytajOpisStrony() {
+  try {
+    const tytul = localStorage.getItem(KEY_OPIS_STRONY_TYTUL);
+    const tresc = localStorage.getItem(KEY_OPIS_STRONY_TRESC);
+    if (tytul) zastosujOpisStrony('tytul', tytul);
+    if (tresc) zastosujOpisStrony('tresc', tresc);
+  } catch(e) {}
+}
+
+function zastosujOpisStrony(co, wartosc) {
+  if (co === 'tytul') {
+    const el = document.getElementById('opisStronyTytul');
+    if (el) el.textContent = wartosc;
+  } else if (co === 'tresc') {
+    const el = document.getElementById('opisStronyTresc');
+    if (el) el.innerHTML = renderujOpisStronyHTML(wartosc);
+  }
+}
+
+// Konwertuje surowy tekst (z textarea) na HTML zachowując akapity i pogrubienie
+function renderujOpisStronyHTML(tekst) {
+  if (!tekst) return '';
+  // Akapity oddzielone pustą linią
+  const akapity = tekst.split(/\n\s*\n/).map(a => a.trim()).filter(a => a);
+  return akapity.map(a => {
+    let html = escapeHTML(a);
+    // **bold** -> <b>bold</b>
+    html = html.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    // pojedynczy newline = <br>
+    html = html.replace(/\n/g, '<br>');
+    return `<p>${html}</p>`;
+  }).join('');
+}
+
+// Pomocnicza: wyciąga obecny tekst z DOM-u jako "raw" (z **bold** i akapitami)
+function pobierzOpisStronyRaw() {
+  const el = document.getElementById('opisStronyTresc');
+  if (!el) return '';
+  // Próbuj najpierw z localStorage (zachowuje surową formę)
+  const localRaw = localStorage.getItem(KEY_OPIS_STRONY_TRESC);
+  if (localRaw !== null) return localRaw;
+  // Fallback: skonwertuj HTML akapitów z powrotem na raw
+  const akapity = Array.from(el.querySelectorAll('p')).map(p => {
+    let html = p.innerHTML;
+    // <br> -> newline
+    html = html.replace(/<br\s*\/?>/gi, '\n');
+    // <b>x</b> -> **x**
+    html = html.replace(/<b>([\s\S]*?)<\/b>/gi, '**$1**');
+    // strip pozostałe tagi
+    html = html.replace(/<[^>]+>/g, '');
+    // dekoduj encje
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent.trim();
+  });
+  return akapity.join('\n\n');
+}
+
+function otworzEdytorOpisuStrony() {
+  const edytor = document.getElementById('opisStronyEdytor');
+  const btn = document.getElementById('opisStronyBtn');
+  const panel = document.getElementById('adminList');
+  if (!edytor) return;
+
+  // Wczytaj aktualne wartości
+  const aktTytul = localStorage.getItem(KEY_OPIS_STRONY_TYTUL)
+    || document.getElementById('opisStronyTytul')?.textContent || '';
+  const aktTresc = pobierzOpisStronyRaw();
+
+  document.getElementById('opisStronyTytulInput').value = aktTytul.trim();
+  document.getElementById('opisStronyTrescInput').value = aktTresc;
+
+  edytor.classList.add('visible');
+  if (btn) btn.style.display = 'none';
+  // Tryb pełnoekranowy - chowa resztę panelu admin
+  if (panel) panel.classList.add('edytuje-opis-strony');
+  setTimeout(() => document.getElementById('opisStronyTytulInput').focus(), 50);
+}
+
+function zamknijEdytorOpisuStrony() {
+  const edytor = document.getElementById('opisStronyEdytor');
+  const btn = document.getElementById('opisStronyBtn');
+  const panel = document.getElementById('adminList');
+  if (edytor) edytor.classList.remove('visible');
+  if (btn) btn.style.display = '';
+  // Wyjdź z trybu pełnoekranowego - przywróć resztę panelu
+  if (panel) panel.classList.remove('edytuje-opis-strony');
+}
+
+function zapiszOpisStrony() {
+  const tytulInput = document.getElementById('opisStronyTytulInput');
+  const trescInput = document.getElementById('opisStronyTrescInput');
+  const nowyTytul = (tytulInput?.value || '').trim();
+  const nowaTresc = (trescInput?.value || '').trim();
+
+  if (!nowyTytul) {
+    alert('⚠️ Tytuł sekcji nie może być pusty.');
+    return;
+  }
+
+  // Zastosuj na żywo
+  zastosujOpisStrony('tytul', nowyTytul);
+  zastosujOpisStrony('tresc', nowaTresc);
+
+  // Zapisz w localStorage (surowa wersja - zachowujemy **bold** i akapity)
+  try {
+    localStorage.setItem(KEY_OPIS_STRONY_TYTUL, nowyTytul);
+    localStorage.setItem(KEY_OPIS_STRONY_TRESC, nowaTresc);
+  } catch(e) {}
+
+  // Wizualne potwierdzenie
+  const btn = document.querySelector('#opisStronyEdytor .nazwa-zapisz');
+  if (btn) {
+    const original = btn.innerHTML;
+    btn.innerHTML = '✓ Zapisano!';
+    btn.classList.add('zapisany');
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.classList.remove('zapisany');
+      zamknijEdytorOpisuStrony();
+    }, 900);
+  } else {
+    zamknijEdytorOpisuStrony();
+  }
+}
+
+// =====================================================================
+// === EDYTOR KATEGORII ================================================
+// =====================================================================
+
+function otworzEdytorKategorii() {
+  const edytor = document.getElementById('kategorieEdytor');
+  const btn = document.getElementById('kategorieBtn');
+  const panel = document.getElementById('adminList');
+  if (!edytor) return;
+
+  // Wczytaj aktualne wartości do pól
+  for (const klucz of ['zabytek', 'sakral', 'przyroda', 'urzad']) {
+    const ikonaInput = document.getElementById('katIkona_' + klucz);
+    const nazwaInput = document.getElementById('katNazwa_' + klucz);
+    if (ikonaInput) ikonaInput.value = ikonaKategorii(klucz);
+    if (nazwaInput) nazwaInput.value = nazwaKategorii(klucz);
+  }
+
+  edytor.classList.add('visible');
+  if (btn) btn.style.display = 'none';
+  // Tryb pełnoekranowy panelu - chowa pozostałe przyciski, pokazuje tylko edytor
+  if (panel) panel.classList.add('edytuje-kategorie');
+}
+
+function zamknijEdytorKategorii() {
+  const edytor = document.getElementById('kategorieEdytor');
+  const btn = document.getElementById('kategorieBtn');
+  const panel = document.getElementById('adminList');
+  if (edytor) edytor.classList.remove('visible');
+  if (btn) btn.style.display = '';
+  // Wyjdź z trybu pełnoekranowego - przywróć resztę panelu
+  if (panel) panel.classList.remove('edytuje-kategorie');
+}
+
+function zapiszKategorie() {
+  const nowe = {};
+  let bladPusta = false;
+
+  for (const klucz of ['zabytek', 'sakral', 'przyroda', 'urzad']) {
+    const ikona = (document.getElementById('katIkona_' + klucz)?.value || '').trim();
+    const nazwa = (document.getElementById('katNazwa_' + klucz)?.value || '').trim();
+    if (!nazwa) {
+      bladPusta = true;
+      break;
+    }
+    // Jeśli ikona pusta - bierz domyślną
+    nowe[klucz] = {
+      ikona: ikona || (kategorieDomyslne[klucz] && kategorieDomyslne[klucz].ikona) || '📍',
+      nazwa: nazwa
+    };
+  }
+
+  if (bladPusta) {
+    alert('⚠️ Wszystkie kategorie muszą mieć nazwę. Ikona może być pusta (weźmie domyślną).');
+    return;
+  }
+
+  // Aktualizuj globalny obiekt
+  kategorie = nowe;
+
+  // Zapisz do localStorage
+  try {
+    localStorage.setItem('kategorie_robocze_v1', JSON.stringify(nowe));
+  } catch(e) {}
+
+  // Odśwież UI
+  zastosujKategorie();
+
+  // Wizualne potwierdzenie
+  const btn = document.querySelector('#kategorieEdytor .nazwa-zapisz');
+  if (btn) {
+    const original = btn.innerHTML;
+    btn.innerHTML = '✓ Zapisano!';
+    btn.classList.add('zapisany');
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.classList.remove('zapisany');
+      zamknijEdytorKategorii();
+    }, 900);
+  } else {
+    zamknijEdytorKategorii();
+  }
+}
+
 function pokazAdminListe() {
   const panel = document.getElementById('adminList');
   if (!panel) return;
@@ -3277,12 +4732,6 @@ function pokazAdminListe() {
   if (elKod) elKod.textContent = kropkiAudio.length;
   const elMiejsc = document.getElementById('adminListCountMiejsc');
   if (elMiejsc) elMiejsc.textContent = miejsca.length;
-  const expBtn = document.getElementById('adminExportBtn');
-  if (expBtn) {
-    expBtn.disabled = zaplanowaneKropki.length === 0;
-    expBtn.style.opacity = zaplanowaneKropki.length === 0 ? '0.5' : '1';
-    expBtn.textContent = `📋 Eksportuj kropki (${zaplanowaneKropki.length})`;
-  }
 }
 
 function dajKolejnyNumer() {
@@ -3331,9 +4780,222 @@ function renderujZaplanowane() {
   });
 }
 
+// =====================================================================
+// EDYTOR OPISU MIEJSCA (tryb admin)
+// Tytuł i opis miejsca są zapisywane bezpośrednio w obiekcie miejsca,
+// w polach `tytul`, `opis`, `tytulSrodek`, `tytulDuzy`. Po pobraniu
+// nowego index.html lecą razem z tablicą miejsc - jeden plik = wszystko.
+// =====================================================================
+
+// Roboczy bufor edytora - to co user wpisał ale jeszcze nie zatwierdził
+let opisRoboczy = { tytul: '', opis: '', srodek: false, duzy: false };
+
+function otworzEdytorOpisu() {
+  // Ukryj zwinięty przycisk, pokaż edytor
+  document.getElementById('opisZwiniety').style.display = 'none';
+  document.getElementById('opisEdytor').classList.add('visible');
+  // Tryb pełnoekranowy - ukryj resztę panelu (nazwa/kategoria/ikona/klucz)
+  const helper = document.getElementById('miejsceHelper');
+  helper.classList.add('edytuje-opis');
+  helper.classList.remove('tryb-podglad'); // upewnij się że zaczynamy w trybie edycji
+
+  // Wczytaj aktualne wartości do pól (jeśli edytujemy istniejące miejsce)
+  document.getElementById('opisTytul').value = opisRoboczy.tytul || '';
+  document.getElementById('opisTekst').value = opisRoboczy.opis || '';
+  document.getElementById('opisTytulSrodek').checked = !!opisRoboczy.srodek;
+  document.getElementById('opisTytulDuzy').checked = !!opisRoboczy.duzy;
+
+  aktualizujLicznikOpisu();
+  // Schowaj podgląd na start
+  document.getElementById('opisPodglad').style.display = 'none';
+  document.getElementById('opisPodgladBtn').textContent = '👁 Pokaż podgląd';
+
+  // Focus na tytuł
+  setTimeout(() => document.getElementById('opisTytul').focus(), 50);
+}
+
+function zamknijEdytorOpisu() {
+  // Zachowaj wartości w buforze (nie kasuj)
+  opisRoboczy.tytul = document.getElementById('opisTytul').value;
+  opisRoboczy.opis = document.getElementById('opisTekst').value;
+  opisRoboczy.srodek = document.getElementById('opisTytulSrodek').checked;
+  opisRoboczy.duzy = document.getElementById('opisTytulDuzy').checked;
+
+  document.getElementById('opisEdytor').classList.remove('visible');
+  document.getElementById('opisZwiniety').style.display = '';
+  // Wyjdź z trybu pełnoekranowego i podglądu - przywróć resztę panelu
+  const helper = document.getElementById('miejsceHelper');
+  helper.classList.remove('edytuje-opis');
+  helper.classList.remove('tryb-podglad');
+
+  aktualizujPrzyciskOpisu();
+}
+
+function aktualizujLicznikOpisu() {
+  const tekst = document.getElementById('opisTekst').value;
+  document.getElementById('opisLicznik').textContent = tekst.length;
+}
+
+function przelaczPodgladOpisu() {
+  const podglad = document.getElementById('opisPodglad');
+  const btn = document.getElementById('opisPodgladBtn');
+  const helper = document.getElementById('miejsceHelper');
+  if (podglad.style.display === 'none') {
+    // WŁĄCZ podgląd: ukryj pola edycji, pokaż tylko podgląd
+    renderujPodgladOpisu();
+    podglad.style.display = '';
+    helper.classList.add('tryb-podglad');
+    btn.textContent = '✎ Wróć do edycji';
+  } else {
+    // WYŁĄCZ podgląd: pokaż z powrotem pola edycji
+    podglad.style.display = 'none';
+    helper.classList.remove('tryb-podglad');
+    btn.textContent = '👁 Pokaż podgląd';
+  }
+}
+
+function renderujPodgladOpisu() {
+  const tytul = document.getElementById('opisTytul').value.trim();
+  const tekst = document.getElementById('opisTekst').value.trim();
+  const srodek = document.getElementById('opisTytulSrodek').checked;
+  const duzy = document.getElementById('opisTytulDuzy').checked;
+
+  let html = '';
+  if (tytul) {
+    const klasy = ['opis-tytul'];
+    if (srodek) klasy.push('srodek');
+    if (duzy) klasy.push('duzy');
+    html += `<h2 class="${klasy.join(' ')}">${escapeHTML(tytul)}</h2>`;
+  }
+  if (tekst) {
+    // Każdy nowy akapit = pusta linia
+    const akapity = tekst.split(/\n\s*\n/).map(a => a.trim()).filter(a => a);
+    const akapityHTML = akapity.map(a => `<p>${escapeHTML(a).replace(/\n/g, '<br>')}</p>`).join('');
+    html += `<div class="opis-tekst">${akapityHTML}</div>`;
+  }
+  if (!html) {
+    html = '<p style="color:var(--ink-muted);font-style:italic;text-align:center">Brak treści do wyświetlenia.</p>';
+  }
+  document.getElementById('opisPodgladTresc').innerHTML = html;
+}
+
+function escapeHTML(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function zapiszOpisRoboczo() {
+  // Aktualizuj bufor z aktualnych pól
+  opisRoboczy.tytul = document.getElementById('opisTytul').value.trim();
+  opisRoboczy.opis = document.getElementById('opisTekst').value.trim();
+  opisRoboczy.srodek = document.getElementById('opisTytulSrodek').checked;
+  opisRoboczy.duzy = document.getElementById('opisTytulDuzy').checked;
+
+  // Jeśli edytujemy istniejące miejsce - zapisz od razu w obiekcie + localStorage
+  if (edytowaneMiejsce && edytowanyMiejsceIdx >= 0) {
+    miejsca[edytowanyMiejsceIdx].tytul = opisRoboczy.tytul;
+    miejsca[edytowanyMiejsceIdx].opis = opisRoboczy.opis;
+    miejsca[edytowanyMiejsceIdx].tytulSrodek = opisRoboczy.srodek;
+    miejsca[edytowanyMiejsceIdx].tytulDuzy = opisRoboczy.duzy;
+    if (typeof zapiszZmianyMiejsc === 'function') zapiszZmianyMiejsc();
+  }
+
+  // Wizualne potwierdzenie
+  const btn = document.querySelector('.opis-zapisz-btn');
+  if (btn) {
+    const original = btn.innerHTML;
+    btn.innerHTML = '✓ Zapisano!';
+    btn.classList.add('zapisany');
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.classList.remove('zapisany');
+    }, 1300);
+  }
+
+  aktualizujPrzyciskOpisu();
+}
+
+function wyczyscOpis() {
+  if (!confirm('Wyczyścić tytuł i opis tego miejsca?')) return;
+  document.getElementById('opisTytul').value = '';
+  document.getElementById('opisTekst').value = '';
+  document.getElementById('opisTytulSrodek').checked = false;
+  document.getElementById('opisTytulDuzy').checked = false;
+  opisRoboczy = { tytul: '', opis: '', srodek: false, duzy: false };
+
+  // Jeśli edytujemy - wyczyść też w obiekcie
+  if (edytowaneMiejsce && edytowanyMiejsceIdx >= 0) {
+    miejsca[edytowanyMiejsceIdx].tytul = '';
+    miejsca[edytowanyMiejsceIdx].opis = '';
+    miejsca[edytowanyMiejsceIdx].tytulSrodek = false;
+    miejsca[edytowanyMiejsceIdx].tytulDuzy = false;
+    if (typeof zapiszZmianyMiejsc === 'function') zapiszZmianyMiejsc();
+  }
+
+  aktualizujLicznikOpisu();
+  if (document.getElementById('opisPodglad').style.display !== 'none') {
+    renderujPodgladOpisu();
+  }
+  aktualizujPrzyciskOpisu();
+}
+
+// Aktualizuje wygląd zwiniętego przycisku - pokazuje czy opis jest dodany
+function aktualizujPrzyciskOpisu() {
+  const btn = document.querySelector('#opisZwiniety .opis-toggle-btn');
+  const tytulEl = document.getElementById('opisToggleTytul');
+  const statusEl = document.getElementById('opisToggleStatus');
+  if (!btn || !tytulEl || !statusEl) return;
+
+  const maTytul = (opisRoboczy.tytul || '').length > 0;
+  const maOpis = (opisRoboczy.opis || '').length > 0;
+
+  if (maTytul || maOpis) {
+    btn.classList.add('ma-opis');
+    tytulEl.textContent = maTytul ? opisRoboczy.tytul : 'Opis dodany';
+    const dlugosc = (opisRoboczy.opis || '').length;
+    statusEl.textContent = dlugosc > 0
+      ? `${dlugosc} znaków · kliknij aby edytować`
+      : 'tylko tytuł · kliknij aby dodać tekst';
+  } else {
+    btn.classList.remove('ma-opis');
+    tytulEl.textContent = 'Dodaj opis';
+    statusEl.textContent = 'Tytuł i tekst miejsca';
+  }
+}
+
+// Wczytuje dane do bufora edytora (wywoływane przy otwieraniu panelu miejsca)
+function wczytajOpisDoBufora(miejsce) {
+  if (miejsce) {
+    opisRoboczy = {
+      tytul: miejsce.tytul || '',
+      opis: miejsce.opis || '',
+      srodek: !!miejsce.tytulSrodek,
+      duzy: !!miejsce.tytulDuzy
+    };
+  } else {
+    opisRoboczy = { tytul: '', opis: '', srodek: false, duzy: false };
+  }
+  // Upewnij się że edytor jest zwinięty po otwarciu nowego miejsca
+  const ed = document.getElementById('opisEdytor');
+  const zw = document.getElementById('opisZwiniety');
+  const helper = document.getElementById('miejsceHelper');
+  if (ed) ed.classList.remove('visible');
+  if (zw) zw.style.display = '';
+  if (helper) {
+    helper.classList.remove('edytuje-opis');
+    helper.classList.remove('tryb-podglad');
+  }
+  aktualizujPrzyciskOpisu();
+}
+
 // Klik w mapę w trybie admin - otwórz pomocnik
 function obsluzKlikAdmin(e) {
   if (!isAdmin) return;
+
+  // BLOKADA: gdy tryb rysowania włączony, kliknięcie w mapę służy do rysowania,
+  // a nie do dodawania punktów audio/miejsc. Wracamy bez efektu.
+  if (typeof trybRysowaniaWlaczony !== 'undefined' && trybRysowaniaWlaczony) return;
 
   // Sprawdź czy nie kliknięto w istniejący marker (Leaflet już to obsłużył)
   // Tu dochodzimy tylko jak klik był w pustą mapę
@@ -3370,7 +5032,7 @@ function wybierzTyp(typ) {
     const helper = document.getElementById('adminHelper');
     document.getElementById('adminNumer').value = dajKolejnyNumer();
     document.getElementById('adminPromien').value = 50;
-    document.getElementById('adminPromienVal').textContent = '50';
+    document.getElementById('adminPromienVal').textContent = '50 m';
     document.getElementById('adminOpis').value = '';
     aktualizujKodKropki();
     zaktualizujPrzyciskiHelpera();
@@ -3385,6 +5047,8 @@ function wybierzTyp(typ) {
     document.getElementById('miejsceKlucz').value = '';
     aktualizujKodMiejsca();
     zaktualizujPrzyciskiMiejsce();
+    // Reset bufora opisu - nowe miejsce, czysty stan
+    wczytajOpisDoBufora(null);
     helper.classList.add('visible');
   }
 }
@@ -3535,8 +5199,11 @@ function wyczyscMiejsca() {
 // i podmienia ją na NOWĄ (istniejące + zaplanowane). Zwraca plik do pobrania.
 async function pobierzNowyIndex() {
   try {
-    // Pobierz tekst tego samego pliku
-    const response = await fetch(window.location.href.split('?')[0]);
+    // Pobierz tekst tego samego pliku - z timestampem i no-cache żeby ominąć
+    // cache przeglądarki, Cloudflare, Netlify CDN itp. (bez tego ryzykujemy
+    // że pobierzemy starą wersję pliku bez najnowszych funkcji).
+    const adresZrodla = window.location.href.split('?')[0] + '?_=' + Date.now();
+    const response = await fetch(adresZrodla, { cache: 'no-store' });
     if (!response.ok) throw new Error('Nie udało się odczytać pliku');
     let tekst = await response.text();
 
@@ -3575,13 +5242,20 @@ async function pobierzNowyIndex() {
 
     // ===== TABLICA miejsca =====
     // Generujemy tablicę z aktualną pamięcią (która zawiera nasze edycje)
-    // Format: tylko podstawowe dane (klucz, nazwa, pozycja, ikona, kategoria)
-    // Opisy są w plikach opisy/{klucz}.md - nie w kodzie
-    const esc = s => (s || '').replace(/'/g, "\\'").replace(/\n/g,' ');
+    // Format: podstawowe dane + opcjonalnie tytuł i opis (jeśli ustawione)
+    // Dzięki temu jeden plik index.html zawiera WSZYSTKO - dwuklik działa.
+    const esc = s => (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
     const linieMiejsc = miejsca.map(m => {
       const lat = m.pozycja[0].toFixed(4);
       const lng = m.pozycja[1].toFixed(4);
-      return `  { klucz: '${esc(m.klucz)}', nazwa: '${esc(m.nazwa)}', pozycja: [${lat}, ${lng}], ikona: '${esc(m.ikona)}', kategoria: '${esc(m.kategoria)}' }`;
+      let linia = `  { klucz: '${esc(m.klucz)}', nazwa: '${esc(m.nazwa)}', pozycja: [${lat}, ${lng}], ikona: '${esc(m.ikona)}', kategoria: '${esc(m.kategoria)}'`;
+      // Opcjonalne: tytuł, opis i flagi - dodajemy tylko jeśli są ustawione
+      if (m.tytul && m.tytul.trim()) linia += `, tytul: '${esc(m.tytul)}'`;
+      if (m.opis && m.opis.trim()) linia += `, opis: '${esc(m.opis)}'`;
+      if (m.tytulSrodek) linia += `, tytulSrodek: true`;
+      if (m.tytulDuzy) linia += `, tytulDuzy: true`;
+      linia += ` }`;
+      return linia;
     });
     const nowaTablicaMiejsc = `const miejsca = [\n${linieMiejsc.join(',\n')}\n];`;
 
@@ -3591,6 +5265,173 @@ async function pobierzNowyIndex() {
       tekst = tekst.replace(regexMiejsc, nowaTablicaMiejsc);
     } else {
       alert('⚠️ Nie znaleziono tablicy miejsc w pliku - kropki audio zaktualizowane, miejsca pominięte.');
+    }
+
+    // ===== NAZWA STRONY (h1 + title) =====
+    // Bierzemy z localStorage albo z aktualnego H1 - cokolwiek user widzi w tym momencie
+    const aktualnaNazwa = (localStorage.getItem(KEY_NAZWA_STRONY)
+        || document.querySelector('h1')?.textContent || '').trim();
+    if (aktualnaNazwa) {
+      // Escape dla regex replacement (specjalnie $)
+      const safeNazwa = aktualnaNazwa.replace(/\$/g, '$$$$');
+      // 1. Podmień <h1>...</h1> (pierwszy h1 w pliku)
+      tekst = tekst.replace(/<h1>([\s\S]*?)<\/h1>/, `<h1>${safeNazwa}</h1>`);
+      // 2. Podmień fragment w <title> - zachowaj suffix po " · "
+      tekst = tekst.replace(/<title>([^<]*)<\/title>/, (m, stary) => {
+        const obecny = stary.trim();
+        let nowyTytul;
+        if (obecny.includes(' — ')) {
+          const czesci = obecny.split(' — ');
+          // Format "Coś — NazwaMiejsca · suffix" - podmieniamy część po " — "
+          let dolna = czesci[1] || '';
+          if (dolna.includes(' · ')) {
+            const sub = dolna.split(' · ');
+            sub[0] = aktualnaNazwa;
+            dolna = sub.join(' · ');
+          } else {
+            dolna = aktualnaNazwa;
+          }
+          czesci[1] = dolna;
+          nowyTytul = czesci.join(' — ');
+        } else if (obecny.includes(' · ')) {
+          const sub = obecny.split(' · ');
+          sub[0] = aktualnaNazwa;
+          nowyTytul = sub.join(' · ');
+        } else {
+          nowyTytul = aktualnaNazwa;
+        }
+        return `<title>${nowyTytul.replace(/\$/g, '$$$$')}</title>`;
+      });
+    }
+
+    // ===== OPIS STRONY (zakładka pod mapą) =====
+    // Tytuł sekcji (span#opisStronyTytul) + treść (div#opisStronyTresc) z akapitów.
+    const aktOpisTytul = localStorage.getItem(KEY_OPIS_STRONY_TYTUL);
+    const aktOpisTresc = localStorage.getItem(KEY_OPIS_STRONY_TRESC);
+
+    if (aktOpisTytul) {
+      const safeTytul = aktOpisTytul.replace(/\$/g, '$$$$');
+      // Podmiana zawartości <span class="title" id="opisStronyTytul">…</span>
+      tekst = tekst.replace(
+        /(<span\s+class="title"\s+id="opisStronyTytul">)([\s\S]*?)(<\/span>)/,
+        `$1${safeTytul}$3`
+      );
+    }
+
+    if (aktOpisTresc !== null && aktOpisTresc !== undefined) {
+      // Generuj HTML akapitów z surowego tekstu (zachowując **bold** i akapity)
+      let trescHTML;
+      const akapity = aktOpisTresc.split(/\n\s*\n/).map(a => a.trim()).filter(a => a);
+      if (akapity.length === 0) {
+        // Pusty opis - wstaw placeholder
+        trescHTML = '\n        <p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:20px 0">Opis tej strony nie został jeszcze dodany.</p>\n      ';
+      } else {
+        trescHTML = '\n' + akapity.map(a => {
+          let h = a.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          h = h.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+          h = h.replace(/\n/g, '<br>');
+          return `        <p>${h}</p>`;
+        }).join('\n') + '\n      ';
+      }
+      const safeTresc = trescHTML.replace(/\$/g, '$$$$');
+      // Podmiana zawartości <div class="accordion-inner" id="opisStronyTresc">…</div>
+      tekst = tekst.replace(
+        /(<div\s+class="accordion-inner"\s+id="opisStronyTresc">)([\s\S]*?)(<\/div>)/,
+        `$1${safeTresc}$3`
+      );
+    }
+
+    // ===== TABLICA rysunkiZakodowane =====
+    // Wszystkie rysunki (zakodowane + robocze z localStorage) zapisujemy
+    // do nowego pliku jako pełną tablicę. Po wgraniu na serwer wszyscy je zobaczą.
+    let liczbaWbudowanychRys = 0;
+    let regexZnaleziony = false;
+    try {
+      const linieRys = rysunki.map(r => {
+        const kolor = (r.kolor || '#a04510').replace(/'/g, "\\'");
+        if (r.typ === 'linia' && Array.isArray(r.punkty)) {
+          const pkt = r.punkty.map(p => `[${p[0].toFixed(6)}, ${p[1].toFixed(6)}]`).join(', ');
+          return `  { typ: 'linia', kolor: '${kolor}', punkty: [${pkt}] }`;
+        }
+        if (r.typ === 'kolo' && Array.isArray(r.srodek)) {
+          return `  { typ: 'kolo', kolor: '${kolor}', srodek: [${r.srodek[0].toFixed(6)}, ${r.srodek[1].toFixed(6)}], promien: ${Math.round(r.promien)} }`;
+        }
+        if (r.typ === 'tekst' && Array.isArray(r.pozycja)) {
+          const tresc = (r.tresc || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
+          return `  { typ: 'tekst', kolor: '${kolor}', pozycja: [${r.pozycja[0].toFixed(6)}, ${r.pozycja[1].toFixed(6)}], tresc: '${tresc}' }`;
+        }
+        return null;
+      }).filter(x => x !== null);
+
+      liczbaWbudowanychRys = linieRys.length;
+      const nowaTablicaRys = `// === RYSUNKI:START === (nie usuwaj tego komentarza - znacznik dla auto-eksportu)\nconst rysunkiZakodowane = [\n${linieRys.join(',\n')}\n];\n// === RYSUNKI:END ===`;
+
+      console.log('[Rysunki] W pamięci:', rysunki.length, '| Do wbudowania:', liczbaWbudowanychRys);
+
+      // Znajdź marker stojący NA POCZĄTKU LINII - prawdziwą deklarację, nie
+      // template string wewnątrz tej funkcji (template ma `\n` przed sobą,
+      // więc nie zaczyna się na początku linii w pliku źródłowym).
+      // Regex /^\/\/ === RYSUNKI:START ===/m wymusza początek linii.
+      const realStartRegexR = /^\/\/ === RYSUNKI:START ===.*$/m;
+      const realEndRegexR = /^\/\/ === RYSUNKI:END ===.*$/m;
+      const matchStartR = tekst.match(realStartRegexR);
+      const matchEndR = tekst.match(realEndRegexR);
+      regexZnaleziony = !!(matchStartR && matchEndR && matchEndR.index > matchStartR.index);
+      if (regexZnaleziony) {
+        const idxStart = matchStartR.index;
+        const idxEnd = matchEndR.index + matchEndR[0].length;
+        tekst = tekst.substring(0, idxStart) + nowaTablicaRys + tekst.substring(idxEnd);
+        console.log('[Rysunki] OK - tablica podmieniona w pliku.');
+      } else {
+        console.warn('[Rysunki] UWAGA: nie znaleziono markerów RYSUNKI:START/END w pobranym pliku źródłowym! ' +
+                     'Plik na serwerze może być starą wersją bez modułu rysowania. ' +
+                     'Wgraj najpierw plik z modułem rysowania, potem rysuj i pobieraj nowe wersje.');
+        if (liczbaWbudowanychRys > 0) {
+          alert('⚠️ UWAGA: Masz ' + liczbaWbudowanychRys + ' rysunków w pamięci, ale plik na serwerze ' +
+                'nie zawiera jeszcze modułu rysowania. Rysunki NIE zostały wbudowane w pobierany plik.\n\n' +
+                'Co zrobić: wgraj najpierw aktualną wersję index.html (z modułem rysowania) na serwer, ' +
+                'potem rysuj i klikaj "Pobierz nowy index.html" — wtedy rysunki zostaną wbudowane.');
+        }
+      }
+    } catch (errRys) {
+      console.warn('[Rysunki] Nie udało się zaktualizować tablicy rysunków:', errRys);
+    }
+
+    // ===== KATEGORIE (nazwy + ikony zakładek) =====
+    // Wbudowujemy aktualne kategorie (po edycjach admina) na stałe w plik HTML.
+    // Mechanizm identyczny jak dla rysunków - markery KATEGORIE:START/END.
+    // UWAGA: szukamy markeru który stoi NA POCZĄTKU LINII (nie wewnątrz template
+    // stringa - tam są poprzedzone `\n`). To eliminuje fałszywe trafienie w
+    // szablon w tej samej funkcji generującej.
+    try {
+      const linieKat = [];
+      for (const klucz of ['zabytek', 'sakral', 'przyroda', 'urzad']) {
+        const k = kategorie[klucz] || kategorieDomyslne[klucz];
+        if (!k) continue;
+        const ikona = (k.ikona || '📍').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const nazwa = (k.nazwa || klucz).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const padding = ' '.repeat(Math.max(0, 8 - klucz.length));
+        linieKat.push(`  ${klucz}:${padding}{ ikona: '${ikona}', nazwa: '${nazwa}' }`);
+      }
+      const nowaTablicaKat = `// === KATEGORIE:START === (nie usuwaj tego komentarza - znacznik dla auto-eksportu)\nconst kategorieDomyslne = {\n${linieKat.join(',\n')}\n};\n// === KATEGORIE:END ===`;
+
+      // Znajdź marker stojący na początku linii - czyli prawdziwą deklarację,
+      // nie template string wewnątrz funkcji (ten jest poprzedzony backsashem n).
+      // Regex /^\/\/ === KATEGORIE:START ===/m wymusza początek linii.
+      const realStartRegex = /^\/\/ === KATEGORIE:START ===.*$/m;
+      const realEndRegex = /^\/\/ === KATEGORIE:END ===.*$/m;
+      const matchStart = tekst.match(realStartRegex);
+      const matchEnd = tekst.match(realEndRegex);
+      if (matchStart && matchEnd && matchEnd.index > matchStart.index) {
+        const idxStartKat = matchStart.index;
+        const idxEndKat = matchEnd.index + matchEnd[0].length;
+        tekst = tekst.substring(0, idxStartKat) + nowaTablicaKat + tekst.substring(idxEndKat);
+        console.log('[Kategorie] OK - tablica podmieniona w pliku.');
+      } else {
+        console.warn('[Kategorie] Nie znaleziono markerów KATEGORIE:START/END na początku linii - pomijam.');
+      }
+    } catch (errKat) {
+      console.warn('[Kategorie] Nie udało się zaktualizować kategorii:', errKat);
     }
 
     // Stwórz blob i pobierz plik
@@ -3607,8 +5448,9 @@ async function pobierzNowyIndex() {
     // Po pobraniu - zaproponuj wyczyszczenie listy zaplanowanych + zmian miejsc
     setTimeout(() => {
       const ileZmian = zaplanowaneKropki.length;
+      const ileRys = rysunki.length;
       if (ileZmian > 0 &&
-          confirm(`✓ Pobrano nowy index.html z ${finalne.length} kropkami audio i ${miejsca.length} miejscami.\n\nCzy wyczyścić listę zaplanowanych kropek? (są już w pobranym pliku)`)) {
+          confirm(`✓ Pobrano nowy index.html z ${finalne.length} kropkami audio, ${miejsca.length} miejscami i ${ileRys} rysunkami.\n\nCzy wyczyścić listę zaplanowanych kropek? (są już w pobranym pliku)`)) {
         zaplanowaneKropki = [];
         zapiszZaplanowane();
         renderujZaplanowane();
@@ -3616,6 +5458,15 @@ async function pobierzNowyIndex() {
       }
       // Wyczyść też cache miejsc (są już w pobranym pliku)
       try { localStorage.removeItem(KEY_MIEJSCA); } catch(e) {}
+      // Wyczyść cache nazwy strony (jest już w pobranym pliku)
+      try { localStorage.removeItem(KEY_NAZWA_STRONY); } catch(e) {}
+      // Wyczyść cache opisu strony (jest już w pobranym pliku)
+      try { localStorage.removeItem(KEY_OPIS_STRONY_TYTUL); } catch(e) {}
+      try { localStorage.removeItem(KEY_OPIS_STRONY_TRESC); } catch(e) {}
+      // Wyczyść robocze rysunki - są już w pobranym pliku jako rysunkiZakodowane
+      try { localStorage.removeItem(STORAGE_KEY_RYSUNKI); } catch(e) {}
+      // Wyczyść robocze kategorie - są już w pobranym pliku jako kategorieDomyslne
+      try { localStorage.removeItem('kategorie_robocze_v1'); } catch(e) {}
     }, 500);
 
   } catch (err) {
@@ -3650,7 +5501,9 @@ function edytujKropke(typ, numer) {
   // Otwórz pomocnik z danymi z istniejącej kropki
   document.getElementById('adminNumer').value = kropka.numer;
   document.getElementById('adminPromien').value = kropka.promien;
-  document.getElementById('adminPromienVal').textContent = kropka.promien;
+  // Formatowanie: m / km
+  const tekstPromien = kropka.promien >= 1000 ? (kropka.promien / 1000).toFixed(1).replace('.', ',') + ' km' : kropka.promien + ' m';
+  document.getElementById('adminPromienVal').textContent = tekstPromien;
   document.getElementById('adminOpis').value = kropka.opis || '';
   aktualizujKodKropki();
   zaktualizujPrzyciskiHelpera();
@@ -3822,6 +5675,8 @@ function edytujMiejsce(klucz) {
 
   aktualizujKodMiejsca();
   zaktualizujPrzyciskiMiejsce();
+  // Wczytaj zapisany opis (jeśli istnieje) do bufora edytora
+  wczytajOpisDoBufora(edytowaneMiejsce);
   document.getElementById('miejsceHelper').classList.add('visible');
 }
 
@@ -3838,15 +5693,34 @@ function zapiszEdycjeMiejsca() {
     return;
   }
 
+  // Najpierw "wciągnij" aktualny stan edytora opisu (jeśli jest otwarty)
+  // żeby user nie musiał najpierw klikać "Zapisz opis" osobno
+  synchronizujBuforZPolami();
+
   // Zaktualizuj na żywo w tablicy
   miejsca[edytowanyMiejsceIdx].nazwa = nazwa;
   miejsca[edytowanyMiejsceIdx].kategoria = kategoria;
   miejsca[edytowanyMiejsceIdx].ikona = ikona;
   miejsca[edytowanyMiejsceIdx].pozycja = [aktualnyKlik.lat, aktualnyKlik.lng];
+  miejsca[edytowanyMiejsceIdx].tytul = opisRoboczy.tytul || '';
+  miejsca[edytowanyMiejsceIdx].opis = opisRoboczy.opis || '';
+  miejsca[edytowanyMiejsceIdx].tytulSrodek = !!opisRoboczy.srodek;
+  miejsca[edytowanyMiejsceIdx].tytulDuzy = !!opisRoboczy.duzy;
 
   zapiszZmianyMiejsc();
   odswiezMiejscaNaMapie();
   zamknijMiejsceHelper();
+}
+
+// Pomocnicza: jeśli edytor opisu jest otwarty, przepisz pola do bufora
+function synchronizujBuforZPolami() {
+  const tytulPole = document.getElementById('opisTytul');
+  if (tytulPole) {
+    opisRoboczy.tytul = tytulPole.value.trim();
+    opisRoboczy.opis = document.getElementById('opisTekst').value.trim();
+    opisRoboczy.srodek = document.getElementById('opisTytulSrodek').checked;
+    opisRoboczy.duzy = document.getElementById('opisTytulDuzy').checked;
+  }
 }
 
 // Dodaj nowe miejsce do tablicy
@@ -3869,14 +5743,22 @@ function planujMiejsce() {
     return;
   }
 
-  // Dodaj do tablicy miejsc - tylko 4 pola (kategoria, nazwa, ikona, klucz, pozycja)
-  miejsca.push({
+  // Wciągnij stan edytora opisu (jeśli user wpisał coś ale nie kliknął "Zapisz opis")
+  synchronizujBuforZPolami();
+
+  // Dodaj do tablicy miejsc - z opisem jeśli istnieje
+  const nowe = {
     klucz: klucz,
     nazwa: nazwa,
     pozycja: [aktualnyKlik.lat, aktualnyKlik.lng],
     ikona: ikona,
     kategoria: kategoria
-  });
+  };
+  if (opisRoboczy.tytul) nowe.tytul = opisRoboczy.tytul;
+  if (opisRoboczy.opis) nowe.opis = opisRoboczy.opis;
+  if (opisRoboczy.srodek) nowe.tytulSrodek = true;
+  if (opisRoboczy.duzy) nowe.tytulDuzy = true;
+  miejsca.push(nowe);
 
   zapiszZmianyMiejsc();
   odswiezMiejscaNaMapie();
@@ -3959,6 +5841,12 @@ function odswiezMiejscaNaMapie() {
   pokazAdminListe();
 }
 
+// Wczytaj zapisaną nazwę strony (z localStorage) - dla WSZYSTKICH userów,
+// nie tylko admina. Po zapisaniu w admin i wgraniu nowego index.html,
+// localStorage zawiera to samo co kod - więc nadpisuje tym samym.
+wczytajNazweStrony();
+wczytajOpisStrony();
+
 // Aktywuj pomocnik tylko w trybie admin
 if (isAdmin) {
   // Wczytaj zmiany w miejscach z localStorage (jeśli były)
@@ -3971,11 +5859,35 @@ if (isAdmin) {
   // Wpinamy się w istniejący handler kliknięcia w mapę
   mapa.on('click', obsluzKlikAdmin);
 
+  // KRYTYCZNE: blokuj propagację kliknięć z panelu admin do mapy Leaflet.
+  // Bez tego - klik w pole tekstowe edytora nazwy = klik w mapę = nowy znacznik.
+  const adminPanel = document.getElementById('adminList');
+  if (adminPanel && typeof L !== 'undefined' && L.DomEvent) {
+    L.DomEvent.disableClickPropagation(adminPanel);
+    L.DomEvent.disableScrollPropagation(adminPanel);
+  }
+  // Dodatkowo na wszelki wypadek - blokuj też mousedown ręcznie (dla starszych Leafletów)
+  adminPanel?.addEventListener('mousedown', e => e.stopPropagation());
+  adminPanel?.addEventListener('touchstart', e => e.stopPropagation());
+  adminPanel?.addEventListener('dblclick', e => e.stopPropagation());
+
+  // To samo dla edytora miejsca i pomocnika kropek (na wypadek gdyby nie były)
+  ['miejsceHelper','adminHelper','adminChoose'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && L?.DomEvent) {
+      L.DomEvent.disableClickPropagation(el);
+      L.DomEvent.disableScrollPropagation(el);
+    }
+  });
+
   // Listenery dla pól formularza kropek - odświeżają kod na żywo
   document.getElementById('adminNumer')?.addEventListener('input', aktualizujKodKropki);
   document.getElementById('adminOpis')?.addEventListener('input', aktualizujKodKropki);
   document.getElementById('adminPromien')?.addEventListener('input', () => {
-    document.getElementById('adminPromienVal').textContent = document.getElementById('adminPromien').value;
+    const v = parseInt(document.getElementById('adminPromien').value, 10);
+    // Formatowanie: < 1000m jako metry, >= 1000m jako kilometry
+    const tekst = v >= 1000 ? (v / 1000).toFixed(1).replace('.', ',') + ' km' : v + ' m';
+    document.getElementById('adminPromienVal').textContent = tekst;
     aktualizujKodKropki();
   });
 
@@ -3985,10 +5897,36 @@ if (isAdmin) {
     if (el) el.addEventListener('input', aktualizujKodMiejsca);
     if (el) el.addEventListener('change', aktualizujKodMiejsca);
   });
+
+  // Listenery dla edytora opisu
+  document.getElementById('opisTekst')?.addEventListener('input', () => {
+    aktualizujLicznikOpisu();
+    if (document.getElementById('opisPodglad').style.display !== 'none') {
+      renderujPodgladOpisu();
+    }
+  });
+  document.getElementById('opisTytul')?.addEventListener('input', () => {
+    if (document.getElementById('opisPodglad').style.display !== 'none') {
+      renderujPodgladOpisu();
+    }
+  });
+  ['opisTytulSrodek','opisTytulDuzy'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', () => {
+      if (document.getElementById('opisPodglad').style.display !== 'none') {
+        renderujPodgladOpisu();
+      }
+    });
+  });
 }
 
 // === NAWIGACJA — otwiera natywne mapy telefonu ===
 function prowadzMnie(lat, lng, nazwa) {
+  // Włącz nawigację jeśli wyłączona - żeby gdy user wróci z Google Maps
+  // miał już aktywne audio, fioletowe kropki i radar.
+  if (!trybTurysta) {
+    wlaczNawigacje();
+  }
+
   // Wykryj system - na iOS użyj Apple Maps, na innych Google Maps
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -4016,13 +5954,13 @@ async function pokazTraseTutaj(klucz) {
 
   // Sprawdź czy GPS jest włączony
   if (!userPozycja) {
-    // Spróbuj włączyć GPS automatycznie
-    if (watchId === null) {
-      togglePozycja();
+    // Spróbuj włączyć NAWIGACJĘ automatycznie (GPS + audio + radar + fioletowe kropki)
+    if (!trybTurysta) {
+      wlaczNawigacje();
       // Pokaż info i zaczekaj aż GPS złapie pozycję
       const info = document.querySelector('.route-info');
       if (info) {
-        info.innerHTML = '⏳ Czekam na pozycję GPS... (zezwól na lokalizację jeśli przeglądarka pyta)';
+        info.innerHTML = '⏳ Włączam nawigację... (zezwól na lokalizację jeśli przeglądarka pyta)';
       }
       // Sprawdzaj co 500ms przez 15 sekund
       let proby = 0;
@@ -4447,6 +6385,15 @@ function bladPozycji(err) {
     return;
   }
 
+  // Strategia "nigdy się nie poddawaj" - praktycznie WSZYSTKIE timeouty są ignorowane
+  // (kod 3 = TIMEOUT). Reagujemy TYLKO na realne problemy:
+  //   - kod 1: brak uprawnień (PERMISSION_DENIED) - turysta MUSI to ręcznie naprawić
+  //   - kod 2: pozycja niedostępna (POSITION_UNAVAILABLE) - GPS fizycznie wyłączony
+  if (err.code === 3) {
+    // Timeout - cicho ignoruj. GPS dalej próbuje w tle.
+    return;
+  }
+
   gpsBtn.classList.remove('szukam', 'active', 'muted');
   gpsBtn.classList.add('error');
   gpsBtn.textContent = '⚠️';
@@ -4460,11 +6407,7 @@ function bladPozycji(err) {
   }
   else if (err.code === 2) {
     msg = 'Pozycja niedostępna';
-    podpowiedz = 'GPS nie odbiera sygnału. Wyjdź na otwartą przestrzeń';
-  }
-  else if (err.code === 3) {
-    msg = 'GPS nie znalazł satelitów';
-    podpowiedz = 'Wyjdź na zewnątrz, z dala od budynków i drzew. Może to potrwać minutę.';
+    podpowiedz = 'Sprawdź czy GPS jest włączony w telefonie';
   }
 
   gpsStatus.classList.add('visible');
@@ -4472,7 +6415,6 @@ function bladPozycji(err) {
 
   setTimeout(() => {
     gpsBtn.classList.remove('error');
-    // Wróć do prawidłowej ikony (🔊 lub 📍 w zależności od trybu)
     aktualizujPrzyciskGPS();
   }, 5000);
 }
@@ -4506,19 +6448,51 @@ function togglePozycja() {
 
   // Pokaż przyjazny komunikat ładowania
   gpsStatus.classList.add('visible');
-  gpsStatus.innerHTML = '<span class="ikona-stat">📡</span> Szukam satelitów GPS...<div class="czas">To może potrwać kilkadziesiąt sekund. Wyjdź na otwartą przestrzeń dla najlepszego sygnału.</div>';
+  gpsStatus.innerHTML = '<span class="ikona-stat">📡</span> Wyszukiwanie pozycji...<div class="czas">Łapanie sygnału z satelitów lub sieci.</div>';
 
-  // watchPosition - ciągła aktualizacja
-  // WYSOKA DOKŁADNOŚĆ ONLY - dla turystyki potrzebujemy precyzji do ~5m
-  // (strefy kropek mają 20-50m, niedokładność 100m = niemożność trafienia)
-  // Timeout 60s - GPS satelitarny potrzebuje czasu na pierwszy fix
+  // === STRATEGIA DWUFAZOWA ===
+  //
+  // FAZA 1 (szybka, ~1-5 sek):
+  //   getCurrentPosition z enableHighAccuracy: false
+  //   = używa naziemnych źródeł (WiFi, wieże komórkowe, IP)
+  //   = dokładność 50-500m, ale szybko = turysta od razu widzi gdzie jest
+  //
+  // FAZA 2 (dokładna, w tle, czas otwarty):
+  //   watchPosition z enableHighAccuracy: true
+  //   = prawdziwy GPS satelitarny
+  //   = dokładność 5-15m
+  //   = po pierwszym fixie zastępuje naziemny
+  //   = NIE poddaje się nigdy (timeout: Infinity = brak)
+  //
+  // ŻADNE alarmy w żadnej fazie - dyskretnie czeka aż znajdzie
+
+  // FAZA 1: szybki naziemny fix
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      // Szybki naziemny fix - pokazujemy go turyście
+      pokazPozycje(pos);
+    },
+    (err) => {
+      // Cicho ignoruj błąd fazy 1 - jeszcze próbuje faza 2
+      // (pierwsza próba szybkiego naziemnego mogła się nie udać,
+      // ale dokładny GPS w tle ciągle szuka)
+    },
+    {
+      enableHighAccuracy: false,  // szybkie naziemne źródła (WiFi, wieża)
+      maximumAge: 30000,          // dopuszczamy starszą cache do 30s = błyskawiczny pierwszy fix
+      timeout: 8000               // 8 sekund na szybki fix
+    }
+  );
+
+  // FAZA 2: dokładny satelitarny w tle (równolegle z fazą 1)
+  // Ten ciągle pracuje i zastępuje naziemny gdy złapie satelity
   watchId = navigator.geolocation.watchPosition(
     pokazPozycje,
     bladPozycji,
     {
-      enableHighAccuracy: true,  // tylko prawdziwy GPS satelitarny
-      maximumAge: 5000,           // pozycje starsze niż 5s = świeże szukanie
-      timeout: 60000              // 60 sekund na pierwszy fix
+      enableHighAccuracy: true,  // prawdziwy GPS satelitarny
+      maximumAge: 5000,          // świeże dane - sprawdzamy często
+      timeout: 2147483647        // ~maksymalna wartość - praktycznie nigdy nie poddaje się
     }
   );
 }
@@ -4533,8 +6507,10 @@ function toggleTrybTurysty() {
   const btn = document.getElementById('touristBtn');
 
   if (trybTurysta) {
-    btn.classList.add('active');
-    btn.textContent = '🥾 Wyjdź z trybu';
+    if (btn) {
+      btn.classList.add('active');
+      btn.textContent = '🥾 Wyjdź z trybu';
+    }
 
     // 1. Włącz GPS jeśli nie włączony
     if (watchId === null) togglePozycja();
@@ -4561,13 +6537,17 @@ function toggleTrybTurysty() {
       document.getElementById('mapa').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 200);
   } else {
-    btn.classList.remove('active');
-    btn.textContent = '🥾 Tryb turysty';
+    if (btn) {
+      btn.classList.remove('active');
+      btn.textContent = '🥾 Tryb turysty';
+    }
     // Wyłącz GPS
     if (watchId !== null) togglePozycja();
     // Wyłącz audio przy wyjściu z trybu
     audioPrzewodnikWlaczony = false;
     audioWyciszony = false;
+    // Wyłącz auto-odsłuch (gdyby był aktywny)
+    autoOdsluchAktywny = false;
     if (aktualneAudio) {
       aktualneAudio.pause();
       aktualneAudio = null;
@@ -4575,8 +6555,34 @@ function toggleTrybTurysty() {
     document.getElementById('audioPlayer').classList.remove('visible');
   }
 
-  // Zaktualizuj przycisk GPS (zmienia się w 🔊 lub z powrotem w 📍)
+  // Zaktualizuj przycisk GPS (zmienia się w 🔊 lub z powrotem w 📍/🧭)
   aktualizujPrzyciskGPS();
+}
+
+// =====================================================================
+// === NAWIGACJA - WSPÓLNY PRZYCISK ====================================
+// =====================================================================
+// Zamiast dwóch oddzielnych przycisków (📍 GPS + 🥾 Tryb turysty)
+// jest jeden 🧭 "Włącz nawigację" który robi obie rzeczy naraz.
+// Ten sam efekt dają też przyciski "Pokaż trasę tutaj" i "Otwórz w Mapach"
+// w popupie miejsca - klikając je włączasz nawigację automatycznie.
+// =====================================================================
+
+function wlaczNawigacje() {
+  // Jeśli już włączona - nic nie rób
+  if (trybTurysta) return;
+  // toggleTrybTurysty obsługuje wszystko: GPS, audio, fioletowe kropki, radar.
+  toggleTrybTurysty();
+}
+
+function wylaczNawigacje() {
+  if (!trybTurysta) return;
+  toggleTrybTurysty();
+}
+
+function toggleNawigacja() {
+  if (trybTurysta) wylaczNawigacje();
+  else wlaczNawigacje();
 }
 let audioBannerPokazany = false;
 
@@ -5107,6 +7113,721 @@ function odswiezStrone() {
   url.searchParams.set('_t', Date.now());
   window.location.href = url.toString();
 }
+
+// =====================================================================
+// === PANEL RADARU "📡 W zasięgu" (Krok B) ============================
+// =====================================================================
+// Wyświetla listę WSZYSTKICH stref w zasięgu turysty.
+// Akordeon: mini state = liczba, klik = lista z [▶ Odtwórz] / [⏸ Pauza]
+// Auto-hide gdy lista pusta.
+
+// Toggle rozwijanie panelu (klik w mini state)
+function toggleRadarPanel() {
+  const panel = document.getElementById('radarPanel');
+  if (panel) panel.classList.toggle('expanded');
+}
+
+// Render listy + aktualizacja licznika
+// Wywoływana po każdym sprawdzKropkiAudio() oraz po zmianie audio
+function aktualizujPanelRadaru() {
+  const panel = document.getElementById('radarPanel');
+  const counter = document.getElementById('radarCount');
+  const lista = document.getElementById('radarLista');
+  if (!panel || !counter || !lista) return;
+
+  // Liczba i widoczność
+  const count = kropkiWZasiegu ? kropkiWZasiegu.size : 0;
+  counter.textContent = count;
+
+  // Panel widoczny gdy: są kropki w zasięgu LUB auto-odsłuch aktywny
+  // (żeby user mógł zatrzymać auto nawet jak wyjechał ze stref)
+  if (count === 0 && !autoOdsluchAktywny) {
+    panel.classList.remove('visible', 'expanded');
+    lista.innerHTML = '';
+    return;
+  }
+  panel.classList.add('visible');
+
+  // Jeśli auto włączone i nic nie gra - spróbuj wystartować
+  // (np. właśnie wjechaliśmy w nową strefę po pustym polu)
+  if (autoOdsluchAktywny && count > 0 &&
+      (!aktualneAudio || aktualneAudio.paused || aktualneAudio.ended)) {
+    // Defer żeby nie wpaść w rekurencję - aktualizujPanelRadaru woła się
+    // z odtworzKropkeAuto przez onplay/onended.
+    setTimeout(startAutoJesliCzeka, 0);
+  }
+
+  // Render HTML
+  lista.innerHTML = '';
+
+  // ===== Pasek auto-odsłuchu (nad listą) =====
+  // Pokazuje się zawsze gdy panel widoczny, niezależnie czy lista pełna
+  const pasekAuto = document.createElement('div');
+  pasekAuto.className = 'radar-auto-bar';
+  const btnAuto = document.createElement('button');
+  btnAuto.className = 'radar-auto-btn' + (autoOdsluchAktywny ? ' aktywny' : '');
+  btnAuto.onclick = toggleAutoOdsluch;
+
+  // Trzy stany przycisku zależnie od sytuacji:
+  // 1. Auto wyłączone -> proponuj włączenie
+  // 2. Auto włączone i AUDIO GRA -> proponuj wyłączenie
+  // 3. Auto włączone ale CISZA (cała lista odsłuchana albo czekamy na strefę)
+  //    -> proponuj odtworzenie listy znowu (klik resetuje sesję i gra od nowa)
+  const cosGra = aktualneAudio && !aktualneAudio.paused && !aktualneAudio.ended;
+  if (!autoOdsluchAktywny) {
+    btnAuto.innerHTML = '🔁 Odsłuchaj wszystkie po kolei';
+  } else if (cosGra) {
+    btnAuto.innerHTML = '⏹️ Zatrzymaj auto-odsłuch';
+  } else if (count > 0) {
+    // Lista jest, ale wszystko już zagrane w tej sesji - klik = odtwórz znowu
+    btnAuto.innerHTML = '🔁 Odtwórz listę jeszcze raz';
+  } else {
+    // Lista pusta - czekamy aż wjedziesz w strefę
+    btnAuto.innerHTML = '⏸ Auto-odsłuch (czekam na strefę)';
+  }
+
+  pasekAuto.appendChild(btnAuto);
+  lista.appendChild(pasekAuto);
+
+  // Buduj listę pozycji (od najbliższej do najdalszej)
+  const wpisy = [];
+  for (const numer of kropkiWZasiegu) {
+    const k = kropkiAudio.find(kk => kk.numer === numer);
+    if (!k) continue;
+    let odl = 0;
+    if (userPozycja) {
+      odl = dystans(userPozycja.lat, userPozycja.lng, k.pozycja[0], k.pozycja[1]);
+    }
+    wpisy.push({ kropka: k, odl });
+  }
+  wpisy.sort((a, b) => a.odl - b.odl);
+
+  // Render pozycji
+  for (const { kropka } of wpisy) {
+    const item = document.createElement('div');
+    item.className = 'radar-item';
+
+    // Czy ta kropka właśnie gra?
+    const graTen = aktualnaKropkaAudio && aktualnaKropkaAudio.numer === kropka.numer
+      && aktualneAudio && !aktualneAudio.paused && !aktualneAudio.ended;
+    if (graTen) item.classList.add('gra');
+
+    const info = document.createElement('div');
+    info.className = 'radar-item-info';
+
+    const numerEl = document.createElement('div');
+    numerEl.className = 'radar-item-numer';
+    numerEl.textContent = '#' + kropka.numer;
+    info.appendChild(numerEl);
+
+    const nazwaEl = document.createElement('div');
+    nazwaEl.className = 'radar-item-nazwa';
+    nazwaEl.textContent = kropka.opis || 'Audio';
+    info.appendChild(nazwaEl);
+
+    const btn = document.createElement('button');
+    btn.className = 'radar-item-btn';
+    if (graTen) {
+      btn.classList.add('gra');
+      btn.textContent = '⏸';
+      btn.title = 'Pauza';
+    } else {
+      btn.textContent = '▶';
+      btn.title = 'Odtwórz';
+    }
+    btn.onclick = () => radarKlikOdtworz(kropka);
+
+    item.appendChild(info);
+    item.appendChild(btn);
+    lista.appendChild(item);
+  }
+}
+
+// =====================================================================
+// === AUTO-ODSŁUCH - funkcje =========================================
+// =====================================================================
+
+// Zwraca uporządkowaną listę kropek W ZASIĘGU (najbliższa najpierw).
+// Używana zarówno przez panel radaru jak i auto-odsłuch żeby grać "z listy".
+function pobierzListeWZasiegu() {
+  if (!kropkiWZasiegu || kropkiWZasiegu.size === 0) return [];
+  const wpisy = [];
+  for (const numer of kropkiWZasiegu) {
+    const k = kropkiAudio.find(kk => kk.numer === numer);
+    if (!k) continue;
+    let odl = 0;
+    if (userPozycja) {
+      odl = dystans(userPozycja.lat, userPozycja.lng, k.pozycja[0], k.pozycja[1]);
+    }
+    wpisy.push({ kropka: k, odl });
+  }
+  wpisy.sort((a, b) => a.odl - b.odl);
+  return wpisy.map(w => w.kropka);
+}
+
+// Włącza/wyłącza tryb auto-odsłuchu. Klik na przycisk 🔁 w panelu radaru.
+// Logika dwustanowa:
+//   - Wyłączony       -> klik włącza, startuje od najbliższej, sesja resetowana.
+//   - Włączony (gra)  -> klik wyłącza całość.
+//   - Włączony (cisza, bo wszystko z listy odsłuchane) -> klik resetuje sesję
+//     i odtwarza listę od nowa (user wraca do tych samych kropek).
+function toggleAutoOdsluch() {
+  if (autoOdsluchAktywny) {
+    // Czy aktualnie gra audio?
+    const cosGra = aktualneAudio && !aktualneAudio.paused && !aktualneAudio.ended;
+    if (cosGra) {
+      // Coś gra - klik wyłącza całość
+      autoOdsluchAktywny = false;
+      autoSesjaOdsluchane.clear();
+      if (aktualneAudio) {
+        aktualneAudio.pause();
+      }
+      aktualizujPanelRadaru();
+      return;
+    }
+    // Tryb aktywny ale cisza (przejechaliśmy listę) -> reset sesji,
+    // zaczynamy od początku aktualnej listy
+    autoSesjaOdsluchane.clear();
+    const lista = pobierzListeWZasiegu();
+    if (lista.length === 0) {
+      // Dalej nic w zasięgu - po prostu odśwież panel
+      aktualizujPanelRadaru();
+      return;
+    }
+    odtworzKropkeAuto(lista[0]);
+    aktualizujPanelRadaru();
+    return;
+  }
+
+  // Tryb wyłączony - włączamy od zera
+  autoOdsluchAktywny = true;
+  autoSesjaOdsluchane.clear();
+
+  const lista = pobierzListeWZasiegu();
+  if (lista.length === 0) {
+    // Pusta lista - włącz tryb i tak (czeka na pierwszą strefę)
+    aktualizujPanelRadaru();
+    return;
+  }
+
+  // Pierwsza z listy
+  odtworzKropkeAuto(lista[0]);
+  aktualizujPanelRadaru();
+}
+
+// Odtwarza kropkę w trybie auto - wpina onended który wybiera następną.
+// Różni się od zwykłego odtworzKropke tym, że NIE wyłącza autoOdsluchAktywny
+// po skończeniu - przeciwnie, leci do kolejnej (jeśli jest nieodsłuchana).
+function odtworzKropkeAuto(kropka) {
+  // Zaznacz że ta kropka została odtworzona w tej sesji - nie zagra ponownie
+  // dopóki nie zresetujemy sesji (przez ponowny klik 🔁 albo wyłączenie/włączenie).
+  autoSesjaOdsluchane.add(kropka.numer);
+
+  // Reset flagi żeby kropka mogła zagrać teraz
+  kropkaJestOdtwarzana.delete(kropka.numer);
+  odtworzKropke(kropka);
+  if (!aktualneAudio) return;
+
+  // Wpinamy się w onended bez zerwania istniejących hooków
+  const oldOnended = aktualneAudio.onended;
+  aktualneAudio.onended = (e) => {
+    if (oldOnended) oldOnended.call(aktualneAudio, e);
+    // Jeśli auto dalej aktywne - leć do następnej NIEODSŁUCHANEJ z aktualnej listy
+    if (autoOdsluchAktywny) {
+      nastepneWAuto();
+    }
+    aktualizujPanelRadaru();
+  };
+}
+
+// Znajduje następną kropkę w aktualnej liście W ZASIĘGU, która jeszcze NIE
+// została odsłuchana w tej sesji. Jeśli wszystkie z listy odsłuchane lub
+// lista pusta - cisza, ale tryb dalej aktywny. User wjedzie w nową strefę
+// (do listy wpadnie nowa kropka której nie ma w sesji) -> zagra ona.
+function nastepneWAuto() {
+  const lista = pobierzListeWZasiegu();
+  if (lista.length === 0) {
+    // Lista pusta - cisza (tryb dalej aktywny)
+    return;
+  }
+
+  // Pierwsza kropka z listy która jeszcze nie była odtworzona w tej sesji
+  const nastepna = lista.find(k => !autoSesjaOdsluchane.has(k.numer));
+  if (!nastepna) {
+    // Wszystkie z listy już odsłuchane w tej sesji - cisza, czekamy na nowe
+    // kropki (gdy wjedziesz w nową strefę, dołączy do listy i to ona zagra).
+    return;
+  }
+
+  odtworzKropkeAuto(nastepna);
+}
+
+// Wywoływana z aktualizujPanelRadaru gdy lista się zmienia.
+// Jeśli auto aktywne ale nic nie gra (np. wjechaliśmy w nową strefę po
+// pustym polu, lub wjechała nowa kropka której nie odsłuchaliśmy w tej
+// sesji) - startuje pierwszą NIEODSŁUCHANĄ z listy.
+function startAutoJesliCzeka() {
+  if (!autoOdsluchAktywny) return;
+  // Jeśli już coś gra - nic nie robimy
+  if (aktualneAudio && !aktualneAudio.paused && !aktualneAudio.ended) return;
+
+  const lista = pobierzListeWZasiegu();
+  if (lista.length === 0) return;
+
+  // Pierwsza nieodsłuchana w tej sesji
+  const doOdtworzenia = lista.find(k => !autoSesjaOdsluchane.has(k.numer));
+  if (!doOdtworzenia) return;
+
+  odtworzKropkeAuto(doOdtworzenia);
+}
+
+
+// Logika: nowe audio przerywa stare. Pauza tylko jeśli klikamy AKTUALNIE grające.
+function radarKlikOdtworz(kropka) {
+  // Jeśli ta sama kropka już gra - pauza/wznów (nie ruszamy trybu auto -
+  // pauza w trakcie auto-odsłuchu po prostu wstrzymuje, klik znów wznowi)
+  if (aktualnaKropkaAudio && aktualnaKropkaAudio.numer === kropka.numer && aktualneAudio) {
+    if (aktualneAudio.paused) {
+      aktualneAudio.play();
+    } else {
+      aktualneAudio.pause();
+    }
+    aktualizujPanelRadaru();
+    return;
+  }
+
+  // Inna kropka klikana ręcznie - przejmujemy kontrolę.
+  // Wyłączamy auto-odsłuch (zgodnie z założeniem: ręczny klik = manual mode)
+  if (autoOdsluchAktywny) {
+    autoOdsluchAktywny = false;
+  }
+
+  // Inna kropka - odtwórz (odtworzKropke automatycznie zatrzyma poprzednie)
+  kropkaJestOdtwarzana.delete(kropka.numer);
+  odtworzKropke(kropka);
+
+  // Hook na koniec audio - aktualizuj panel
+  if (aktualneAudio) {
+    const oldOnended = aktualneAudio.onended;
+    aktualneAudio.onended = (e) => {
+      if (oldOnended) oldOnended.call(aktualneAudio, e);
+      aktualizujPanelRadaru();
+    };
+    const oldOnpause = aktualneAudio.onpause;
+    aktualneAudio.onpause = (e) => {
+      if (oldOnpause) oldOnpause.call(aktualneAudio, e);
+      aktualizujPanelRadaru();
+    };
+    const oldOnplay = aktualneAudio.onplay;
+    aktualneAudio.onplay = (e) => {
+      if (oldOnplay) oldOnplay.call(aktualneAudio, e);
+      aktualizujPanelRadaru();
+    };
+  }
+
+  aktualizujPanelRadaru();
+}
+
+// Inicjalizacja - panel ukryty na start, pokaże się gdy będą strefy w zasięgu
+aktualizujPanelRadaru();
+
+// =====================================================================
+// === RYSOWANIE NA MAPIE (admin only) =================================
+// =====================================================================
+// System rysowania linii, kół i etykiet tekstowych na warstwie Leaflet.
+// Wszystko zapisuje się w localStorage pod kluczem 'rysunki_mapy'.
+// Rysunki używają współrzędnych geograficznych — przesuwają się
+// i skalują razem z mapą (NIE są to piksele, tylko lat/lng).
+//
+// Format zapisu:
+//   { typ: 'linia',  punkty: [[lat,lng],...], kolor: '#a04510' }
+//   { typ: 'kolo',   srodek: [lat,lng], promien: 50,  kolor: '#a04510' }
+//   { typ: 'tekst',  pozycja: [lat,lng], tresc: '...', kolor: '#a04510' }
+//
+// PUBLIKACJA: tablica `rysunkiZakodowane` poniżej jest WBUDOWANA w plik HTML
+// i widoczna dla wszystkich gości (tak samo jak `miejsca` i `kropkiAudio`).
+// Admin edytuje rysunki w localStorage, klika "💾 Pobierz nowy index.html",
+// a kod generuje nowy plik z aktualną tablicą `rysunkiZakodowane` w środku.
+// Wgrywasz na Netlify -> wszyscy widzą rysunki.
+// =====================================================================
+
+// === RYSUNKI:START === (nie usuwaj tego komentarza - znacznik dla auto-eksportu)
+const rysunkiZakodowane = [
+];
+// === RYSUNKI:END ===
+
+// --- Stan rysowania ---
+let trybRysowaniaWlaczony = false;
+let aktualneNarzedzie = null;        // 'linia' | 'kolo' | 'tekst' | 'gumka' | null
+let rysunki = [];                     // tablica wszystkich rysunków
+let warstwaRysunkow = L.layerGroup(); // warstwa Leaflet z renderowanymi rysunkami
+let warstwyDoRysunku = new Map();     // mapowanie: rysunek -> warstwa Leaflet (dla gumki)
+
+// Stan w trakcie rysowania linii (klikasz wiele punktów)
+let aktualnaLinia = null;             // { punkty: [[lat,lng],...], kolor, tymczasowaWarstwa }
+
+// Stan w trakcie rysowania koła (1. klik = środek, 2. klik = promień)
+let aktualneKoloSrodek = null;        // [lat, lng] albo null
+
+const STORAGE_KEY_RYSUNKI = 'rysunki_mapy_v1';
+
+// --- Inicjalizacja: wczytaj rysunki z localStorage i pokaż na mapie ---
+// Logika:
+//   - Goście (bez ?admin=1) widzą TYLKO rysunki z `rysunkiZakodowane` (te wbudowane w plik).
+//   - Admin (?admin=1) widzi `rysunkiZakodowane` + swoje robocze z localStorage.
+//     Jego edycje siedzą w localStorage do czasu kliknięcia "Pobierz nowy index.html",
+//     które wbuduje je na stałe w plik. Po wgraniu na serwer - wszyscy je zobaczą.
+function inicjalizujRysunki() {
+  // 1. Zacznij od publicznych (te są w kodzie, widzi je każdy)
+  rysunki = Array.isArray(rysunkiZakodowane) ? rysunkiZakodowane.slice() : [];
+
+  // 2. Tylko w trybie admin - dołóż robocze z localStorage
+  if (typeof isAdmin !== 'undefined' && isAdmin) {
+    try {
+      const zapisane = localStorage.getItem(STORAGE_KEY_RYSUNKI);
+      if (zapisane) {
+        const robocze = JSON.parse(zapisane);
+        if (Array.isArray(robocze)) {
+          rysunki = rysunki.concat(robocze);
+        }
+      }
+    } catch (e) {
+      console.warn('Nie udało się wczytać roboczych rysunków:', e);
+    }
+  }
+
+  warstwaRysunkow.addTo(mapa);
+  przerysujWszystko();
+}
+
+// --- Pomocnik: zwraca tylko ROBOCZE rysunki (te które admin dodał lokalnie) ---
+// Używane przy zapisie do localStorage - nie zapisujemy zakodowanych ponownie,
+// żeby się nie zduplikowały po wczytaniu strony.
+function pobierzRoboczeRysunki() {
+  const zakodowaneSet = new Set(rysunkiZakodowane);
+  return rysunki.filter(r => !zakodowaneSet.has(r));
+}
+
+// --- Zapis do localStorage (tylko ROBOCZE - zakodowane są już w pliku HTML) ---
+function zapiszRysunki() {
+  try {
+    const robocze = pobierzRoboczeRysunki();
+    localStorage.setItem(STORAGE_KEY_RYSUNKI, JSON.stringify(robocze));
+  } catch (e) {
+    console.error('Nie udało się zapisać rysunków:', e);
+  }
+}
+
+// --- Render: wyczyść warstwę i narysuj wszystko od nowa ---
+function przerysujWszystko() {
+  warstwaRysunkow.clearLayers();
+  warstwyDoRysunku.clear();
+
+  for (const r of rysunki) {
+    let warstwa = null;
+
+    if (r.typ === 'linia' && r.punkty && r.punkty.length >= 2) {
+      warstwa = L.polyline(r.punkty, {
+        color: r.kolor || '#a04510',
+        weight: 4,
+        opacity: 0.85,
+        lineCap: 'round',
+        lineJoin: 'round'
+      });
+    }
+    else if (r.typ === 'kolo' && r.srodek && r.promien) {
+      warstwa = L.circle(r.srodek, {
+        radius: r.promien,
+        color: r.kolor || '#a04510',
+        weight: 3,
+        opacity: 0.85,
+        fillColor: r.kolor || '#a04510',
+        fillOpacity: 0.15
+      });
+    }
+    else if (r.typ === 'tekst' && r.pozycja && r.tresc) {
+      const ikona = L.divIcon({
+        className: 'rysunek-etykieta-marker',
+        html: '<div class="rysunek-etykieta" style="border-color:' + (r.kolor || '#a04510') + ';color:' + (r.kolor || '#a04510') + '">' + escapeHtmlRys(r.tresc) + '</div>',
+        iconSize: null,
+        iconAnchor: [0, 0]
+      });
+      warstwa = L.marker(r.pozycja, { icon: ikona });
+    }
+
+    if (warstwa) {
+      // Klik w gumce kasuje
+      warstwa.on('click', (e) => {
+        if (aktualneNarzedzie === 'gumka') {
+          L.DomEvent.stopPropagation(e);
+          rysunki = rysunki.filter(x => x !== r);
+          zapiszRysunki();
+          przerysujWszystko();
+        }
+      });
+      warstwa.addTo(warstwaRysunkow);
+      warstwyDoRysunku.set(r, warstwa);
+    }
+  }
+}
+
+// --- Pomocnicze: bezpieczne wyświetlanie tekstu w HTML ---
+function escapeHtmlRys(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// --- Włącz/wyłącz tryb rysowania (klik na przycisk "🎨 Rysuj na mapie") ---
+function toggleRysowanie() {
+  trybRysowaniaWlaczony = !trybRysowaniaWlaczony;
+  const panel = document.getElementById('panelRysowania');
+  const btn = document.getElementById('btnRysowanie');
+
+  if (trybRysowaniaWlaczony) {
+    panel.classList.add('visible');
+    btn.textContent = '✕ Zamknij rysowanie';
+    btn.style.background = '#8b2030';
+    btn.style.borderColor = '#8b2030';
+
+    // BLOKADA przesuwania mapy i podwójnego kliknięcia (które zoomuje)
+    // żeby nie kolidowało z rysowaniem linii / koła.
+    // Zoom przez przewijanie i przyciski +/- zostają — żeby móc zmienić skalę.
+    if (mapa.dragging)        mapa.dragging.disable();
+    if (mapa.doubleClickZoom) mapa.doubleClickZoom.disable();
+    // Zamknij ewentualnie otwarte popupy
+    mapa.closePopup();
+  } else {
+    panel.classList.remove('visible');
+    btn.textContent = '🎨 Rysuj na mapie';
+    btn.style.background = '#3a6a4a';
+    btn.style.borderColor = '#3a6a4a';
+
+    // ODBLOKUJ przesuwanie i podwójny klik
+    if (mapa.dragging)        mapa.dragging.enable();
+    if (mapa.doubleClickZoom) mapa.doubleClickZoom.enable();
+
+    // Zakończ wszystkie aktywne narzędzia
+    wybierzNarzedzie(null);
+  }
+}
+
+// --- Wybór narzędzia ---
+function wybierzNarzedzie(narzedzie) {
+  // Anuluj rozpoczęte rysunki przy zmianie narzędzia
+  if (aktualnaLinia) {
+    if (aktualnaLinia.tymczasowaWarstwa) {
+      warstwaRysunkow.removeLayer(aktualnaLinia.tymczasowaWarstwa);
+    }
+    aktualnaLinia = null;
+  }
+  aktualneKoloSrodek = null;
+
+  aktualneNarzedzie = narzedzie;
+
+  // Aktualizuj wygląd przycisków
+  document.querySelectorAll('.btn-narzedzie[data-narzedzie]').forEach(b => {
+    b.classList.toggle('active', b.dataset.narzedzie === narzedzie);
+  });
+
+  // Pokaż/ukryj przycisk "Zakończ linię"
+  document.getElementById('btnZakonczLinie').style.display =
+    (narzedzie === 'linia') ? '' : 'none';
+
+  // Kursor "krzyżyk" gdy narzędzie wybrane
+  const mapEl = document.getElementById('mapa');
+  if (narzedzie) {
+    mapEl.querySelector('.leaflet-container')?.classList.add('tryb-rysowania');
+  } else {
+    mapEl.querySelector('.leaflet-container')?.classList.remove('tryb-rysowania');
+  }
+
+  // Komunikat pomocniczy
+  const info = document.getElementById('panelRysowaniaInfo');
+  const komunikaty = {
+    'linia':  'Klikaj punkty aby rysować linię. Naciśnij ✓ Zakończ linię gdy skończysz (lub Escape).',
+    'kolo':   'Pierwszy klik = środek koła. Drugi klik = promień (jak daleko sięga).',
+    'tekst':  'Kliknij miejsce gdzie ma być tekst. Wpisz treść w okienku.',
+    'gumka':  'Klikaj rysunki na mapie aby je usuwać.',
+    null:     'Wybierz narzędzie i klikaj na mapie. Rysunki zapisują się automatycznie.'
+  };
+  info.textContent = komunikaty[narzedzie] ?? komunikaty[null];
+}
+
+// --- Główny handler kliknięć w mapę ---
+mapa.on('click', function(e) {
+  if (!trybRysowaniaWlaczony || !aktualneNarzedzie) return;
+  // Gumka nie reaguje na klik w mapę — tylko na klik w rysunek
+  if (aktualneNarzedzie === 'gumka') return;
+
+  const kolor = document.getElementById('rysKolor').value || '#a04510';
+  const punkt = [e.latlng.lat, e.latlng.lng];
+
+  if (aktualneNarzedzie === 'linia') {
+    // Pierwszy punkt -> rozpocznij linię
+    if (!aktualnaLinia) {
+      aktualnaLinia = { punkty: [punkt], kolor: kolor, tymczasowaWarstwa: null };
+    } else {
+      // Kolejne punkty -> dodaj
+      aktualnaLinia.punkty.push(punkt);
+    }
+    // Pokaż na żywo
+    if (aktualnaLinia.tymczasowaWarstwa) {
+      warstwaRysunkow.removeLayer(aktualnaLinia.tymczasowaWarstwa);
+    }
+    if (aktualnaLinia.punkty.length >= 2) {
+      aktualnaLinia.tymczasowaWarstwa = L.polyline(aktualnaLinia.punkty, {
+        color: aktualnaLinia.kolor,
+        weight: 4,
+        opacity: 0.6,
+        dashArray: '6, 6'
+      }).addTo(warstwaRysunkow);
+    }
+  }
+  else if (aktualneNarzedzie === 'kolo') {
+    if (!aktualneKoloSrodek) {
+      // Pierwszy klik = środek
+      aktualneKoloSrodek = punkt;
+      document.getElementById('panelRysowaniaInfo').textContent =
+        'Środek ustawiony. Kliknij gdzie ma być krawędź koła.';
+    } else {
+      // Drugi klik = promień
+      const promien = mapa.distance(aktualneKoloSrodek, punkt);
+      rysunki.push({
+        typ: 'kolo',
+        srodek: aktualneKoloSrodek,
+        promien: promien,
+        kolor: kolor
+      });
+      aktualneKoloSrodek = null;
+      zapiszRysunki();
+      przerysujWszystko();
+      document.getElementById('panelRysowaniaInfo').textContent =
+        'Koło dodane! Kliknij ponownie aby narysować kolejne.';
+    }
+  }
+  else if (aktualneNarzedzie === 'tekst') {
+    const tresc = prompt('Wpisz tekst do wstawienia na mapie:', '');
+    if (tresc && tresc.trim()) {
+      rysunki.push({
+        typ: 'tekst',
+        pozycja: punkt,
+        tresc: tresc.trim(),
+        kolor: kolor
+      });
+      zapiszRysunki();
+      przerysujWszystko();
+    }
+  }
+});
+
+// --- Zakończ aktualnie rysowaną linię (przycisk lub Escape) ---
+function zakonczLinie() {
+  if (!aktualnaLinia || aktualnaLinia.punkty.length < 2) {
+    if (aktualnaLinia && aktualnaLinia.tymczasowaWarstwa) {
+      warstwaRysunkow.removeLayer(aktualnaLinia.tymczasowaWarstwa);
+    }
+    aktualnaLinia = null;
+    return;
+  }
+  rysunki.push({
+    typ: 'linia',
+    punkty: aktualnaLinia.punkty.slice(),
+    kolor: aktualnaLinia.kolor
+  });
+  if (aktualnaLinia.tymczasowaWarstwa) {
+    warstwaRysunkow.removeLayer(aktualnaLinia.tymczasowaWarstwa);
+  }
+  aktualnaLinia = null;
+  zapiszRysunki();
+  przerysujWszystko();
+  document.getElementById('panelRysowaniaInfo').textContent =
+    'Linia zapisana! Kliknij aby rysować kolejną.';
+}
+
+// Escape kończy linię / anuluje koło
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && trybRysowaniaWlaczony) {
+    if (aktualnaLinia) zakonczLinie();
+    if (aktualneKoloSrodek) {
+      aktualneKoloSrodek = null;
+      document.getElementById('panelRysowaniaInfo').textContent =
+        'Anulowano koło. Kliknij aby zacząć od nowa.';
+    }
+  }
+});
+
+// --- Wyczyść wszystkie rysunki ---
+function wyczyscWszystkieRysunki() {
+  if (rysunki.length === 0) {
+    alert('Nie ma żadnych rysunków do usunięcia.');
+    return;
+  }
+  if (!confirm('Usunąć wszystkie rysunki (' + rysunki.length + ' szt.)?\n\nUWAGA: usunięte zostaną zarówno publiczne (z pliku) jak i twoje robocze.\nŻeby zmiana była widoczna dla wszystkich, kliknij potem "💾 Pobierz nowy index.html" i wgraj plik na serwer.')) {
+    return;
+  }
+  rysunki = [];
+  zapiszRysunki();
+  przerysujWszystko();
+}
+
+// --- Eksport rysunków do pliku .json ---
+function eksportujRysunki() {
+  if (rysunki.length === 0) {
+    alert('Nie ma żadnych rysunków do wyeksportowania.');
+    return;
+  }
+  const dane = JSON.stringify(rysunki, null, 2);
+  const blob = new Blob([dane], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'rysunki_mapy_' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// --- Import rysunków z pliku .json ---
+function importujRysunki(event) {
+  const plik = event.target.files[0];
+  if (!plik) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wczytane = JSON.parse(e.target.result);
+      if (!Array.isArray(wczytane)) {
+        alert('Plik ma nieprawidłowy format (oczekiwano tablicy rysunków).');
+        return;
+      }
+      const akcja = rysunki.length > 0
+        ? confirm('Masz już ' + rysunki.length + ' rysunków. Kliknij OK aby DODAĆ wczytane do istniejących, Anuluj aby ZASTĄPIĆ wszystkie nowymi.')
+        : true;
+      if (akcja) {
+        // Dodaj
+        rysunki = rysunki.concat(wczytane);
+      } else {
+        // Zastąp
+        rysunki = wczytane;
+      }
+      zapiszRysunki();
+      przerysujWszystko();
+      alert('Wczytano ' + wczytane.length + ' rysunków.');
+    } catch (err) {
+      alert('Nie udało się wczytać pliku: ' + err.message);
+    }
+  };
+  reader.readAsText(plik);
+  // Reset input żeby można było wczytać ten sam plik ponownie
+  event.target.value = '';
+}
+
+// --- Start: wczytaj zapisane rysunki przy ładowaniu strony ---
+inicjalizujRysunki();
 </script>
 
 </body>
