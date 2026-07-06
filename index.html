@@ -209,7 +209,7 @@ h1{
   margin-top:6px;cursor:pointer;font-size:13.5px;line-height:1.45;color:var(--tekst-2);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
 }
-.karta-szczegoly{margin-top:12px;padding-top:34px;border-top:1px solid rgba(120,90,46,0.22);position:relative}
+.karta-szczegoly{margin-top:12px;padding-top:12px;border-top:1px solid rgba(120,90,46,0.22);position:relative}
 .karta-zamknij{
   position:absolute;top:8px;right:0;width:28px;height:28px;border-radius:50%;
   border:1.5px solid rgba(120,90,46,0.35);background:rgba(0,0,0,0.2);color:var(--tekst);
@@ -553,7 +553,7 @@ body:not(.tryb-admin) .sidebar::after{display:none}
    z bielą hamburgera i plakietki. Ustawiam też jasne kolory tekstu/kart,
    żeby nic nie zostało złote-na-złotym / niewidoczne. */
 body:not(.tryb-admin) .sidebar{
-  background:linear-gradient(180deg,#ffffff 0%,#f4f1ec 100%);
+  background:linear-gradient(180deg,#ede0c4 0%,#e3d3ab 100%);
   border-right:none;
   box-shadow:2px 0 20px rgba(30,20,10,0.18);
 }
@@ -596,6 +596,19 @@ body:not(.tryb-admin) .filtr-btn.aktywny{
   border-color:#c98b3a;
 }
 
+/* Kategorie (nieaktywne/wyłączone) - neonowe litery, żeby dobrze
+   było widać na piaskowym tle nawet gdy przycisk jest "wyłączony". */
+body:not(.tryb-admin) .kat-kw{
+  background:#241a10;border-color:rgba(201,139,58,.55);
+  color:#ffe9a8;opacity:1;
+  text-shadow:0 0 4px #ffd966,0 0 10px #f3b13c,0 0 18px rgba(201,139,58,.85);
+}
+body:not(.tryb-admin) .kat-kw.aktywny{
+  color:#3a2a12;text-shadow:none;
+  background:linear-gradient(180deg,#ffd966,#c98b3a);
+  border-color:#8a5a1e;
+}
+
 /* Biały styl hamburgera jest teraz bazowy (patrz .hamburger wyżej) -
    obowiązuje jednakowo dla gościa i admina, więc osobny override tutaj
    nie jest już potrzebny. */
@@ -628,6 +641,11 @@ body:not(.tryb-admin) .panel-backdrop{
 .topbar-nazwa span{
   font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;
   color:#2b2118;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.topbar-herb{
+  height:36px;width:36px;object-fit:cover;border-radius:6px;
+  margin-right:10px;flex-shrink:0;
+  border:1px solid rgba(43,33,24,0.25);
 }
 body:not(.tryb-admin) .topbar-nazwa{display:flex}
 
@@ -929,6 +947,18 @@ body:not(.tryb-admin) .pin-audio-inner.pin-audio-fala:hover{
   0%{width:100%;height:100%;opacity:0.7}
   100%{width:320%;height:320%;opacity:0}
 }
+/* Fale wokół pinezki na mapie - pokazują się, gdy karta miejsca jest
+   rozwinięta w panelu bocznym (ten sam efekt co przy audio "Fala"). */
+.fala-marker-wrap{background:transparent;border:none}
+.fala-marker{position:relative;width:34px;height:34px}
+.fala-marker::before,.fala-marker::after{
+  content:'';position:absolute;top:50%;left:50%;
+  width:100%;height:100%;border-radius:50%;
+  border:2px solid rgba(224,169,85,0.65);
+  transform:translate(-50%,-50%);
+  animation:audioFala 2.6s ease-out infinite;
+}
+.fala-marker::after{animation-delay:1.3s}
 .karta-badge.saudio{background:linear-gradient(180deg,#8e44c9,#6322a0);border-radius:50%;padding:2px 6px}
 .karta-badge.smiejsce{background:linear-gradient(180deg,#3a5a9c,#243a6c);border-radius:50%;padding:2px 6px}
 .pin-miejsce{background:transparent!important;border:none!important}
@@ -1270,8 +1300,7 @@ body:not(.tryb-admin) .napis-wedrowca{display:inline}
 body.dotyk .info-btn,
 body:not(.tryb-admin) .info-btn{display:flex}
 body.dotyk.tryb-admin .info-btn{right:16px;top:72px}
-body.dotyk:not(.tryb-admin) .info-btn,
-body:not(.tryb-admin) .info-btn{right:16px;top:72px}
+body:not(.tryb-admin) .info-btn{display:none !important}
 
 /* Modal opisu strony (telefon) */
 .opis-strony-modal{
@@ -1592,7 +1621,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">49</span>
+  <span class="lp-liczba" id="lp-liczba">57</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1601,7 +1630,10 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 </div>
 
 <!-- Plakietka z nazwą mapy (tylko widok gościa - biało, rozmyte szkło) -->
-<div class="topbar-nazwa" id="topbarNazwa"><span id="topbarNazwaTekst">Sokolec - stolec</span></div>
+<div class="topbar-nazwa" id="topbarNazwa">
+  <img class="topbar-herb" id="topbarHerb" alt="" src="img/herb.webp" onerror="this.onerror=null;this.src='img/herb.png';this.onerror=function(){this.onerror=null;this.src='img/herb.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
+  <span id="topbarNazwaTekst">Sokolec - stolec</span>
+</div>
 
 <!-- Tło pod wysuniętym panelem -->
 <div class="panel-backdrop" id="panelBackdrop" onclick="zamknijPanel()"></div>
@@ -1808,7 +1840,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <!-- Panel BOGATEGO MIEJSCA (modal) - wszystko naraz, bez instrukcji -->
 <div class="panel-backdrop2" id="panelBackdropMiejsce" onclick="zamknijPanelMiejsce()"></div>
 <div class="panel-modal" id="panelMiejsce">
-  <h2 id="panelMiejsceTytul">🏛️ Edytuj miejsce</h2>
+  <h2 id="panelMiejsceTytul">🏛️ Miejsce na mapie</h2>
 
   <label class="panel-label">Nazwa</label>
   <input type="text" id="mscNazwa" maxlength="80" placeholder="np. Kościół św. Anny">
@@ -1824,7 +1856,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     <div class="rozmiar-opcja" data-foto="brak" onclick="ustawFotoMiejsce('brak')">
       <span class="ikona">🚫</span>Brak
     </div>
-    <div class="rozmiar-opcja wybrany" data-foto="zwykle" onclick="ustawFotoMiejsce('zwykle')">
+    <div class="rozmiar-opcja" data-foto="zwykle" onclick="ustawFotoMiejsce('zwykle')">
       <span class="ikona">🖼️</span>Zwykłe
     </div>
     <div class="rozmiar-opcja" data-foto="panorama" onclick="ustawFotoMiejsce('panorama')">
@@ -1834,10 +1866,10 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
   <label class="panel-label">Audio <span class="opcj">(plik {nazwa}.mp3 w folderze audio/)</span></label>
   <div class="rozmiar-wybor" id="mscMp3Wybor">
-    <div class="rozmiar-opcja" data-mp3="nie" onclick="ustawMp3Miejsce('nie')">
+    <div class="rozmiar-opcja wybrany" data-mp3="nie" onclick="ustawMp3Miejsce('nie')">
       <span class="ikona">🚫</span>Brak
     </div>
-    <div class="rozmiar-opcja wybrany" data-mp3="tak" onclick="ustawMp3Miejsce('tak')">
+    <div class="rozmiar-opcja" data-mp3="tak" onclick="ustawMp3Miejsce('tak')">
       <span class="ikona">🎧</span>Jest nagranie
     </div>
   </div>
@@ -1849,11 +1881,11 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <input type="range" id="mscZasieg" min="10" max="200" step="10" value="50" class="suwak-zasieg" oninput="aktualizujZasiegMiejsce()">
 
   <label class="panel-label">Kategoria <span class="opcj">(wymagana, gdy mapa ma kategorie)</span></label>
-  <select id="mscKat"><option value="">— bez kategorii —</option><option value="k1783358052016">zabytek</option><option value="k1783358645120">dupa</option><option value="k1783358670120">lisć</option></select>
+  <select id="mscKat"><option value="">— bez kategorii —</option></select>
 
   <label class="panel-label">Lokalizacja</label>
   <div class="pozycja-wiersz">
-    <div class="pozycja-tekst" id="mscPozycjaTekst">📌 <b>53.11665, 15.78955</b></div>
+    <div class="pozycja-tekst" id="mscPozycjaTekst">Kliknij miejsce na mapie lub użyj GPS</div>
     <button class="btn-pozycja" onclick="uzyjMojejPozycji('miejsce')">📍 Moja pozycja</button>
   </div>
 
@@ -1891,11 +1923,12 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <label class="panel-label">Autor <span class="opcj">(pokaże się tylko na ekranie intro, pod tytułem)</span></label>
   <input type="text" id="autorInput" maxlength="60" placeholder="np. Piotr · mini-klik.pl">
 
-  <label class="panel-label">Opis strony <span class="opcj">(akapity oddziel pustą linią)</span></label>
-  <textarea id="opisStronyInput" style="min-height:120px" placeholder="Tu napisz o czym jest ta mapa..."></textarea>
+  <label class="panel-label">Herb / logo <span class="opcj">(miniaturka obok nazwy, przy hamburgerze)</span></label>
+  <div class="intro-hint">Dodaj plik <code>img/herb.jpg</code> na serwer obok index.html — herb miasta, wioski,
+    logo strony, cokolwiek. Po wgraniu miniaturka pojawi się sama, obok nazwy mapy, tuż przy hamburgerze.</div>
 
   <label class="panel-label">Ekran intro <span class="opcj">(powitanie przed mapą)</span></label>
-  <button type="button" class="intro-toggle" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WYŁĄCZONE</b></button>
+  <button type="button" class="intro-toggle aktywny" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WŁĄCZONE</b></button>
   <div class="intro-hint">Po włączeniu gość najpierw zobaczy pełny ekran ze zdjęciem
     <code>img/intro.jpg</code>, nazwą mapy i przyciskiem „Zaczynamy".
     Wgraj zdjęcie na serwer obok index.html.</div>
@@ -2012,17 +2045,14 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     <button class="kat-kw aktywny" title="lisć" onclick="przelaczFiltrKat('k1783358670120')">lisć</button></div>
       </div>
 
-      <div id="lista-miejsc"><div class="miejsce-card">
+      <div id="lista-miejsc"><div class="miejsce-card" id="karta-msc-1783359154632">
         <div class="nazwa karta-glowka" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')">
           <span class="karta-badge smiejsce">📍</span>
           <span class="karta-nazwa-tekst">Krynica</span>
           <span class="karta-miniaturka-brak">🖼️</span>
         </div>
-        
-        <div class="karta-szczegoly">
-            <button class="karta-zamknij" title="Zwiń" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')">×</button>
-            <div class="karta-foto" id="karta-foto-msc-1783359154632"><p class="karta-brak">Zdjęcie nie zostało jeszcze wgrane.</p></div><div class="detail-opis"><p>Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.</p></div><button class="karta-audio-btn" onclick="event.stopPropagation();odtworzAudioKlucz('msc-1783359154632')">▶ Odtwórz audio</button><a class="karta-yt-link" href="https://www.youtube.com/watch?v=EkKK4IQakP0" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a>
-          </div><div class="karta-akcje">
+        <div class="karta-podglad-opis" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')">Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.</div>
+        <div class="karta-akcje">
     <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783359154632')">🏷</button>
     <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783359154632')">🛠</button>
     <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783359154632')">🗑</button></div></div></div>
@@ -2168,10 +2198,20 @@ function przelacznikPanelu(){
   h.classList.toggle('open', otwarty);
   b.classList.toggle('open', otwarty);
 }
+function otworzPanel(){
+  document.getElementById('sidebarLewy').classList.add('open');
+  document.getElementById('hamburger').classList.add('open');
+  document.getElementById('panelBackdrop').classList.add('open');
+}
 function zamknijPanel(){
   document.getElementById('sidebarLewy').classList.remove('open');
   document.getElementById('hamburger').classList.remove('open');
   document.getElementById('panelBackdrop').classList.remove('open');
+  if (autoCenterByloAktywnePrzedKlikiem) {
+    autoCenterByloAktywnePrzedKlikiem = false;
+    autoCenterAktywny = true;
+    aktualizujPrzyciskCenter();
+  }
 }
 // U gościa backdrop pod szufladą ma pointer-events:none (żeby dało się
 // przeciągać mapę pod otwartym panelem), więc klik w mapę już nie zamyka
@@ -2194,8 +2234,24 @@ let userPozycja = null;
 let watchId = null;
 // auto-center: mapa podąża za userem; wyłącza się gdy przeciągnie mapę palcem.
 let autoCenterAktywny = false;
+// pamięta, czy auto-center było aktywne zanim kliknięto miejsce w panelu -
+// żeby wznowić śledzenie dopiero po zamknięciu panelu, a nie od razu.
+let autoCenterByloAktywnePrzedKlikiem = false;
 // flaga "mapa sama się przesuwa" - by drag programowy nie wyłączał auto-center.
 let mapaProgramowoPrzesuwana = false;
+
+// Wspólna funkcja: zatrzymuje auto-center (pamiętając, że było aktywne) i
+// płynnie dolatuje mapą do punktu. Używane przy kliku pinezki i przy
+// rozwijaniu karty miejsca w panelu bocznym.
+function centrujNaMiejscu(m) {
+  if (!m || !Array.isArray(m.pozycja)) return;
+  if (autoCenterAktywny) autoCenterByloAktywnePrzedKlikiem = true;
+  autoCenterAktywny = false;
+  aktualizujPrzyciskCenter();
+  mapaProgramowoPrzesuwana = true;
+  mapa.flyTo(m.pozycja, 16, { duration: 1.0 });
+  setTimeout(() => { mapaProgramowoPrzesuwana = false; }, 1100);
+}
 
 const gpsBtn = document.getElementById('gpsBtn');
 const gpsStatus = document.getElementById('gpsStatus');
@@ -4394,10 +4450,38 @@ function zatwierdzMiejsce() {
   ukryjInfo();
 }
 
-// Ikona bogatego miejsca - pinezka z płatkami (tylko wypełnione media)
+// Klik gościa w pinezkę "miejsce" - dolatuje do punktu i rozwija pełny
+// opis w panelu bocznym (bez płatków - to tylko dla admina, do edycji).
+function pokazMiejscePubliczne(klucz) {
+  const m = miejsca.find(x => x.klucz === klucz);
+  if (!m) return;
+  centrujNaMiejscu(m);
+  rozwinieteMiejsca.add(klucz);
+  dodajFaleMapa(m);
+  renderujMiejsca();
+  if (typeof otworzPanel === 'function') otworzPanel();
+  setTimeout(() => {
+    const karta = document.getElementById('karta-' + klucz);
+    if (karta) karta.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+}
+
+// Ikona bogatego miejsca - pinezka z płatkami (tylko admin, do edycji).
+// Gość klika i od razu dostaje pełny podgląd w panelu bocznym.
 function ikonaMiejsce(m) {
   const klucz = m.klucz;
   const px = 34;
+
+  if (!isAdmin) {
+    return L.divIcon({
+      className: 'pin-miejsce',
+      html: `<div style="position:relative;width:${px}px;height:${px}px">
+          <div class="pin-miejsce-inner" style="width:${px}px;height:${px}px"
+               onclick="event.stopPropagation();pokazMiejscePubliczne('${klucz}')">📍</div>
+        </div>`,
+      iconSize: [px, px], iconAnchor: [px/2, px]
+    });
+  }
 
   // Zbierz dostępne płatki
   const platki = [];
@@ -4589,7 +4673,6 @@ var _introWybor = false; // robocza wartość przełącznika (Anuluj = bez zmian
 function otworzPanelTytul() {
   if (typeof zamknijPanel === 'function') zamknijPanel();
   document.getElementById('tytulInput').value = tytulStrony || '';
-  document.getElementById('opisStronyInput').value = opisStrony || '';
   document.getElementById('autorInput').value = autorStrony || '';
   _introWybor = introStrony === true;
   ustawIntroToggleUI();
@@ -4602,7 +4685,6 @@ function zamknijPanelTytul() {
 }
 function zatwierdzTytul() {
   tytulStrony = document.getElementById('tytulInput').value.trim();
-  opisStrony = document.getElementById('opisStronyInput').value.trim();
   autorStrony = document.getElementById('autorInput').value.trim();
   introStrony = _introWybor === true; // przełącznik liczy się dopiero po Zatwierdź
   zapiszStrone();
@@ -4925,10 +5007,31 @@ function usunZListy(klucz) {
 // i opis pod spodem. Ten sam widok u admina i u gościa.
 // ============================================================
 let rozwinieteMiejsca = new Set(); // klucze aktualnie rozwiniętych kart
+let faleMarkery = {};              // klucz -> L.marker (fale wokół rozwiniętego miejsca)
+
+function dodajFaleMapa(m) {
+  if (!m || faleMarkery[m.klucz]) return;
+  const icon = L.divIcon({
+    className: 'fala-marker-wrap',
+    html: `<div class="fala-marker"></div>`,
+    iconSize: [34, 34], iconAnchor: [17, 17]
+  });
+  faleMarkery[m.klucz] = L.marker(m.pozycja, { icon, interactive: false, zIndexOffset: -100 }).addTo(mapa);
+}
+function usunFaleMapa(klucz) {
+  if (faleMarkery[klucz]) { mapa.removeLayer(faleMarkery[klucz]); delete faleMarkery[klucz]; }
+}
 
 function toggleRozwinMiejsce(klucz) {
-  if (rozwinieteMiejsca.has(klucz)) rozwinieteMiejsca.delete(klucz);
-  else rozwinieteMiejsca.add(klucz);
+  if (rozwinieteMiejsca.has(klucz)) {
+    rozwinieteMiejsca.delete(klucz);
+    usunFaleMapa(klucz);
+  } else {
+    const m = miejsca.find(x => x.klucz === klucz);
+    rozwinieteMiejsca.add(klucz);
+    dodajFaleMapa(m);
+    centrujNaMiejscu(m);
+  }
   renderujMiejsca();
 }
 
@@ -4954,6 +5057,9 @@ function trescMiejsceSzczegoly(m) {
   const ytId = m.link ? youtubeId(m.link) : null;
   if (ytId) {
     html += `<a class="karta-yt-link" href="${escapeHTML(m.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a>`;
+  }
+  if (m.pozycja) {
+    html += `<button class="route-btn route-btn-mapy" style="display:block;width:100%;margin-top:4px" onclick="event.stopPropagation();otworzWMapach('${m.klucz}')">🧭 Prowadź do miejsca</button>`;
   }
   return html;
 }
@@ -5073,6 +5179,7 @@ function renderujMiejsca() {
 
       const card = document.createElement('div');
       card.className = 'miejsce-card';
+      card.id = 'karta-' + m.klucz;
 
       const maZdjecie = m.fotoTyp && m.fotoTyp !== 'brak';
       const miniaturkaHTML = maZdjecie
@@ -5090,7 +5197,6 @@ function renderujMiejsca() {
         </div>
         ${!rozwiniete ? `<div class="karta-podglad-opis" onclick="event.stopPropagation();toggleRozwinMiejsce('${m.klucz}')">${opisSkrot}</div>` : ''}
         ${rozwiniete ? `<div class="karta-szczegoly">
-            <button class="karta-zamknij" title="Zwiń" onclick="event.stopPropagation();toggleRozwinMiejsce('${m.klucz}')">×</button>
             ${trescMiejsceSzczegoly(m)}
           </div>` : ''}`;
       card.onclick = () => {
