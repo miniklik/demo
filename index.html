@@ -644,7 +644,7 @@ body:not(.tryb-admin) .panel-backdrop{
 }
 .topbar-herb{
   height:36px;width:36px;object-fit:cover;border-radius:6px;
-  margin-right:10px;flex-shrink:0;
+  margin-left:10px;flex-shrink:0;
   border:1px solid rgba(43,33,24,0.25);
 }
 body:not(.tryb-admin) .topbar-nazwa{display:flex}
@@ -1621,7 +1621,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">57</span>
+  <span class="lp-liczba" id="lp-liczba">58</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1631,8 +1631,8 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 <!-- Plakietka z nazwą mapy (tylko widok gościa - biało, rozmyte szkło) -->
 <div class="topbar-nazwa" id="topbarNazwa">
-  <img class="topbar-herb" id="topbarHerb" alt="" src="img/herb.webp" onerror="this.onerror=null;this.src='img/herb.png';this.onerror=function(){this.onerror=null;this.src='img/herb.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
   <span id="topbarNazwaTekst">Sokolec - stolec</span>
+  <img class="topbar-herb" id="topbarHerb" alt="" src="img/herb.webp" onerror="this.onerror=null;this.src='img/herb.png';this.onerror=function(){this.onerror=null;this.src='img/herb.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
 </div>
 
 <!-- Tło pod wysuniętym panelem -->
@@ -1928,7 +1928,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     logo strony, cokolwiek. Po wgraniu miniaturka pojawi się sama, obok nazwy mapy, tuż przy hamburgerze.</div>
 
   <label class="panel-label">Ekran intro <span class="opcj">(powitanie przed mapą)</span></label>
-  <button type="button" class="intro-toggle aktywny" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WŁĄCZONE</b></button>
+  <button type="button" class="intro-toggle" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WYŁĄCZONE</b></button>
   <div class="intro-hint">Po włączeniu gość najpierw zobaczy pełny ekran ze zdjęciem
     <code>img/intro.jpg</code>, nazwą mapy i przyciskiem „Zaczynamy".
     Wgraj zdjęcie na serwer obok index.html.</div>
@@ -2055,7 +2055,17 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
         <div class="karta-akcje">
     <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783359154632')">🏷</button>
     <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783359154632')">🛠</button>
-    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783359154632')">🗑</button></div></div></div>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783359154632')">🗑</button></div></div><div class="miejsce-card" id="karta-msc-1783379723883">
+        <div class="nazwa karta-glowka" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783379723883')">
+          <span class="karta-badge smiejsce">📍</span>
+          <span class="karta-nazwa-tekst">bagno</span>
+          <span class="karta-miniaturka-brak">🖼️</span>
+        </div>
+        <div class="karta-podglad-opis" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783379723883')">Brak opisu.</div>
+        <div class="karta-akcje">
+    <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783379723883')">🏷</button>
+    <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783379723883')">🛠</button>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783379723883')">🗑</button></div></div></div>
     </aside>
   </div>
 
@@ -2094,7 +2104,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 
 <!-- Osadzone miejsca (wypełniane przy "Zapisz HTML"). Pusta tablica = brak. -->
-<script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]}]</script>
+<script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]}]</script>
 <script id="daneStrony" type="application/json">{"tytul":"Sokolec - stolec","opis":"zapomniane źródła","autor":"mini - klik.pl","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
 
 <script>
