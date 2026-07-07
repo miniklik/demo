@@ -205,18 +205,14 @@ h1{
   border:1px solid rgba(120,90,46,0.3);background:rgba(0,0,0,0.15);opacity:0.7;
 }
 .karta-glowka{display:flex;align-items:center;gap:8px;cursor:pointer}
+.karta-podglad-wrap{cursor:pointer;overflow:hidden}
+.karta-podglad-wrap .karta-glowka{margin-bottom:2px}
 .karta-podglad-opis{
-  margin-top:6px;cursor:pointer;font-size:13.5px;line-height:1.45;color:var(--tekst-2);
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
-}
-/* Wariant ze zdjęciem: zdjęcie oplecione tekstem (2 linijki), 3. linijka pełna szerokość */
-.karta-podglad-opis.ma-foto{
-  display:block;-webkit-box-orient:unset;-webkit-line-clamp:unset;
-  font-size:14px;line-height:24px;max-height:72px;overflow:hidden;
+  font-size:13.5px;line-height:1.5;color:var(--tekst-2);
 }
 .karta-podglad-miniaturka{
-  float:right;width:48px;height:48px;border-radius:8px;object-fit:cover;
-  margin:0 0 6px 10px;border:1px solid rgba(120,90,46,0.35);background:rgba(0,0,0,0.2);
+  float:left;width:72px;height:72px;border-radius:10px;object-fit:cover;
+  margin:0 12px 6px 0;border:1px solid rgba(120,90,46,0.35);background:rgba(0,0,0,0.2);
 }
 body:not(.tryb-admin) .karta-podglad-miniaturka{border-color:rgba(122,90,46,0.3);background:rgba(122,90,46,0.08)}
 .karta-szczegoly{margin-top:12px;padding-top:12px;border-top:1px solid rgba(120,90,46,0.22);position:relative}
@@ -1687,7 +1683,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">66</span>
+  <span class="lp-liczba" id="lp-liczba">67</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -2020,7 +2016,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     logo strony, cokolwiek. Po wgraniu miniaturka pojawi się sama, obok nazwy mapy, tuż przy hamburgerze.</div>
 
   <label class="panel-label">Ekran intro <span class="opcj">(powitanie przed mapą)</span></label>
-  <button type="button" class="intro-toggle aktywny" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WŁĄCZONE</b></button>
+  <button type="button" class="intro-toggle" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WYŁĄCZONE</b></button>
   <div class="intro-hint">Po włączeniu gość najpierw zobaczy pełny ekran ze zdjęciem
     <code>img/intro.jpg</code>, nazwą mapy i przyciskiem „Zaczynamy".
     Wgraj zdjęcie na serwer obok index.html.</div>
@@ -2122,11 +2118,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
       <!-- OPIS MIEJSCOWOŚCI - osobna karta, ZAWSZE pierwsza na liście, bez punktu na mapie -->
       <div id="opisMiejscowosciKarta"><div class="miejsce-card karta-opis-miasta">
       <button class="btn-opis-miasta" onclick="toggleOpisMiejscowosci()">🏘️ Opis miejscowości</button>
-      <div class="karta-szczegoly"><div class="karta-foto" id="karta-foto-opis-miasta" style="display: none;">
-        <img src="img/opis-miejscowosci.webp" onerror="this.onerror=null;this.src='img/opis-miejscowosci.png';this.onerror=function(){this.onerror=null;this.src='img/opis-miejscowosci.webp';this.onerror=function(){this.parentElement.style.display='none';};};" alt="Miasto">
-      </div><div class="detail-opis"><p>zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń" na samym dole.<br>To wszystko trzyma się też przy „Zapisz JSON" / „Zapisz HTML" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.</p></div><a class="karta-yt-link" href="https://www.youtube.com/watch?v=pEEMi2j6lYE" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a>
-        <button class="karta-zwin-dol" onclick="toggleOpisMiejscowosci()"><span class="strzalki">⌃ ⌃ ⌃</span>Zwiń</button>
-      </div>
+      
     </div></div>
 
       <!-- PĘDZEL KATEGORII (admin, komputer) - zaznacz nazwę, a każdy nowo
@@ -2148,28 +2140,24 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
       </div>
 
       <div id="lista-miejsc"><div class="miejsce-card" id="karta-msc-1783359154632">
-        <div class="nazwa karta-glowka" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')">
-          <span class="karta-badge smiejsce">📍</span>
-          <span class="karta-nazwa-tekst">Krynica</span>
-        </div>
-        
-        <div class="karta-szczegoly">
-            <div class="karta-foto" id="karta-foto-msc-1783359154632"><p class="karta-brak">Zdjęcie nie zostało jeszcze wgrane.</p></div><div class="detail-opis"><p>Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.</p></div><button class="karta-audio-btn" onclick="event.stopPropagation();odtworzAudioKlucz('msc-1783359154632')">▶ Odtwórz audio</button><a class="karta-yt-link" href="https://www.youtube.com/watch?v=EkKK4IQakP0" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a><button class="route-btn route-btn-mapy" style="display:block;width:100%;margin-top:4px" onclick="event.stopPropagation();otworzWMapach('msc-1783359154632')">🧭 Prowadź do miejsca</button><button class="karta-zwin-dol" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')" title="Zwiń opis">
-      <span class="strzalki">⌃ ⌃ ⌃</span>Zwiń
-    </button>
+          <div class="karta-podglad-wrap" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')">
+            <img class="karta-podglad-miniaturka" alt="" src="img/2.webp" onerror="this.onerror=null;this.src='img/2.png';this.onerror=function(){this.onerror=null;this.src='img/2.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
+            <div class="nazwa karta-glowka">
+              <span class="karta-badge smiejsce">📍</span>
+              <span class="karta-nazwa-tekst">Krynica</span>
+            </div>
+            <div class="karta-podglad-opis">Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Inn…</div>
           </div><div class="karta-akcje">
     <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783359154632')">🏷</button>
     <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783359154632')">🛠</button>
     <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783359154632')">🗑</button></div></div><div class="miejsce-card" id="karta-msc-1783379723883">
-        <div class="nazwa karta-glowka" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783379723883')">
-          <span class="karta-badge smiejsce">📍</span>
-          <span class="karta-nazwa-tekst">bagno</span>
-        </div>
-        
-        <div class="karta-szczegoly">
-            <div class="karta-foto" id="karta-foto-msc-1783379723883"><p class="karta-brak">Zdjęcie nie zostało jeszcze wgrane.</p></div><p class="karta-brak">Opis tego miejsca nie został jeszcze dodany.</p><button class="karta-audio-btn" onclick="event.stopPropagation();odtworzAudioKlucz('msc-1783379723883')">▶ Odtwórz audio</button><a class="karta-yt-link" href="https://www.youtube.com/watch?v=EkKK4IQakP0" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a><button class="route-btn route-btn-mapy" style="display:block;width:100%;margin-top:4px" onclick="event.stopPropagation();otworzWMapach('msc-1783379723883')">🧭 Prowadź do miejsca</button><button class="karta-zwin-dol" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783379723883')" title="Zwiń opis">
-      <span class="strzalki">⌃ ⌃ ⌃</span>Zwiń
-    </button>
+          <div class="karta-podglad-wrap" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783379723883')">
+            <img class="karta-podglad-miniaturka" alt="" src="img/3.webp" onerror="this.onerror=null;this.src='img/3.png';this.onerror=function(){this.onerror=null;this.src='img/3.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
+            <div class="nazwa karta-glowka">
+              <span class="karta-badge smiejsce">📍</span>
+              <span class="karta-nazwa-tekst">bagno</span>
+            </div>
+            <div class="karta-podglad-opis">Brak opisu.</div>
           </div><div class="karta-akcje">
     <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783379723883')">🏷</button>
     <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783379723883')">🛠</button>
@@ -5349,17 +5337,31 @@ function renderujMiejsca() {
              onerror="this.onerror=null;this.src='img/${m.plik}.png';this.onerror=function(){this.onerror=null;this.src='img/${m.plik}.webp';this.onerror=function(){this.style.display='none';};};">`
         : '';
       const rozwiniete = rozwinieteMiejsca.has(m.klucz);
-      const opisSkrot = (m.opis && m.opis.trim()) ? escapeHTML(m.opis.trim()) : 'Brak opisu.';
+      const opisPelny = (m.opis && m.opis.trim()) ? m.opis.trim() : 'Brak opisu.';
+      const opisSkrot = escapeHTML(opisPelny.length > 220 ? opisPelny.slice(0, 220).trim() + '…' : opisPelny);
 
-      card.innerHTML = `
-        <div class="nazwa karta-glowka" onclick="event.stopPropagation();toggleRozwinMiejsce('${m.klucz}')">
-          <span class="karta-badge smiejsce">📍</span>
-          <span class="karta-nazwa-tekst">${escapeHTML(m.nazwa)}</span>
-        </div>
-        ${!rozwiniete ? `<div class="karta-podglad-opis${maZdjecie ? ' ma-foto' : ''}" onclick="event.stopPropagation();toggleRozwinMiejsce('${m.klucz}')">${miniaturkaFloatHTML}${opisSkrot}</div>` : ''}
-        ${rozwiniete ? `<div class="karta-szczegoly">
+      if (!rozwiniete) {
+        // ZWINIĘTA: zdjęcie po lewej (float), tytuł + opis opływają je razem
+        card.innerHTML = `
+          <div class="karta-podglad-wrap" onclick="event.stopPropagation();toggleRozwinMiejsce('${m.klucz}')">
+            ${miniaturkaFloatHTML}
+            <div class="nazwa karta-glowka">
+              <span class="karta-badge smiejsce">📍</span>
+              <span class="karta-nazwa-tekst">${escapeHTML(m.nazwa)}</span>
+            </div>
+            <div class="karta-podglad-opis">${opisSkrot}</div>
+          </div>`;
+      } else {
+        // ROZWINIĘTA: zwykły nagłówek + pełne szczegóły (zdjęcie w pełnym rozmiarze niżej)
+        card.innerHTML = `
+          <div class="nazwa karta-glowka" onclick="event.stopPropagation();toggleRozwinMiejsce('${m.klucz}')">
+            <span class="karta-badge smiejsce">📍</span>
+            <span class="karta-nazwa-tekst">${escapeHTML(m.nazwa)}</span>
+          </div>
+          <div class="karta-szczegoly">
             ${trescMiejsceSzczegoly(m)}
-          </div>` : ''}`;
+          </div>`;
+      }
       card.onclick = () => {
         autoCenterAktywny = false;
         aktualizujPrzyciskCenter();
