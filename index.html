@@ -1732,8 +1732,8 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="topbar-nazwa" id="topbarNazwa">
   <span id="topbarNazwaTekst">Miasto - SDL</span>
 </div>
-<div class="herb-brak" id="topbarHerb">brak pliku<br>img/herb.jpg<br>(.png / .webp)</div>
-<img class="herb-rog" id="topbarHerbImg" alt="Herb" style="display:none" src="img/herb.webp">
+<div class="herb-brak" id="topbarHerb" style="display: none;">brak pliku<br>img/herb.jpg<br>(.png / .webp)</div>
+<img class="herb-rog" id="topbarHerbImg" alt="Herb" style="" src="img/herb.png">
 <script>
 (function wczytajHerb(){
   const img = document.getElementById('topbarHerbImg');
@@ -2185,7 +2185,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
       <div id="lista-miejsc"><div class="miejsce-card" id="karta-msc-1783359154632">
           <div class="karta-podglad-wrap" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')">
-            <img class="karta-podglad-miniaturka" alt="" src="img/2.webp" onerror="this.onerror=null;this.src='img/2.png';this.onerror=function(){this.onerror=null;this.src='img/2.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
+            <img class="karta-podglad-miniaturka" alt="" src="img/2.jpg" onerror="this.onerror=null;this.src='img/2.png';this.onerror=function(){this.onerror=null;this.src='img/2.webp';this.onerror=function(){this.style.display='none';};};">
             <div class="nazwa karta-glowka">
               <span class="karta-badge smiejsce">📍</span>
               <span class="karta-nazwa-tekst">Krynica</span>
@@ -5470,6 +5470,7 @@ renderujStrone();
 warstwaRysunkow.addTo(mapa);
 przerysujRysunki();
 </script>
+
 
 
 
