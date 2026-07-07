@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
-<title>Miasto - Siedliszcze</title>
+<title>Miasto</title>
 
 <!-- Leaflet (mapa) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -239,6 +239,18 @@ h1{
 }
 .karta-audio-btn:hover{filter:brightness(1.1)}
 .karta-brak{font-size:13px;color:var(--tekst-2);font-style:italic;padding:2px 0}
+.karta-zwin-dol{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  width:100%;margin-top:14px;padding-top:10px;cursor:pointer;
+  border:none;border-top:1px dashed rgba(224,169,85,0.3);background:none;
+  color:var(--tekst-2);font-family:'EB Garamond',serif;font-size:11px;
+  letter-spacing:1px;line-height:1;transition:color 0.15s;
+}
+.karta-zwin-dol .strzalki{font-size:9px;letter-spacing:2px;color:var(--zloto);line-height:1}
+.karta-zwin-dol:hover{color:var(--zloto-2)}
+.karta-zwin-dol:hover .strzalki{color:var(--zloto-2)}
+body:not(.tryb-admin) .karta-zwin-dol{border-top-color:rgba(122,90,46,0.25);color:#6b5636}
+body:not(.tryb-admin) .karta-zwin-dol:hover{color:#3d2c18}
 
 /* ============================================================
    GPS - nawigacja (śledzenie na żywo) + środkowanie
@@ -642,7 +654,7 @@ body:not(.tryb-admin) .panel-backdrop{
   background:none;
 }
 .topbar-nazwa span{
-  font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;
+  font-family:'Cormorant Garamond',serif;font-weight:600;font-size:44px;
   color:#2b2118;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   text-shadow:0 1px 3px rgba(255,255,255,0.85),0 0 10px rgba(255,255,255,0.6);
 }
@@ -665,6 +677,21 @@ body:not(.tryb-admin) .herb-rog{display:block}
 }
 body:not(.tryb-admin) .herb-brak{display:block}
 body:not(.tryb-admin) .topbar-nazwa{display:flex}
+
+/* U turysty: przyciski nawigacji (🧭 🛰️ ⊙) przenosimy z góry-środka
+   na prawą stronę, pionowo w dół, pod herbem (który jest top:16px,
+   wysokość 100px -> dolna krawędź ~116px). Wyśrodkowane pod herbem
+   (herb 100px szeroki, przycisk 50px -> przesunięcie 25px). */
+body:not(.tryb-admin) .gps-btn,
+body:not(.tryb-admin) .mapa-btn,
+body:not(.tryb-admin) .center-btn{
+  position:fixed;
+  left:auto;right:41px;
+  z-index:1140;
+}
+body:not(.tryb-admin) .gps-btn{ top:132px; }
+body:not(.tryb-admin) .mapa-btn{ top:196px; }
+body:not(.tryb-admin) .center-btn{ top:280px; } /* trzeci przycisk - jeszcze niżej */
 
 /* ============================================================
    PASEK EDYTORA (widoczny tylko w trybie admin ?admin=1)
@@ -1537,6 +1564,18 @@ body:not(.tryb-admin) #katPedzle{display:none !important}
 /* Warstwy gościa (pod rzędem YT/Foto/Audio/Mix) */
 .filtry-kat{display:none;flex-direction:column;gap:8px;margin-top:8px}
 .filtry-kat.ma{display:flex}
+
+/* KARTA "OPIS MIEJSCOWOŚCI" - stały wpis nad listą miejsc, bez punktu na mapie */
+.karta-opis-miasta{margin-bottom:12px}
+.btn-opis-miasta{
+  display:block;width:100%;padding:13px 16px;border-radius:6px;cursor:pointer;
+  border:1.5px solid rgba(120,200,110,.55);background:linear-gradient(180deg,#4f9a3c,#2c5a20);
+  font-family:'EB Garamond',serif;font-weight:600;font-size:16px;color:#eafbe0;
+  text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent;
+}
+.btn-opis-miasta:hover{filter:brightness(1.08)}
+.btn-opis-miasta:active{transform:translateY(1px) scale(.99)}
+body:not(.tryb-admin) .btn-opis-miasta{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.25)}
 /* Panel zarządzania kategoriami */
 .kat-wiersz{display:flex;align-items:center;gap:10px;padding:8px 10px;
   border:1px solid rgba(243,205,130,.25);border-radius:10px;
@@ -1638,7 +1677,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">64</span>
+  <span class="lp-liczba" id="lp-liczba">65</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1648,7 +1687,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 <!-- Plakietka z nazwą mapy (tylko widok gościa - biało, rozmyte szkło) -->
 <div class="topbar-nazwa" id="topbarNazwa">
-  <span id="topbarNazwaTekst">Miasto - Siedliszcze</span>
+  <span id="topbarNazwaTekst">Miasto</span>
 </div>
 <div class="herb-brak" id="topbarHerb">brak pliku<br>img/herb.jpg<br>(.png / .webp)</div>
 <img class="herb-rog" id="topbarHerbImg" alt="Herb" style="display:none" src="img/herb.webp">
@@ -1676,8 +1715,8 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="opis-strony-modal" id="opisStronyModal">
   <div class="opis-strony-box">
     <button class="opis-strony-zamknij" onclick="zamknijOpisStrony()" aria-label="Zamknij">×</button>
-    <h2 id="opisStronyModalTytul">Miasto - Siedliszcze</h2>
-    <div id="opisStronyModalTresc"><div class="detail-opis"><p>zapomniane źródła</p></div></div>
+    <h2 id="opisStronyModalTytul">Miasto</h2>
+    <div id="opisStronyModalTresc"><div class="detail-opis"><p>zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń" na samym dole.<br>To wszystko trzyma się też przy „Zapisz JSON" / „Zapisz HTML" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.</p></div></div>
   </div>
 </div>
 
@@ -1956,12 +1995,22 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <label class="panel-label">Autor <span class="opcj">(pokaże się tylko na ekranie intro, pod tytułem)</span></label>
   <input type="text" id="autorInput" maxlength="60" placeholder="np. Piotr · mini-klik.pl">
 
+  <label class="panel-label">Opis miejscowości <span class="opcj">(osobna karta nad listą miejsc + w ℹ️ na telefonie)</span></label>
+  <textarea id="opisMiejscowosciInput" maxlength="4000" placeholder="np. Krótka historia miejscowości, ciekawostki, co warto zobaczyć..." style="height: 125px;"></textarea>
+
+  <label class="panel-label">Zdjęcie do opisu <span class="opcj">(opcjonalnie)</span></label>
+  <div class="intro-hint">Dodaj plik <code>img/opis-miejscowosci.jpg</code> na serwer obok index.html
+    (.png / .webp też działa) — pojawi się nad opisem, po rozwinięciu zielonej karty.</div>
+
+  <label class="panel-label">Film YouTube do opisu <span class="opcj">(opcjonalnie)</span></label>
+  <input type="url" id="opisYTInput" maxlength="300" placeholder="https://youtube.com/watch?v=...">
+
   <label class="panel-label">Herb / logo <span class="opcj">(miniaturka obok nazwy, przy hamburgerze)</span></label>
   <div class="intro-hint">Dodaj plik <code>img/herb.jpg</code> na serwer obok index.html — herb miasta, wioski,
     logo strony, cokolwiek. Po wgraniu miniaturka pojawi się sama, obok nazwy mapy, tuż przy hamburgerze.</div>
 
   <label class="panel-label">Ekran intro <span class="opcj">(powitanie przed mapą)</span></label>
-  <button type="button" class="intro-toggle" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WYŁĄCZONE</b></button>
+  <button type="button" class="intro-toggle aktywny" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WŁĄCZONE</b></button>
   <div class="intro-hint">Po włączeniu gość najpierw zobaczy pełny ekran ze zdjęciem
     <code>img/intro.jpg</code>, nazwą mapy i przyciskiem „Zaczynamy".
     Wgraj zdjęcie na serwer obok index.html.</div>
@@ -1990,7 +2039,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
   <header>
     <div class="ornament">✦ ✦ ✦</div>
-    <h1>Miasto - Siedliszcze</h1>
+    <h1>Miasto</h1>
     <div class="podtytul">mapa miejsc</div>
   </header>
 
@@ -2078,6 +2127,12 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     <button class="kat-kw aktywny" title="lisć" onclick="przelaczFiltrKat('k1783358670120')">lisć</button></div>
       </div>
 
+      <!-- OPIS MIEJSCOWOŚCI - osobna karta, zawsze na górze listy, bez punktu na mapie -->
+      <div id="opisMiejscowosciKarta"><div class="miejsce-card karta-opis-miasta">
+      <button class="btn-opis-miasta" onclick="toggleOpisMiejscowosci()">🏘️ Opis miejscowości</button>
+      
+    </div></div>
+
       <div id="lista-miejsc"><div class="miejsce-card" id="karta-msc-1783359154632">
         <div class="nazwa karta-glowka" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783359154632')">
           <span class="karta-badge smiejsce">📍</span>
@@ -2113,7 +2168,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   </div>
 
   <!-- OPIS STRONY pod mapą (komputer). Na telefonie ukryty - jest w prawym hamburgerze. -->
-  <div id="opisStronyPodMapa"><div class="detail-opis"><p>zapomniane źródła</p></div></div>
+  <div id="opisStronyPodMapa"><div class="detail-opis"><p>zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń" na samym dole.<br>To wszystko trzyma się też przy „Zapisz JSON" / „Zapisz HTML" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.</p></div></div>
 
   <footer>Skarbiec · fundament wyglądu</footer>
 </div>
@@ -2138,7 +2193,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 <!-- Osadzone miejsca (wypełniane przy "Zapisz HTML"). Pusta tablica = brak. -->
 <script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]}]</script>
-<script id="daneStrony" type="application/json">{"tytul":"Miasto - Siedliszcze","opis":"zapomniane źródła","autor":"mini - klik.pl","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
+<script id="daneStrony" type="application/json">{"tytul":"Miasto","opis":"zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń\" na samym dole.\nTo wszystko trzyma się też przy „Zapisz JSON\" / „Zapisz HTML\" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.","opisYT":"https://www.youtube.com/watch?v=pEEMi2j6lYE","autor":"mini","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
 
 <script>
 // ============================================================
@@ -2521,6 +2576,7 @@ let miejsca = [];
 let markery = [];
 let tytulStrony = '';
 let opisStrony = '';
+let opisYT = '';       // opcjonalny link YouTube przy opisie miejscowości
 let autorStrony = '';  // autor mapy - widoczny TYLKO na ekranie intro, pod tytułem
 let introStrony = false; // ekran intro przed mapą (przełącznik w "Tytuł i opis")
 let kategorieMapy = [];   // kategorie miejsc: [{id, nazwa, ikona}]
@@ -2549,12 +2605,12 @@ function wczytajStrone() {
   // UWAGA: localStorage tylko dla admina - wędrowiec zawsze z osadzonych danych
   try {
     const raw = isAdmin ? localStorage.getItem(KEY_STRONA) : null;
-    if (raw) { const s = JSON.parse(raw); tytulStrony = s.tytul||''; opisStrony = s.opis||''; autorStrony = s.autor||''; introStrony = s.intro === true; kategorieMapy = Array.isArray(s.kategorie) ? s.kategorie : []; }
+    if (raw) { const s = JSON.parse(raw); tytulStrony = s.tytul||''; opisStrony = s.opis||''; opisYT = s.opisYT||''; autorStrony = s.autor||''; introStrony = s.intro === true; kategorieMapy = Array.isArray(s.kategorie) ? s.kategorie : []; }
     else {
       const el = document.getElementById('daneStrony');
       if (el && el.textContent.trim()) {
         const s = JSON.parse(el.textContent);
-        tytulStrony = s.tytul||''; opisStrony = s.opis||''; autorStrony = s.autor||''; introStrony = s.intro === true;
+        tytulStrony = s.tytul||''; opisStrony = s.opis||''; opisYT = s.opisYT||''; autorStrony = s.autor||''; introStrony = s.intro === true;
         kategorieMapy = Array.isArray(s.kategorie) ? s.kategorie : [];
       }
     }
@@ -2564,7 +2620,7 @@ function zapiszMiejsca() {
   try { localStorage.setItem(KEY_MIEJSCA, JSON.stringify(miejsca)); } catch(e) {}
 }
 function zapiszStrone() {
-  try { localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:tytulStrony, opis:opisStrony, autor:autorStrony, intro:introStrony === true, kategorie:kategorieMapy})); } catch(e) {}
+  try { localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:tytulStrony, opis:opisStrony, opisYT:opisYT, autor:autorStrony, intro:introStrony === true, kategorie:kategorieMapy})); } catch(e) {}
 }
 
 // ============================================================
@@ -2608,6 +2664,7 @@ async function zapiszJSON() {
     autorStrony: autorStrony || '',
     kategorieMapy: kategorieMapy,
     opisStrony: opisStrony || '',
+    opisYT: opisYT || '',
     miejsca: Array.isArray(miejsca) ? miejsca : []
   };
 
@@ -2656,8 +2713,8 @@ function _zastosujWczytaneDane(dane) {
   // Jeśli mapa jest pusta - po prostu wczytaj (bez pytania o łączenie)
   if (miejsca.length === 0) {
     localStorage.setItem(KEY_MIEJSCA, JSON.stringify(wczMiejsca));
-    if (dane.tytulStrony || dane.opisStrony || dane.autorStrony || dane.introStrony || (Array.isArray(dane.kategorieMapy) && dane.kategorieMapy.length)) {
-      localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:dane.tytulStrony||'', opis:dane.opisStrony||'', autor:dane.autorStrony||'', intro:dane.introStrony === true, kategorie:Array.isArray(dane.kategorieMapy) ? dane.kategorieMapy : []}));
+    if (dane.tytulStrony || dane.opisStrony || dane.opisYT || dane.autorStrony || dane.introStrony || (Array.isArray(dane.kategorieMapy) && dane.kategorieMapy.length)) {
+      localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:dane.tytulStrony||'', opis:dane.opisStrony||'', opisYT:dane.opisYT||'', autor:dane.autorStrony||'', intro:dane.introStrony === true, kategorie:Array.isArray(dane.kategorieMapy) ? dane.kategorieMapy : []}));
     }
     alert('✓ Wczytano ' + wczMiejsca.length + ' miejsc.\n\nStrona za chwilę się odświeży.');
     location.reload();
@@ -2702,10 +2759,10 @@ function _zastosujWczytaneDane(dane) {
 
   localStorage.setItem(KEY_MIEJSCA, JSON.stringify(wynik));
   // Nowa mapa: bierz tytuł/opis z wczytanych danych. Połącz: ustaw tylko jeśli obecny pusty.
-  if (!polacz && (dane.tytulStrony || dane.opisStrony || dane.autorStrony || dane.introStrony || (Array.isArray(dane.kategorieMapy) && dane.kategorieMapy.length))) {
-    localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:dane.tytulStrony||'', opis:dane.opisStrony||'', autor:dane.autorStrony||'', intro:dane.introStrony === true, kategorie:Array.isArray(dane.kategorieMapy) ? dane.kategorieMapy : []}));
-  } else if (polacz && !tytulStrony && !opisStrony && (dane.tytulStrony || dane.opisStrony || dane.autorStrony || dane.introStrony || (Array.isArray(dane.kategorieMapy) && dane.kategorieMapy.length))) {
-    localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:dane.tytulStrony||'', opis:dane.opisStrony||'', autor:dane.autorStrony||'', intro:dane.introStrony === true, kategorie:Array.isArray(dane.kategorieMapy) ? dane.kategorieMapy : []}));
+  if (!polacz && (dane.tytulStrony || dane.opisStrony || dane.opisYT || dane.autorStrony || dane.introStrony || (Array.isArray(dane.kategorieMapy) && dane.kategorieMapy.length))) {
+    localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:dane.tytulStrony||'', opis:dane.opisStrony||'', opisYT:dane.opisYT||'', autor:dane.autorStrony||'', intro:dane.introStrony === true, kategorie:Array.isArray(dane.kategorieMapy) ? dane.kategorieMapy : []}));
+  } else if (polacz && !tytulStrony && !opisStrony && (dane.tytulStrony || dane.opisStrony || dane.opisYT || dane.autorStrony || dane.introStrony || (Array.isArray(dane.kategorieMapy) && dane.kategorieMapy.length))) {
+    localStorage.setItem(KEY_STRONA, JSON.stringify({tytul:dane.tytulStrony||'', opis:dane.opisStrony||'', opisYT:dane.opisYT||'', autor:dane.autorStrony||'', intro:dane.introStrony === true, kategorie:Array.isArray(dane.kategorieMapy) ? dane.kategorieMapy : []}));
   }
   alert(komunikat + '\n\nStrona za chwilę się odświeży.');
   location.reload();
@@ -2860,7 +2917,7 @@ function zapiszHTML() {
       html = html.replace(/<script id="daneMiejsc"[^>]*>[\s\S]*?<\/script>/, () => blokDanych);
     }
     // Ten sam pancerz co wyżej - tytuł/opis strony też mogą mieć "<" i "$".
-    const jsonStrony = JSON.stringify({tytul:tytulStrony||'', opis:opisStrony||'', autor:autorStrony||'', intro:introStrony === true, kategorie:kategorieMapy}).replace(/</g, '\\u003c');
+    const jsonStrony = JSON.stringify({tytul:tytulStrony||'', opis:opisStrony||'', opisYT:opisYT||'', autor:autorStrony||'', intro:introStrony === true, kategorie:kategorieMapy}).replace(/</g, '\\u003c');
     const blokStrony = `<script id="daneStrony" type="application/json">${jsonStrony}<\/script>`;
     if (/<script id="daneStrony"[^>]*>[\s\S]*?<\/script>/.test(html)) {
       html = html.replace(/<script id="daneStrony"[^>]*>[\s\S]*?<\/script>/, () => blokStrony);
@@ -4717,6 +4774,8 @@ function otworzPanelTytul() {
   if (typeof zamknijPanel === 'function') zamknijPanel();
   document.getElementById('tytulInput').value = tytulStrony || '';
   document.getElementById('autorInput').value = autorStrony || '';
+  document.getElementById('opisMiejscowosciInput').value = opisStrony || '';
+  document.getElementById('opisYTInput').value = opisYT || '';
   _introWybor = introStrony === true;
   ustawIntroToggleUI();
   document.getElementById('panelBackdropTytul').classList.add('visible');
@@ -4729,6 +4788,8 @@ function zamknijPanelTytul() {
 function zatwierdzTytul() {
   tytulStrony = document.getElementById('tytulInput').value.trim();
   autorStrony = document.getElementById('autorInput').value.trim();
+  opisStrony = document.getElementById('opisMiejscowosciInput').value.trim();
+  opisYT = document.getElementById('opisYTInput').value.trim();
   introStrony = _introWybor === true; // przełącznik liczy się dopiero po Zatwierdź
   zapiszStrone();
   renderujStrone();
@@ -4763,12 +4824,47 @@ function renderujStrone() {
 
   // Tytuł w <title> karty
   if (tytulStrony) document.title = tytulStrony;
+
+  // Zielona karta "Opis miejscowości" nad listą miejsc
+  renderujOpisMiejscowosciKarte();
 }
 function pokazOpisStrony() {
   document.getElementById('opisStronyModal').classList.add('visible');
 }
 function zamknijOpisStrony() {
   document.getElementById('opisStronyModal').classList.remove('visible');
+}
+
+// Zielona karta "Opis miejscowości" nad listą miejsc (bez punktu na mapie)
+let opisMiejscowosciRozwiniety = false;
+function toggleOpisMiejscowosci() {
+  opisMiejscowosciRozwiniety = !opisMiejscowosciRozwiniety;
+  renderujOpisMiejscowosciKarte();
+}
+function renderujOpisMiejscowosciKarte() {
+  const el = document.getElementById('opisMiejscowosciKarta');
+  if (!el) return;
+  if (!opisStrony || !opisStrony.trim()) { el.innerHTML = ''; return; }
+  let szczegoly = '';
+  if (opisMiejscowosciRozwiniety) {
+    szczegoly += `<div class="karta-foto" id="karta-foto-opis-miasta">
+        <img src="img/opis-miejscowosci.jpg"
+          onerror="this.onerror=null;this.src='img/opis-miejscowosci.png';this.onerror=function(){this.onerror=null;this.src='img/opis-miejscowosci.webp';this.onerror=function(){this.parentElement.style.display='none';};};"
+          alt="${escapeHTML(tytulStrony || 'Miejscowość')}">
+      </div>`;
+    szczegoly += opisAkapity(opisStrony);
+    const ytId = opisYT ? youtubeId(opisYT) : null;
+    if (ytId) {
+      szczegoly += `<a class="karta-yt-link" href="${escapeHTML(opisYT)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a>`;
+    }
+    szczegoly = `<div class="karta-szczegoly">${szczegoly}
+        <button class="karta-zwin-dol" onclick="toggleOpisMiejscowosci()"><span class="strzalki">⌃ ⌃ ⌃</span>Zwiń</button>
+      </div>`;
+  }
+  el.innerHTML = `<div class="miejsce-card karta-opis-miasta">
+      <button class="btn-opis-miasta" onclick="toggleOpisMiejscowosci()">🏘️ Opis miejscowości</button>
+      ${szczegoly}
+    </div>`;
 }
 
 // =====================================================================
@@ -5104,6 +5200,9 @@ function trescMiejsceSzczegoly(m) {
   if (m.pozycja) {
     html += `<button class="route-btn route-btn-mapy" style="display:block;width:100%;margin-top:4px" onclick="event.stopPropagation();otworzWMapach('${m.klucz}')">🧭 Prowadź do miejsca</button>`;
   }
+  html += `<button class="karta-zwin-dol" onclick="event.stopPropagation();toggleRozwinMiejsce('${m.klucz}')" title="Zwiń opis">
+      <span class="strzalki">⌃ ⌃ ⌃</span>Zwiń
+    </button>`;
   return html;
 }
 
