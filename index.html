@@ -655,6 +655,15 @@ body:not(.tryb-admin) .panel-backdrop{
   filter:drop-shadow(0 2px 8px rgba(0,0,0,0.35));
 }
 body:not(.tryb-admin) .herb-rog{display:block}
+.herb-brak{
+  display:none;
+  position:fixed;top:16px;right:16px;z-index:1150;
+  width:100px;padding:8px;text-align:center;
+  font-family:'EB Garamond',serif;font-size:11px;line-height:1.4;
+  color:#a04030;background:rgba(255,255,255,0.9);
+  border:1.5px dashed #a04030;border-radius:8px;
+}
+body:not(.tryb-admin) .herb-brak{display:block}
 body:not(.tryb-admin) .topbar-nazwa{display:flex}
 
 /* ============================================================
@@ -1629,7 +1638,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">63</span>
+  <span class="lp-liczba" id="lp-liczba">64</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1641,7 +1650,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="topbar-nazwa" id="topbarNazwa">
   <span id="topbarNazwaTekst">Miasto - Siedliszcze</span>
 </div>
-<img class="herb-rog" id="topbarHerb" alt="" src="img/herb.webp" onerror="this.onerror=null;this.src='img/herb.png';this.onerror=function(){this.onerror=null;this.src='img/herb.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
+<div class="herb-brak" id="topbarHerb">brak pliku<br>img/herb.jpg<br>(.png / .webp)</div>
 
 <!-- Tło pod wysuniętym panelem -->
 <div class="panel-backdrop" id="panelBackdrop" onclick="zamknijPanel()"></div>
