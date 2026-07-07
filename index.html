@@ -148,10 +148,11 @@ h1{
 }
 
 /* Scrollbar w stylu skarbca */
-.sidebar::-webkit-scrollbar{width:8px}
+.sidebar::-webkit-scrollbar{width:10px}
 .sidebar::-webkit-scrollbar-track{background:rgba(0,0,0,0.25)}
-.sidebar::-webkit-scrollbar-thumb{background:rgba(224,169,85,0.4);border-radius:4px}
-.sidebar::-webkit-scrollbar-thumb:hover{background:var(--zloto)}
+.sidebar::-webkit-scrollbar-thumb{background:#d81f1f;border-radius:5px;border:1.5px solid rgba(0,0,0,0.3)}
+.sidebar::-webkit-scrollbar-thumb:hover{background:#ff2b2b}
+.sidebar{scrollbar-color:#d81f1f rgba(0,0,0,0.25);scrollbar-width:thin}
 
 /* KARTA MIEJSCA (na liście) - styl gotowy na przyszłe funkcje */
 .miejsce-card{
@@ -227,6 +228,7 @@ body:not(.tryb-admin) .karta-podglad-miniaturka{border-color:rgba(122,90,46,0.3)
   margin-bottom:10px;background:#0a0a0a;
 }
 .karta-foto img{width:100%;height:auto;display:block;max-height:280px;object-fit:contain}
+.karta-foto-klik{cursor:zoom-in}
 .karta-sfera{
   width:100%;height:220px;border:1.5px solid var(--obrys);border-radius:8px;
   background:#0a0a0a;overflow:hidden;margin-bottom:10px;
@@ -585,8 +587,9 @@ body:not(.tryb-admin) .sidebar-tytul{
   color:#7a5a2e;border-bottom-color:rgba(122,90,46,0.25);
 }
 body:not(.tryb-admin) .sidebar::-webkit-scrollbar-track{background:rgba(0,0,0,0.05)}
-body:not(.tryb-admin) .sidebar::-webkit-scrollbar-thumb{background:rgba(122,90,46,0.35)}
-body:not(.tryb-admin) .sidebar::-webkit-scrollbar-thumb:hover{background:#a97c3f}
+body:not(.tryb-admin) .sidebar::-webkit-scrollbar-thumb{background:#d81f1f;border-color:rgba(0,0,0,0.15)}
+body:not(.tryb-admin) .sidebar::-webkit-scrollbar-thumb:hover{background:#ff2b2b}
+body:not(.tryb-admin) .sidebar{scrollbar-color:#d81f1f rgba(0,0,0,0.05)}
 
 body:not(.tryb-admin) .miejsce-card{
   background:#ffffff;
@@ -1683,7 +1686,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">68</span>
+  <span class="lp-liczba" id="lp-liczba">69</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -4856,7 +4859,8 @@ function renderujOpisMiejscowosciKarte() {
   let szczegoly = '';
   if (opisMiejscowosciRozwiniety) {
     szczegoly += `<div class="karta-foto" id="karta-foto-opis-miasta">
-        <img src="img/opis-miejscowosci.jpg"
+        <img src="img/opis-miejscowosci.jpg" class="karta-foto-klik"
+          onclick="event.stopPropagation();window.open(this.src, '_blank')"
           onerror="this.onerror=null;this.src='img/opis-miejscowosci.png';this.onerror=function(){this.onerror=null;this.src='img/opis-miejscowosci.webp';this.onerror=function(){this.parentElement.style.display='none';};};"
           alt="${escapeHTML(tytulStrony || 'Miejscowość')}">
       </div>`;
@@ -5186,7 +5190,8 @@ function trescMiejsceSzczegoly(m) {
   let html = '';
   if (m.fotoTyp === 'zwykle') {
     html += `<div class="karta-foto" id="karta-foto-${m.klucz}">
-        <img src="img/${m.plik}.jpg"
+        <img src="img/${m.plik}.jpg" class="karta-foto-klik"
+          onclick="event.stopPropagation();window.open(this.src, '_blank')"
           onerror="this.onerror=null;this.src='img/${m.plik}.png';this.onerror=function(){this.onerror=null;this.src='img/${m.plik}.webp';this.onerror=function(){this.parentElement.innerHTML='<p class=&quot;karta-brak&quot;>Zdjęcie nie zostało jeszcze wgrane.</p>';};};"
           alt="${escapeHTML(m.nazwa)}">
       </div>`;
