@@ -1651,6 +1651,22 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <span id="topbarNazwaTekst">Miasto - Siedliszcze</span>
 </div>
 <div class="herb-brak" id="topbarHerb">brak pliku<br>img/herb.jpg<br>(.png / .webp)</div>
+<img class="herb-rog" id="topbarHerbImg" alt="Herb" style="display:none" src="img/herb.webp">
+<script>
+(function wczytajHerb(){
+  const img = document.getElementById('topbarHerbImg');
+  const brak = document.getElementById('topbarHerb');
+  const proby = ['img/herb.jpg', 'img/herb.png', 'img/herb.webp'];
+  let i = 0;
+  function sprobuj(){
+    if (i >= proby.length) { return; } // zostaw "brak pliku"
+    img.onload = function(){ img.style.display = ''; if (brak) brak.style.display = 'none'; };
+    img.onerror = function(){ i++; sprobuj(); };
+    img.src = proby[i];
+  }
+  sprobuj();
+})();
+</script>
 
 <!-- Tło pod wysuniętym panelem -->
 <div class="panel-backdrop" id="panelBackdrop" onclick="zamknijPanel()"></div>
@@ -5253,6 +5269,7 @@ renderujStrone();
 warstwaRysunkow.addTo(mapa);
 przerysujRysunki();
 </script>
+
 
 
 
