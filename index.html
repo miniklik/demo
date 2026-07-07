@@ -1683,7 +1683,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">67</span>
+  <span class="lp-liczba" id="lp-liczba">68</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -2146,7 +2146,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
               <span class="karta-badge smiejsce">📍</span>
               <span class="karta-nazwa-tekst">Krynica</span>
             </div>
-            <div class="karta-podglad-opis">Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Inn…</div>
+            <div class="karta-podglad-opis">Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów –…</div>
           </div><div class="karta-akcje">
     <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783359154632')">🏷</button>
     <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783359154632')">🛠</button>
@@ -5338,7 +5338,7 @@ function renderujMiejsca() {
         : '';
       const rozwiniete = rozwinieteMiejsca.has(m.klucz);
       const opisPelny = (m.opis && m.opis.trim()) ? m.opis.trim() : 'Brak opisu.';
-      const opisSkrot = escapeHTML(opisPelny.length > 220 ? opisPelny.slice(0, 220).trim() + '…' : opisPelny);
+      const opisSkrot = escapeHTML(opisPelny.length > 130 ? opisPelny.slice(0, 130).trim() + '…' : opisPelny);
 
       if (!rozwiniete) {
         // ZWINIĘTA: zdjęcie po lewej (float), tytuł + opis opływają je razem
