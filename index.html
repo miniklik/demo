@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
-<title>Miasto</title>
+<title>Miasto - SDL</title>
 
 <!-- Leaflet (mapa) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -264,8 +264,15 @@ body:not(.tryb-admin) .karta-podglad-miniaturka{border-color:rgba(122,90,46,0.3)
   display:inline-block;text-decoration:none;margin-bottom:10px;margin-right:8px;
   background:linear-gradient(180deg,#ff0000,#c00);color:#fff;
   font-weight:700;font-size:13.5px;padding:9px 16px;border-radius:8px;
+  border:none;cursor:pointer;font-family:'EB Garamond',serif;
 }
 .karta-yt-link:hover{filter:brightness(1.1)}
+/* Odtwarzacz YT osadzony w karcie (po kliknięciu "Obejrzyj na YouTube") */
+.karta-yt-embed{
+  position:relative;width:100%;padding-top:56.25%;margin-bottom:10px;
+  border-radius:8px;overflow:hidden;border:1.5px solid var(--obrys);background:#000;
+}
+.karta-yt-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .karta-audio-btn{
   display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;
   background:linear-gradient(180deg,#8e44c9,#6322a0);color:#fff;border:none;
@@ -1713,7 +1720,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">70</span>
+  <span class="lp-liczba" id="lp-liczba">71</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1723,7 +1730,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 <!-- Plakietka z nazwą mapy (tylko widok gościa - biało, rozmyte szkło) -->
 <div class="topbar-nazwa" id="topbarNazwa">
-  <span id="topbarNazwaTekst">Miasto</span>
+  <span id="topbarNazwaTekst">Miasto - SDL</span>
 </div>
 <div class="herb-brak" id="topbarHerb">brak pliku<br>img/herb.jpg<br>(.png / .webp)</div>
 <img class="herb-rog" id="topbarHerbImg" alt="Herb" style="display:none" src="img/herb.webp">
@@ -1751,7 +1758,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="opis-strony-modal" id="opisStronyModal">
   <div class="opis-strony-box">
     <button class="opis-strony-zamknij" onclick="zamknijOpisStrony()" aria-label="Zamknij">×</button>
-    <h2 id="opisStronyModalTytul">Miasto</h2>
+    <h2 id="opisStronyModalTytul">Miasto - SDL</h2>
     <div id="opisStronyModalTresc"><div class="detail-opis"><p>zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń" na samym dole.<br>To wszystko trzyma się też przy „Zapisz JSON" / „Zapisz HTML" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.</p></div></div>
   </div>
 </div>
@@ -2053,7 +2060,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     logo strony, cokolwiek. Po wgraniu miniaturka pojawi się sama, obok nazwy mapy, tuż przy hamburgerze.</div>
 
   <label class="panel-label">Ekran intro <span class="opcj">(powitanie przed mapą)</span></label>
-  <button type="button" class="intro-toggle" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WYŁĄCZONE</b></button>
+  <button type="button" class="intro-toggle aktywny" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WŁĄCZONE</b></button>
   <div class="intro-hint">Po włączeniu gość najpierw zobaczy pełny ekran ze zdjęciem
     <code>img/intro.jpg</code>, nazwą mapy i przyciskiem „Zaczynamy".
     Wgraj zdjęcie na serwer obok index.html.</div>
@@ -2082,7 +2089,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
   <header>
     <div class="ornament">✦ ✦ ✦</div>
-    <h1>Miasto</h1>
+    <h1>Miasto - SDL</h1>
     <div class="podtytul">mapa miejsc</div>
   </header>
 
@@ -2238,7 +2245,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 <!-- Osadzone miejsca (wypełniane przy "Zapisz HTML"). Pusta tablica = brak. -->
 <script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]}]</script>
-<script id="daneStrony" type="application/json">{"tytul":"Miasto","opis":"zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń\" na samym dole.\nTo wszystko trzyma się też przy „Zapisz JSON\" / „Zapisz HTML\" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.","opisYT":"https://www.youtube.com/watch?v=pEEMi2j6lYE","autor":"mini","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
+<script id="daneStrony" type="application/json">{"tytul":"Miasto - SDL","opis":"zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń\" na samym dole.\nTo wszystko trzyma się też przy „Zapisz JSON\" / „Zapisz HTML\" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.","opisYT":"https://www.youtube.com/watch?v=pEEMi2j6lYE","autor":"mini","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
 
 <script>
 // ============================================================
@@ -4897,6 +4904,18 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') zamknijLightbox();
 });
 
+// Osadzony odtwarzacz YT - klik na przycisk odtwarza film w miejscu (bez wychodzenia
+// na youtube.com). Do prawdziwego YT przechodzi się dopiero klikając w sam film
+// (natywna ikonka YouTube w rogu odtwarzacza).
+function odtworzYTwKarcie(btn, ytId) {
+  const wrap = document.createElement('div');
+  wrap.className = 'karta-yt-embed';
+  wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0"
+      title="YouTube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>`;
+  btn.replaceWith(wrap);
+}
+
 // Zielona karta "Opis miejscowości" nad listą miejsc (bez punktu na mapie)
 let opisMiejscowosciRozwiniety = false;
 function toggleOpisMiejscowosci() {
@@ -4918,7 +4937,7 @@ function renderujOpisMiejscowosciKarte() {
     szczegoly += opisAkapity(opisStrony);
     const ytId = opisYT ? youtubeId(opisYT) : null;
     if (ytId) {
-      szczegoly += `<a class="karta-yt-link" href="${escapeHTML(opisYT)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a>`;
+      szczegoly += `<button type="button" class="karta-yt-link" onclick="event.stopPropagation();odtworzYTwKarcie(this, '${ytId}')">🎬 Obejrzyj na YouTube</button>`;
     }
     szczegoly = `<div class="karta-szczegoly">${szczegoly}
         <button class="karta-zwin-dol" onclick="toggleOpisMiejscowosci()"><span class="strzalki">⌃ ⌃ ⌃</span>Zwiń</button>
@@ -5259,7 +5278,7 @@ function trescMiejsceSzczegoly(m) {
   }
   const ytId = m.link ? youtubeId(m.link) : null;
   if (ytId) {
-    html += `<a class="karta-yt-link" href="${escapeHTML(m.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🎬 Obejrzyj na YouTube</a>`;
+    html += `<button type="button" class="karta-yt-link" onclick="event.stopPropagation();odtworzYTwKarcie(this, '${ytId}')">🎬 Obejrzyj na YouTube</button>`;
   }
   if (m.pozycja) {
     html += `<button class="route-btn route-btn-mapy" style="display:block;width:100%;margin-top:4px" onclick="event.stopPropagation();otworzWMapach('${m.klucz}')">🧭 Prowadź do miejsca</button>`;
