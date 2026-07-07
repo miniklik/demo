@@ -1720,7 +1720,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">71</span>
+  <span class="lp-liczba" id="lp-liczba">72</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -2060,7 +2060,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     logo strony, cokolwiek. Po wgraniu miniaturka pojawi się sama, obok nazwy mapy, tuż przy hamburgerze.</div>
 
   <label class="panel-label">Ekran intro <span class="opcj">(powitanie przed mapą)</span></label>
-  <button type="button" class="intro-toggle aktywny" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WŁĄCZONE</b></button>
+  <button type="button" class="intro-toggle" id="introToggle" onclick="przelaczIntro()">🎬 Intro na start: <b id="introToggleStan">WYŁĄCZONE</b></button>
   <div class="intro-hint">Po włączeniu gość najpierw zobaczy pełny ekran ze zdjęciem
     <code>img/intro.jpg</code>, nazwą mapy i przyciskiem „Zaczynamy".
     Wgraj zdjęcie na serwer obok index.html.</div>
@@ -2613,9 +2613,15 @@ function menuDodaj(typ) {
 
 // ============================================================
 // TRYB ADMIN (?admin=1) - pokazuje pasek edytora
+// UWAGA: to program TYLKO do edycji z komputera - na telefonie/tablecie
+// (dotyk + mały ekran) admin jest zablokowany, nawet z ?admin=1 w adresie.
 // ============================================================
-const isAdmin = new URLSearchParams(window.location.search).get('admin') === '1';
+const probaAdminNaTelefonie = new URLSearchParams(window.location.search).get('admin') === '1' && czyDotyk();
+const isAdmin = new URLSearchParams(window.location.search).get('admin') === '1' && !czyDotyk();
 if (isAdmin) document.body.classList.add('tryb-admin');
+if (probaAdminNaTelefonie) {
+  setTimeout(() => alert('⚠️ Tryb edycji jest dostępny tylko na komputerze.\n\nNa telefonie/tablecie zawsze otwiera się zwykły widok mapy.'), 300);
+}
 
 // ============================================================
 // MIEJSCA - dane + zapis w localStorage
