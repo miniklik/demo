@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
-<title>Sokolec - stolec</title>
+<title>Miasto - Siedliszcze</title>
 
 <!-- Leaflet (mapa) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -402,6 +402,7 @@ footer{
   cursor:pointer;
   align-items:center;justify-content:center;
   box-shadow:0 3px 14px rgba(30,20,10,0.22);
+  transition:left 0.32s cubic-bezier(.4,0,.2,1);
 }
 .hamburger:hover{background:rgba(255,255,255,0.9)}
 .hamburger span{
@@ -543,11 +544,16 @@ body:not(.tryb-admin) .sidebar{
   border:none;border-right:2px solid var(--obrys);
   transform:translateX(-100%);
   transition:transform 0.32s cubic-bezier(.4,0,.2,1);
-  padding-top:74px;            /* miejsce pod hamburger */
+  padding-top:20px;
 }
 body:not(.tryb-admin) .sidebar.open{transform:translateX(0)}
 body:not(.tryb-admin) .sidebar::before,
 body:not(.tryb-admin) .sidebar::after{display:none}
+/* Hamburger przyklejony do krawędzi panelu - wysuwa się razem z nim i
+   cofa, więc panel nie musi rezerwować miejsca u góry na hamburger. */
+body:not(.tryb-admin) .hamburger.open{
+  left:calc(min(82vw,360px) - 24px);
+}
 
 /* Panel gościa - jasny/biały (zamiast brązowo-złotego "Skarbca"), spójny
    z bielą hamburgera i plakietki. Ustawiam też jasne kolory tekstu/kart,
@@ -625,28 +631,30 @@ body:not(.tryb-admin) .panel-backdrop{
   pointer-events:none !important;   /* nie blokuj przeciągania/klikania mapy pod spodem */
 }
 
-/* Plakietka z nazwą mapy - biało, rozmyte szkło, obok hamburgera.
+/* Nazwa mapy - na środku góry strony, bez tła (nad mapą).
    Widoczna TYLKO u gościa (dla admina zbędna - ma swój nagłówek). */
 .topbar-nazwa{
   display:none;
-  position:fixed;top:16px;left:76px;z-index:1200;
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1200;
   max-width:calc(100vw - 150px);
-  padding:0 18px;height:48px;
+  padding:0 8px;height:48px;
   align-items:center;
-  background:rgba(255,255,255,0.75);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border-radius:10px;
-  box-shadow:0 3px 14px rgba(30,20,10,0.22);
+  background:none;
 }
 .topbar-nazwa span{
-  font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;
+  font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;
   color:#2b2118;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:0 1px 3px rgba(255,255,255,0.85),0 0 10px rgba(255,255,255,0.6);
 }
-.topbar-herb{
-  height:36px;width:36px;object-fit:cover;border-radius:6px;
-  margin-left:10px;flex-shrink:0;
-  border:1px solid rgba(43,33,24,0.25);
+/* Herb - osobno, w prawym górnym rogu mapy, duży i półprzezroczysty */
+.herb-rog{
+  display:none;
+  position:fixed;top:16px;right:16px;z-index:1150;
+  height:100px;width:100px;object-fit:contain;
+  opacity:0.65;pointer-events:none;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,0.35));
 }
+body:not(.tryb-admin) .herb-rog{display:block}
 body:not(.tryb-admin) .topbar-nazwa{display:flex}
 
 /* ============================================================
@@ -1621,7 +1629,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">58</span>
+  <span class="lp-liczba" id="lp-liczba">63</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1631,9 +1639,9 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 <!-- Plakietka z nazwą mapy (tylko widok gościa - biało, rozmyte szkło) -->
 <div class="topbar-nazwa" id="topbarNazwa">
-  <span id="topbarNazwaTekst">Sokolec - stolec</span>
-  <img class="topbar-herb" id="topbarHerb" alt="" src="img/herb.webp" onerror="this.onerror=null;this.src='img/herb.png';this.onerror=function(){this.onerror=null;this.src='img/herb.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
+  <span id="topbarNazwaTekst">Miasto - Siedliszcze</span>
 </div>
+<img class="herb-rog" id="topbarHerb" alt="" src="img/herb.webp" onerror="this.onerror=null;this.src='img/herb.png';this.onerror=function(){this.onerror=null;this.src='img/herb.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
 
 <!-- Tło pod wysuniętym panelem -->
 <div class="panel-backdrop" id="panelBackdrop" onclick="zamknijPanel()"></div>
@@ -1643,7 +1651,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="opis-strony-modal" id="opisStronyModal">
   <div class="opis-strony-box">
     <button class="opis-strony-zamknij" onclick="zamknijOpisStrony()" aria-label="Zamknij">×</button>
-    <h2 id="opisStronyModalTytul">Sokolec - stolec</h2>
+    <h2 id="opisStronyModalTytul">Miasto - Siedliszcze</h2>
     <div id="opisStronyModalTresc"><div class="detail-opis"><p>zapomniane źródła</p></div></div>
   </div>
 </div>
@@ -1957,7 +1965,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
   <header>
     <div class="ornament">✦ ✦ ✦</div>
-    <h1>Sokolec - stolec</h1>
+    <h1>Miasto - Siedliszcze</h1>
     <div class="podtytul">mapa miejsc</div>
   </header>
 
@@ -2105,7 +2113,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 <!-- Osadzone miejsca (wypełniane przy "Zapisz HTML"). Pusta tablica = brak. -->
 <script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]}]</script>
-<script id="daneStrony" type="application/json">{"tytul":"Sokolec - stolec","opis":"zapomniane źródła","autor":"mini - klik.pl","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
+<script id="daneStrony" type="application/json">{"tytul":"Miasto - Siedliszcze","opis":"zapomniane źródła","autor":"mini - klik.pl","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
 
 <script>
 // ============================================================
