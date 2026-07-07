@@ -229,6 +229,33 @@ body:not(.tryb-admin) .karta-podglad-miniaturka{border-color:rgba(122,90,46,0.3)
 }
 .karta-foto img{width:100%;height:auto;display:block;max-height:280px;object-fit:contain}
 .karta-foto-klik{cursor:zoom-in}
+
+/* LIGHTBOX - podgląd zdjęcia w pełnej rozdzielczości, na tej samej stronie */
+.lightbox-foto{
+  display:none;position:fixed;inset:0;z-index:3000;
+  background:rgba(10,6,3,0.92);
+  align-items:center;justify-content:center;
+  padding:30px;cursor:zoom-out;
+}
+.lightbox-foto.visible{display:flex}
+.lightbox-foto img{
+  max-width:92vw;max-height:88vh;border-radius:10px;cursor:default;
+  box-shadow:0 14px 60px rgba(0,0,0,0.7), 0 0 0 4px rgba(224,169,85,0.15);
+  animation:lightbox-wejscie 0.4s cubic-bezier(.2,.85,.25,1);
+}
+@keyframes lightbox-wejscie{
+  from{opacity:0;transform:scale(0.6) rotate(-6deg);}
+  to{opacity:1;transform:scale(1) rotate(0deg);}
+}
+.lightbox-zamknij{
+  position:fixed;top:18px;right:20px;z-index:3001;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.45);
+  color:#fff;font-size:24px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.lightbox-zamknij:hover{background:var(--zloto);border-color:var(--zloto);color:#2b1c0e;transform:rotate(90deg)}
 .karta-sfera{
   width:100%;height:220px;border:1.5px solid var(--obrys);border-radius:8px;
   background:#0a0a0a;overflow:hidden;margin-bottom:10px;
@@ -1686,7 +1713,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">69</span>
+  <span class="lp-liczba" id="lp-liczba">70</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1728,6 +1755,13 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     <div id="opisStronyModalTresc"><div class="detail-opis"><p>zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń" na samym dole.<br>To wszystko trzyma się też przy „Zapisz JSON" / „Zapisz HTML" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.</p></div></div>
   </div>
 </div>
+
+<!-- LIGHTBOX - podgląd zdjęcia w pełnej rozdzielczości (bez opuszczania strony) -->
+<div class="lightbox-foto" id="lightboxFoto" onclick="zamknijLightbox()">
+  <button class="lightbox-zamknij" onclick="event.stopPropagation();zamknijLightbox()" aria-label="Zamknij">×</button>
+  <img id="lightboxFotoImg" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
 
 
 <!-- PRAWY hamburger - menu zapisu (dotyk + tryb admin) -->
@@ -4846,6 +4880,23 @@ function zamknijOpisStrony() {
   document.getElementById('opisStronyModal').classList.remove('visible');
 }
 
+// LIGHTBOX - podgląd zdjęcia w pełnej rozdzielczości, bez opuszczania strony
+function otworzLightbox(src, alt) {
+  const box = document.getElementById('lightboxFoto');
+  const img = document.getElementById('lightboxFotoImg');
+  if (!box || !img) return;
+  img.src = src;
+  img.alt = alt || '';
+  box.classList.add('visible');
+}
+function zamknijLightbox() {
+  const box = document.getElementById('lightboxFoto');
+  if (box) box.classList.remove('visible');
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') zamknijLightbox();
+});
+
 // Zielona karta "Opis miejscowości" nad listą miejsc (bez punktu na mapie)
 let opisMiejscowosciRozwiniety = false;
 function toggleOpisMiejscowosci() {
@@ -4860,7 +4911,7 @@ function renderujOpisMiejscowosciKarte() {
   if (opisMiejscowosciRozwiniety) {
     szczegoly += `<div class="karta-foto" id="karta-foto-opis-miasta">
         <img src="img/opis-miejscowosci.jpg" class="karta-foto-klik"
-          onclick="event.stopPropagation();window.open(this.src, '_blank')"
+          onclick="event.stopPropagation();otworzLightbox(this.src, this.alt)"
           onerror="this.onerror=null;this.src='img/opis-miejscowosci.png';this.onerror=function(){this.onerror=null;this.src='img/opis-miejscowosci.webp';this.onerror=function(){this.parentElement.style.display='none';};};"
           alt="${escapeHTML(tytulStrony || 'Miejscowość')}">
       </div>`;
@@ -5191,7 +5242,7 @@ function trescMiejsceSzczegoly(m) {
   if (m.fotoTyp === 'zwykle') {
     html += `<div class="karta-foto" id="karta-foto-${m.klucz}">
         <img src="img/${m.plik}.jpg" class="karta-foto-klik"
-          onclick="event.stopPropagation();window.open(this.src, '_blank')"
+          onclick="event.stopPropagation();otworzLightbox(this.src, this.alt)"
           onerror="this.onerror=null;this.src='img/${m.plik}.png';this.onerror=function(){this.onerror=null;this.src='img/${m.plik}.webp';this.onerror=function(){this.parentElement.innerHTML='<p class=&quot;karta-brak&quot;>Zdjęcie nie zostało jeszcze wgrane.</p>';};};"
           alt="${escapeHTML(m.nazwa)}">
       </div>`;
