@@ -737,6 +737,7 @@ body:not(.tryb-admin) .gps-btn{ left:16px; }
 body:not(.tryb-admin) .mapa-btn{ left:76px; }
 body:not(.tryb-admin) .center-btn{ left:136px; }
 body:not(.tryb-admin) .gps-btn.tlo-btn{ left:196px; }
+#tloBtn{ position:fixed !important; top:auto !important; bottom:16px !important; }
 .gps-btn.tlo-btn.active{
   background:linear-gradient(180deg,#4f9a3c,#2c5a20);
   color:#eafbe0;border-color:#6bbf52;
@@ -744,6 +745,12 @@ body:not(.tryb-admin) .gps-btn.tlo-btn{ left:196px; }
 .gps-btn.tlo-btn:not(.active){
   background:linear-gradient(180deg,var(--panel-2),var(--panel));
   color:var(--tekst-2);opacity:0.55;
+}
+/* Radio wyłączone = przekreślone (ukośna czerwona kreska przez ikonę) */
+.gps-btn.tlo-btn:not(.active)::after{
+  content:'';position:absolute;left:8%;top:50%;width:84%;height:2.5px;
+  background:#e04b3c;transform:translateY(-50%) rotate(-45deg);
+  border-radius:2px;pointer-events:none;
 }
 
 /* ============================================================
@@ -1758,7 +1765,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">73</span>
+  <span class="lp-liczba" id="lp-liczba">75</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1833,7 +1840,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 </div>
 
 <!-- Pasek-podpowiedź gdy włączony tryb dodawania -->
-<div class="tryb-info" id="trybInfo"></div>
+<div class="tryb-info" id="trybInfo">🌳 Kliknij na mapie, gdzie ma być środek/początek strefy tła.</div>
 
 <!-- Panel dodawania YT (modal) + przyciemnienie -->
 <div class="panel-backdrop2" id="panelBackdrop2" onclick="zamknijPanelYT()"></div>
@@ -1939,33 +1946,6 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="panel-modal" id="panelAudio">
   <h2 id="panelAudioTytul">🎧 Dodaj kropkę audio</h2>
 
-  <label class="panel-label">Typ dźwięku</label>
-  <div class="rozmiar-wybor" id="audTypWybor">
-    <div class="rozmiar-opcja wybrany" data-typ="wiersz" onclick="ustawTypAudio('wiersz')">
-      <span class="ikona">🎙</span>Wiersz — odtwarzane raz
-    </div>
-    <div class="rozmiar-opcja" data-typ="tlo" onclick="ustawTypAudio('tlo')">
-      <span class="ikona">🌳</span>Tło — pętla, klimat
-    </div>
-  </div>
-
-  <!-- Kształt strefy - widoczny TYLKO dla typu "Tło" (wiersz zawsze jest okręgiem+pinezką) -->
-  <div id="audKsztaltSekcja" style="display:none">
-    <label class="panel-label">Kształt strefy</label>
-    <div class="rozmiar-wybor" id="audKsztaltWybor">
-      <div class="rozmiar-opcja wybrany" data-ksztalt="kolo" onclick="ustawKsztaltAudio('kolo')">
-        <span class="ikona">⭕</span>Okrąg — punkt + promień
-      </div>
-      <div class="rozmiar-opcja" data-ksztalt="wielokat" onclick="ustawKsztaltAudio('wielokat')">
-        <span class="ikona">✏️</span>Rysuj kształt — dowolny obrys
-      </div>
-    </div>
-    <div id="audStrefaBlok" style="display:none">
-      <div class="intro-hint" id="audStrefaInfo" style="margin-bottom:10px">Kliknij „✏️ Rysuj strefę na mapie", potem klikaj punkty po obrysie terenu (min. 3).</div>
-      <button type="button" class="btn-pozycja" style="width:100%;margin-bottom:12px" onclick="rozpocznijRysowanieStrefy()">✏️ Rysuj strefę na mapie</button>
-    </div>
-  </div>
-
   <label class="panel-label">Nazwa</label>
   <input type="text" id="audNazwa" maxlength="80" placeholder="np. Legenda o dębie">
 
@@ -1985,16 +1965,13 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
         <li>Wgraj plik do folderu <code>audio/</code> na serwerze (obok <code>index.html</code>).</li>
         <li>Gotowe — kliknięcie kropki 🎧 odtworzy nagranie.</li>
       </ol>
-      <p class="instr-uwaga">W polu wpisz samą nazwę (bez <code>.mp3</code>). Dla „Tła" dobra konwencja to np. <code>tlo1</code>, <code>tlo2</code>.</p>
+      <p class="instr-uwaga">W polu wpisz samą nazwę (bez <code>.mp3</code>).</p>
     </div>
   </div>
 
-  <!-- Blok promienia + tryb - widoczny tylko dla kształtu OKRĄG (wiersz zawsze, tło opcjonalnie) -->
-  <div id="audKoloBlok">
   <label class="panel-label">Zasięg odtwarzania dźwięku: <span id="audZasiegLabel" class="akcent-zasieg">100 m</span></label>
   <input type="range" id="audZasieg" min="0" max="0" step="1" value="0" class="suwak-zasieg" oninput="aktualizujZasiegLabel()">
 
-  <div id="audTrybSekcja">
   <label class="panel-label">Tryb kropki</label>
   <div class="rozmiar-wybor" id="audTrybWybor">
     <div class="rozmiar-opcja" data-tryb="fala" onclick="ustawTrybAudio('fala')">
@@ -2011,8 +1988,6 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     <label class="panel-label">Od kiedy pokazuje się fala: <span id="audFalaLabel" class="akcent-zasieg">2 km</span></label>
     <input type="range" id="audFalaZasieg" min="500" max="6000" step="100" value="2000" class="suwak-zasieg" oninput="aktualizujFalaLabel()">
   </div>
-  </div>
-  </div>
 
   <label class="panel-label">Kategoria <span class="opcj">(wymagana, gdy mapa ma kategorie)</span></label>
   <select id="audKat"><option value="">— bez kategorii —</option></select>
@@ -2026,6 +2001,88 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <div class="panel-akcje">
     <button class="btn-zatwierdz" id="btnZatwierdzAudio" onclick="zatwierdzAudio()">✓ Zatwierdź</button>
     <button class="btn-anuluj" onclick="zamknijPanelAudio()">✕ Anuluj</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     PANEL "STREFA TŁA" - osobny od kropek audio. Zapętlony dźwięk
+     (mp3) ALBO komunikat czytany głosem przeglądarki, uruchamiany
+     automatycznie gdy gość wejdzie w obręb koła/wielokąta.
+     ============================================================ -->
+<div class="panel-backdrop2" id="panelBackdropStrefa" onclick="zamknijPanelStrefa()"></div>
+<div class="panel-modal" id="panelStrefa">
+  <h2 id="panelStrefaTytul">🌳 Dodaj strefę tła</h2>
+
+  <label class="panel-label">Nazwa <span class="opcj">(tylko dla Ciebie, do rozpoznania na liście)</span></label>
+  <input type="text" id="strefaNazwa" maxlength="80" placeholder="np. Park miejski / ul. Kościuszki">
+
+  <label class="panel-label">Kształt strefy</label>
+  <div class="rozmiar-wybor" id="strefaKsztaltWybor">
+    <div class="rozmiar-opcja wybrany" data-ksztalt="kolo" onclick="ustawKsztaltStrefa('kolo')">
+      <span class="ikona">⭕</span>Okrąg — punkt + promień
+    </div>
+    <div class="rozmiar-opcja" data-ksztalt="wielokat" onclick="ustawKsztaltStrefa('wielokat')">
+      <span class="ikona">✏️</span>Rysuj kształt — dowolny obrys
+    </div>
+  </div>
+
+  <div id="strefaKoloBlok" style="">
+    <label class="panel-label">Promień strefy: <span id="strefaZasiegLabel" class="akcent-zasieg">1.2 km</span></label>
+    <input type="range" id="strefaZasieg" min="20" max="2000" step="10" value="100" class="suwak-zasieg" oninput="aktualizujStrefaZasiegLabel()">
+  </div>
+
+  <div id="strefaWielokatBlok" style="display: none;">
+    <div class="intro-hint" id="strefaWielokatInfo" style="margin-bottom:10px">Kliknij „✏️ Rysuj strefę na mapie", potem klikaj punkty po obrysie terenu (min. 3).</div>
+    <button type="button" class="btn-pozycja" style="width:100%;margin-bottom:12px" onclick="rozpocznijRysowanieStrefy()">✏️ Rysuj strefę na mapie</button>
+  </div>
+
+  <label class="panel-label">Co ma się odtworzyć?</label>
+  <div class="rozmiar-wybor" id="strefaZrodloWybor">
+    <div class="rozmiar-opcja" data-zrodlo="plik" onclick="ustawZrodloStrefa('plik')">
+      <span class="ikona">📻</span>Plik mp3 — pętla klimatu
+    </div>
+    <div class="rozmiar-opcja wybrany" data-zrodlo="mowa" onclick="ustawZrodloStrefa('mowa')">
+      <span class="ikona">🗣️</span>Komunikat głosowy
+    </div>
+  </div>
+
+  <!-- ŹRÓDŁO: PLIK MP3 -->
+  <div id="strefaPlikBlok" style="display: none;">
+    <label class="panel-label">Nazwa pliku audio</label>
+    <input type="text" id="strefaPlik" maxlength="80" placeholder="np. tlo1">
+    <div class="instrukcja-360" id="instrStrefa">
+      <div class="instr-tytul" onclick="document.getElementById('instrStrefa').classList.toggle('otwarta')">
+        <span>🎧 Jak dodać nagranie?</span>
+        <span class="strzalka">▼</span>
+      </div>
+      <div class="instr-tresc">
+        <ol>
+          <li>Nagraj lub znajdź dźwięk otoczenia w formacie <b>MP3</b> (np. śpiew ptaków, gwar).</li>
+          <li>Zmień nazwę pliku na: <code id="strefaPrzyklad">tlo1.mp3</code></li>
+          <li>Wgraj plik do folderu <code>audio/</code> na serwerze (obok <code>index.html</code>).</li>
+        </ol>
+        <p class="instr-uwaga">W polu wpisz samą nazwę (bez <code>.mp3</code>). Dobra konwencja: <code>tlo1</code>, <code>tlo2</code>, <code>tlo3</code>...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ŹRÓDŁO: KOMUNIKAT GŁOSOWY -->
+  <div id="strefaMowaBlok" style="">
+    <label class="panel-label">Tekst do przeczytania <span class="opcj">(głosem przeglądarki, po polsku)</span></label>
+    <textarea id="strefaTekst" maxlength="500" placeholder="np. Jesteś na ulicy Kościuszki. Po lewej zobaczysz dawny ratusz z XVIII wieku."></textarea>
+    <div class="intro-hint">Odtwarza się raz, gdy gość wejdzie w strefę (nie w pętli — to komunikat, nie muzyka).</div>
+    <button type="button" class="btn-pozycja" style="margin-top:8px" onclick="testujMowe()">🔊 Odsłuchaj próbkę</button>
+  </div>
+
+  <label class="panel-label">Lokalizacja</label>
+  <div class="pozycja-wiersz">
+    <div class="pozycja-tekst" id="strefaPozycjaTekst">📌 <b>51.19475, 23.16361</b></div>
+    <button class="btn-pozycja" onclick="uzyjMojejPozycji('strefa')">📍 Moja pozycja</button>
+  </div>
+
+  <div class="panel-akcje">
+    <button class="btn-zatwierdz" id="btnZatwierdzStrefa" onclick="zatwierdzStrefa()">✓ Zatwierdź</button>
+    <button class="btn-anuluj" onclick="zamknijPanelStrefa()">✕ Anuluj</button>
   </div>
 </div>
 
@@ -2171,6 +2228,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
       <span class="pasek-separator"></span>
       <button class="ed-btn" id="btnRysuj" onclick="toggleRysowanie()">🎨 Rysuj</button>
       <button class="ed-btn ed-btn-miejsce" id="btnMiejsce" onclick="wlaczTrybDodawaniaMiejsce()">🏛️ Miejsce</button>
+      <button class="ed-btn" id="btnStrefa" onclick="wlaczTrybDodawaniaStrefy()">🌳 Strefa tła</button>
       <button class="ed-btn" id="btnKategorie" onclick="otworzPanelKategorie()">🏷️ Kategorie</button>
       <span class="pasek-separator"></span>
       <button class="ed-btn ed-btn-wczytaj" onclick="wczytajJSON()">📂 Wczytaj JSON</button>
@@ -2197,11 +2255,11 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <div class="layout">
     <div id="mapa" class="" tabindex="0">
       <!-- GPS: nawigacja (śledzenie) + środkowanie + status -->
-      <div class="gps-btn" id="gpsBtn" onclick="togglePozycja()" title="Włącz nawigację">🧭</div>
+      <div class="gps-btn active" id="gpsBtn" onclick="togglePozycja()" title="Wyłącz nawigację">🛑</div>
       <div class="mapa-btn" id="mapaBtn" onclick="przelaczMape()" title="Przełącz na widok satelitarny">🛰️</div>
-      <div class="center-btn" id="centerBtn" onclick="wysrodkujNaMnie()" title="Wyśrodkuj na mojej pozycji" style="display: none;">⊙</div>
-      <div class="gps-btn tlo-btn active" id="tloBtn" onclick="przelaczTloAudio()" title="Dźwięk tła (klimat otoczenia)" style="display:none">🌳</div>
-      <div class="gps-status" id="gpsStatus"></div>
+      <div class="center-btn" id="centerBtn" onclick="wysrodkujNaMnie()" title="Wyśrodkuj na mojej pozycji" style="display: flex;">⊙</div>
+      <div class="gps-btn tlo-btn active" id="tloBtn" onclick="przelaczTloAudio()" title="Radio tła: włączone (kliknij, aby wyłączyć)" style="">📻</div>
+      <div class="gps-status" id="gpsStatus"><span class="ikona-stat">📡</span> <b>Wyszukiwanie pozycji…</b><div class="czas">Łapanie sygnału z satelitów lub sieci.</div></div>
     </div>
 
     <aside class="sidebar" id="sidebarLewy">
@@ -2276,7 +2334,23 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
           </div><div class="karta-akcje">
     <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783379723883')">🏷</button>
     <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783379723883')">🛠</button>
-    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783379723883')">🗑</button></div></div></div>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783379723883')">🗑</button></div></div><div class="miejsce-card"><div class="nazwa"><span class="karta-badge stlo">🌳</span>i</div>
+          <div class="opis">🗣️ Komunikat głosowy · strefa (6 pkt.)</div><div class="karta-akcje">
+    <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('strefa-1783497757146')">🏷</button>
+    <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('strefa-1783497757146')">🛠</button>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('strefa-1783497757146')">🗑</button></div></div><div class="miejsce-card"><div class="nazwa"><span class="karta-badge stlo">🌳</span>f</div>
+          <div class="opis">📻 Pętla mp3 · okrąg, zasięg 2 km</div><div class="karta-akcje">
+    <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('strefa-1783497910994')">🏷</button>
+    <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('strefa-1783497910994')">🛠</button>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('strefa-1783497910994')">🗑</button></div></div><div class="miejsce-card"><div class="nazwa"><span class="karta-badge stlo">🌳</span>rr</div>
+          <div class="opis">🗣️ Komunikat głosowy · okrąg, zasięg 1.0 km</div><div class="karta-akcje">
+    <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('strefa-1783498487306')">🏷</button>
+    <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('strefa-1783498487306')">🛠</button>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('strefa-1783498487306')">🗑</button></div></div><div class="miejsce-card"><div class="nazwa"><span class="karta-badge stlo">🌳</span>ww</div>
+          <div class="opis">🗣️ Komunikat głosowy · okrąg, zasięg 1.2 km</div><div class="karta-akcje">
+    <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('strefa-1783498524586')">🏷</button>
+    <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('strefa-1783498524586')">🛠</button>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('strefa-1783498524586')">🗑</button></div></div></div>
     </aside>
   </div>
 
@@ -2315,7 +2389,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 
 <!-- Osadzone miejsca (wypełniane przy "Zapisz HTML"). Pusta tablica = brak. -->
-<script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]}]</script>
+<script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]},{"klucz":"rys-1783460756394","typ":"rysunek","ksztalt":"strzalka","start":[53.20899832669915,15.547302262857558],"koniec":[53.14011023699031,15.735168457031252],"kolor":"#e0a955"},{"klucz":"strefa-1783497757146","typ":"audio","podtyp":"tlo","ksztalt":"wielokat","zasieg":100,"nazwa":"i","zrodloTla":"mowa","plik":null,"tekstMowa":"ok","punkty":[[50.67821352380828,19.107044221018445],[50.679302392405376,19.144294739817273],[50.67244209847045,19.143951417063366],[50.66732344833117,19.141204835032113],[50.665362966435566,19.08919143781532],[50.671788684847186,19.10670089826454]],"pozycja":[50.67240551904967,19.122064591501843]},{"klucz":"strefa-1783497910994","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":2000,"nazwa":"f","zrodloTla":"plik","plik":"tlo1","tekstMowa":null,"punkty":null,"pozycja":[50.66449648211102,19.199054719065316]},{"klucz":"strefa-1783498487306","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":1030,"nazwa":"rr","zrodloTla":"mowa","plik":null,"tekstMowa":"Usunąłem tę zbędną linijkę i dodatkowo zabezpieczyłem pozycję twardą regułą na ID przycisku (!important), żeby żadna przyszła zmiana nie mogła jej już przypadkiem nadpisać. Teraz przycisk ma zostać dokładnie w miejscu, niezależnie czy jest włączony, czy przekreślony. Wgraj i sprawdź.","punkty":null,"pozycja":[51.09127791354616,23.280449867379506]},{"klucz":"strefa-1783498524586","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":1230,"nazwa":"ww","zrodloTla":"mowa","plik":null,"tekstMowa":"Usunąłem tę zbędną linijkę i dodatkowo zabezpieczyłem pozycję twardą regułą na ID przycisku (!important), żeby żadna przyszła zmiana nie mogła jej już przypadkiem nadpisać. Teraz przycisk ma zostać dokładnie w miejscu, niezależnie czy jest włączony, czy przekreślony. Wgraj i sprawdź.","punkty":null,"pozycja":[51.1947454193666,23.163608551549267]}]</script>
 <script id="daneStrony" type="application/json">{"tytul":"Miasto - SDL","opis":"zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń\" na samym dole.\nTo wszystko trzyma się też przy „Zapisz JSON\" / „Zapisz HTML\" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.","opisYT":"https://www.youtube.com/watch?v=pEEMi2j6lYE","autor":"mini","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
 
 <script>
@@ -3170,6 +3244,8 @@ function wylaczWszystkieTryby() {
   trybDodawania360 = false;
   trybDodawaniaAudio = false;
   trybDodawaniaMiejsce = false;
+  trybDodawaniaStrefy = false;
+  document.getElementById('btnStrefa')?.classList.remove('aktywny');
   // rysowanie: jeśli było włączone, schowaj panel poprawnie
   if (typeof trybRysowaniaWlaczony !== 'undefined' && trybRysowaniaWlaczony) {
     trybRysowaniaWlaczony = false;
@@ -3836,6 +3912,8 @@ function resetRadarAudio() {
   kropkiOdwiedzone = new Set();
   kropkiWZasiegu = new Set();
   faleWidoczne = new Set();        // wyłączenie nawigacji = fale-wabiki gasną
+  wierszCzekaKlucz = null;         // bez GPS nie ma sensu odtwarzać odłożonego wiersza później
+  strefyMowaWewnatrz.clear();      // wyzeruj "byłem w strefie głosowej" - przy nawigacji od nowa
   zamknijSzufladkeWykryto();
   if (typeof renderujMiejsca === 'function') renderujMiejsca();   // kropki wracają do fioletu
 }
@@ -3873,7 +3951,9 @@ function sprawdzFale() {
 // Wywoływane przy każdej aktualizacji pozycji GPS (z pokazPozycje).
 function sprawdzKropkiAudio() {
   if (!userPozycja) return;
-  const kropki = miejsca.filter(m => m.typ === 'audio' && Array.isArray(m.pozycja));
+  // WAŻNE: tylko "wiersz" - strefy "tło" mają zupełnie osobny system (sprawdzStrefyTla),
+  // inaczej kropka tła zostałaby złapana też tutaj i zagrałaby podwójnie/w złym trybie.
+  const kropki = miejsca.filter(m => m.typ === 'audio' && m.podtyp !== 'tlo' && Array.isArray(m.pozycja));
   if (!kropki.length) return;
 
   const teraz = new Set();
@@ -3909,7 +3989,12 @@ function sprawdzKropkiAudio() {
     // Auto włączony -> graj tę kropkę raz (pomiń kropki bez pliku - bez alertu w terenie)
     if (autoAudioWlaczony && !kropkiOdsluchane.has(klucz)) {
       kropkiOdsluchane.add(klucz);
-      if (k && k.plik) odtworzAudio(k);
+      if (k && k.plik) {
+        // PRIORYTET STREF: jeśli właśnie gra zapętlone tło, nie przerywamy go -
+        // odkładamy ten wiersz, zagra automatycznie zaraz po tym jak tło ucichnie.
+        if (audioTloKlucz) wierszCzekaKlucz = klucz;
+        else odtworzAudio(k);
+      }
     }
   }
 
@@ -3920,29 +4005,46 @@ function sprawdzKropkiAudio() {
 // =====================================================================
 // === TŁO AUDIO - odtwarzanie w pętli, gdy gość jest w strefie ========
 // =====================================================================
-let tloWlaczone = true;      // globalny przełącznik 🌳 - domyślnie ON
+let tloWlaczone = true;      // globalny przełącznik 📻 - domyślnie ON
 let audioTlo = null;         // aktualnie grający obiekt Audio (osobny kanał od "wiersza")
-let audioTloKlucz = null;    // klucz strefy, której dźwięk teraz gra
+let audioTloKlucz = null;    // klucz strefy MP3, której dźwięk teraz gra
+let wierszCzekaKlucz = null; // klucz "wiersza", który radar odłożył (strefa miała pierwszeństwo) - zagra po jej zakończeniu
+let strefyMowaWewnatrz = new Set(); // klucze stref głosowych, w których user AKTUALNIE stoi (żeby nie powtarzać w kółko)
 
 // Wywoływane przy każdej aktualizacji pozycji GPS - sprawdza czy user jest
 // w obrębie którejś strefy tła (koło ALBO rysowany wielokąt) i odtwarza/
-// zatrzymuje zapętlony dźwięk odpowiednio do tego.
+// zatrzymuje zapętlony dźwięk (mp3) albo czyta komunikat (mowa) odpowiednio.
 function sprawdzStrefyTla() {
   if (!tloWlaczone || !userPozycja) {
     zatrzymajAudioTlo();
+    strefyMowaWewnatrz.clear();
     return;
   }
-  const strefy = miejsca.filter(m => m.typ === 'audio' && m.podtyp === 'tlo' && m.plik);
+  const strefy = miejsca.filter(m => m.typ === 'audio' && m.podtyp === 'tlo' && (m.plik || m.tekstMowa));
+
+  // --- KOMUNIKATY GŁOSOWE: przeczytaj RAZ przy każdym nowym wejściu do strefy ---
+  for (const m of strefy) {
+    if (m.zrodloTla !== 'mowa' || !m.tekstMowa) continue;
+    const wSrodku = jestWStrefie(userPozycja, m);
+    const bylWSrodku = strefyMowaWewnatrz.has(m.klucz);
+    if (wSrodku && !bylWSrodku) {
+      strefyMowaWewnatrz.add(m.klucz);
+      przeczytajTekst(m.tekstMowa);
+    } else if (!wSrodku && bylWSrodku) {
+      strefyMowaWewnatrz.delete(m.klucz);
+    }
+  }
+
+  // --- PĘTLA MP3 ---
+  const strefyMp3 = strefy.filter(m => m.zrodloTla !== 'mowa');
 
   // Czy user jest nadal w strefie, która już gra? (unikamy przełączania na granicy)
   if (audioTloKlucz) {
-    const aktualna = strefy.find(m => m.klucz === audioTloKlucz);
+    const aktualna = strefyMp3.find(m => m.klucz === audioTloKlucz);
     if (aktualna && jestWStrefie(userPozycja, aktualna)) return;   // nic się nie zmienia
   }
 
-  // Znajdź pierwszą pasującą strefę
-  const trafienie = strefy.find(m => jestWStrefie(userPozycja, m));
-
+  const trafienie = strefyMp3.find(m => jestWStrefie(userPozycja, m));
   if (!trafienie) { zatrzymajAudioTlo(); return; }
   if (trafienie.klucz === audioTloKlucz) return;   // już gra
   odtworzAudioTlo(trafienie);
@@ -3958,8 +4060,26 @@ function jestWStrefie(pozUser, m) {
   return dystansMetry(pozUser.lat, pozUser.lng, m.pozycja[0], m.pozycja[1]) <= promien;
 }
 
+// Przeczytaj tekst głosem przeglądarki (polski głos, jeśli dostępny). Ścisza
+// na chwilę pętlę mp3 tła, żeby komunikat było wyraźnie słychać, i wznawia po nim.
+function przeczytajTekst(tekst) {
+  if (!('speechSynthesis' in window) || !tekst) return;
+  const tloGralo = (audioTlo && !audioTlo.paused);
+  if (tloGralo) { try { audioTlo.pause(); } catch (e) {} }
+  try {
+    speechSynthesis.cancel();   // przerwij ewentualną poprzednią wypowiedź
+    const u = new SpeechSynthesisUtterance(tekst);
+    u.lang = 'pl-PL';
+    u.rate = 0.95;
+    u.onend = u.onerror = () => { if (tloGralo) wznowTloPoWierszu(); };
+    speechSynthesis.speak(u);
+  } catch (e) { if (tloGralo) wznowTloPoWierszu(); }
+}
+
 function odtworzAudioTlo(m) {
-  zatrzymajAudioTlo();
+  // Czyszczenie "na cicho" (bez wyzwalania odłożonego wiersza - to tylko
+  // przełączenie z jednej strefy na drugą, nie prawdziwe zatrzymanie).
+  if (audioTlo) { try { audioTlo.pause(); } catch (e) {} audioTlo = null; }
   try {
     audioTlo = new Audio(`audio/${m.plik}.mp3`);
     audioTlo.loop = true;
@@ -3975,19 +4095,50 @@ function zatrzymajAudioTlo() {
     audioTlo = null;
   }
   audioTloKlucz = null;
+  // Strefa właśnie ucichła (wyjście / radio wyłączone) - jeśli czekał na to
+  // jakiś "wiersz" (radar go odłożył, bo strefa miała pierwszeństwo), teraz może zagrać.
+  if (wierszCzekaKlucz) {
+    const klucz = wierszCzekaKlucz;
+    wierszCzekaKlucz = null;
+    const m = miejsca.find(x => x.klucz === klucz);
+    if (m) odtworzAudio(m);
+  }
+}
+
+// Wywoływane po zakończeniu/zamknięciu/pauzie "wiersza" LUB komunikatu głosowego
+// - oddaje głos tłu mp3. Sprawdza aktualną pozycję na nowo (mogłem wyjść ze strefy).
+function wznowTloPoWierszu() {
+  if (!tloWlaczone) return;
+  if (audioTlo && audioTloKlucz && userPozycja) {
+    const strefa = miejsca.find(m => m.klucz === audioTloKlucz);
+    if (strefa && jestWStrefie(userPozycja, strefa)) {
+      try { audioTlo.play().catch(() => {}); } catch (e) {}
+      return;
+    }
+  }
+  audioTloKlucz = null;
+  audioTlo = null;
+  sprawdzStrefyTla();
 }
 
 // Przycisk 🌳 (widoczny u gościa tylko gdy mapa ma choć jedną strefę tła)
 function przelaczTloAudio() {
   tloWlaczone = !tloWlaczone;
   const btn = document.getElementById('tloBtn');
-  if (btn) btn.classList.toggle('active', tloWlaczone);
+  if (btn) {
+    btn.classList.toggle('active', tloWlaczone);
+    btn.title = tloWlaczone
+      ? 'Radio tła: włączone (kliknij, aby wyłączyć)'
+      : 'Radio tła: wyłączone — słychać tylko kropki (kliknij, aby włączyć)';
+  }
   if (tloWlaczone) {
     // Rozgrzej silnik audio (gest usera) - żeby przeglądarka pozwoliła
     // grać dźwięk automatycznie, gdy user wejdzie w strefę.
     try { const t = new Audio(); t.volume = 0.01; t.play().catch(() => {}); } catch (e) {}
     sprawdzStrefyTla();
   } else {
+    // Wyłączenie radia = wyłącza strefy. zatrzymajAudioTlo() zaraz też odpali
+    // odłożony wiersz (jeśli jakiś czekał) - dzięki temu "słychać kropki" od razu.
     zatrzymajAudioTlo();
   }
 }
@@ -4039,57 +4190,87 @@ function decyzjaSzuflady(wybor) {
 
 
 // =====================================================================
-// === TŁO AUDIO - typ "wiersz"/"tlo" + kształt "kolo"/"wielokat" ======
+// === STREFA TŁA - osobny panel/przycisk. Kształt "kolo"/"wielokat",  ==
+// === źródło dźwięku "plik" (mp3 w pętli) / "mowa" (komunikat głosem) ==
 // =====================================================================
-// Wiersz: dokładnie jak dotąd - klikalna kropka, okrąg, jedno odtworzenie.
-// Tło: dźwięk zapętlony, bez pinezki dla gościa - gra automatycznie gdy
-// gość jest w obrębie strefy (koło ALBO rysowany wielokąt) i ma włączony
-// globalny przełącznik "🌳 Tło" (patrz przelaczTloAudio niżej).
-let wybranyTypAudio = 'wiersz';       // 'wiersz' | 'tlo'
-let wybranyKsztaltAudio = 'kolo';     // 'kolo' | 'wielokat'
+// Bez pinezki dla gościa - gra automatycznie gdy gość jest w obrębie
+// strefy (koło ALBO rysowany wielokąt) i ma włączony przełącznik "📻".
+let wybranyKsztaltStrefa = 'kolo';     // 'kolo' | 'wielokat'
+let wybranyZrodloStrefa = 'plik';      // 'plik' | 'mowa'
+let trybDodawaniaStrefy = false;       // czeka na pierwszy klik (środek/punkt referencyjny)
+let kliknietaPozycjaStrefa = null;
 let rysowanieStrefyAktywne = false;
 let strefaPunkty = [];                // [[lat,lng], ...] klikniętych wierzchołków
 let strefaWarstwaPodglad = null;
 let strefaMarkeryPunkty = [];
 
-function ustawTypAudio(t) {
-  if (t !== 'wiersz' && t !== 'tlo') t = 'wiersz';
-  wybranyTypAudio = t;
-  document.querySelectorAll('#audTypWybor .rozmiar-opcja').forEach(o => {
-    o.classList.toggle('wybrany', o.dataset.typ === t);
-  });
-  const sekcja = document.getElementById('audKsztaltSekcja');
-  if (sekcja) sekcja.style.display = (t === 'tlo') ? '' : 'none';
-  // Wiersz zawsze jest okręgiem - wróć do koła gdy przełączamy na wiersz
-  if (t === 'wiersz' && wybranyKsztaltAudio !== 'kolo') ustawKsztaltAudio('kolo');
-  // "Tryb kropki" (fala/zawsze widoczna) dotyczy tylko wiersza - tło nigdy
-  // nie ma widocznej pinezki dla gościa, więc fala nie ma tam zastosowania.
-  const trybSekcja = document.getElementById('audTrybSekcja');
-  if (trybSekcja) trybSekcja.style.display = (t === 'tlo') ? 'none' : '';
-  if (t === 'tlo') ustawTrybAudio('zawsze');
+function wlaczTrybDodawaniaStrefy() {
+  const bylWlaczony = trybDodawaniaStrefy;
+  wylaczWszystkieTryby();
+  trybDodawaniaStrefy = !bylWlaczony;
+  document.getElementById('btnStrefa')?.classList.toggle('aktywny', trybDodawaniaStrefy);
+  syncPrzyciski();
+  if (trybDodawaniaStrefy) pokazInfo('🌳 Kliknij na mapie, gdzie ma być środek/początek strefy tła.');
+  else ukryjInfo();
 }
 
-function ustawKsztaltAudio(k) {
+mapa.on('click', (e) => {
+  if (!trybDodawaniaStrefy || rysowanieStrefyAktywne) return;
+  kliknietaPozycjaStrefa = [e.latlng.lat, e.latlng.lng];
+  otworzPanelStrefa();
+});
+
+// Klik na mapę podczas rysowania strefy (wielokąt) -> dodaj wierzchołek
+mapa.on('click', (e) => {
+  if (!rysowanieStrefyAktywne) return;
+  strefaPunkty.push([e.latlng.lat, e.latlng.lng]);
+  przerysujPodgladStrefy();
+  aktualizujStrefaInfo();
+});
+
+function ustawKsztaltStrefa(k) {
   if (k !== 'kolo' && k !== 'wielokat') k = 'kolo';
-  wybranyKsztaltAudio = k;
-  document.querySelectorAll('#audKsztaltWybor .rozmiar-opcja').forEach(o => {
+  wybranyKsztaltStrefa = k;
+  document.querySelectorAll('#strefaKsztaltWybor .rozmiar-opcja').forEach(o => {
     o.classList.toggle('wybrany', o.dataset.ksztalt === k);
   });
-  const blokKolo = document.getElementById('audKoloBlok');
-  const blokStrefa = document.getElementById('audStrefaBlok');
+  const blokKolo = document.getElementById('strefaKoloBlok');
+  const blokWielokat = document.getElementById('strefaWielokatBlok');
   if (blokKolo) blokKolo.style.display = (k === 'kolo') ? '' : 'none';
-  if (blokStrefa) blokStrefa.style.display = (k === 'wielokat') ? '' : 'none';
+  if (blokWielokat) blokWielokat.style.display = (k === 'wielokat') ? '' : 'none';
   if (k === 'kolo' && rysowanieStrefyAktywne) anulujRysowanieStrefy();
   aktualizujStrefaInfo();
 }
 
+function ustawZrodloStrefa(z) {
+  if (z !== 'plik' && z !== 'mowa') z = 'plik';
+  wybranyZrodloStrefa = z;
+  document.querySelectorAll('#strefaZrodloWybor .rozmiar-opcja').forEach(o => {
+    o.classList.toggle('wybrany', o.dataset.zrodlo === z);
+  });
+  document.getElementById('strefaPlikBlok').style.display = (z === 'plik') ? '' : 'none';
+  document.getElementById('strefaMowaBlok').style.display = (z === 'mowa') ? '' : 'none';
+}
+
+function aktualizujStrefaZasiegLabel() {
+  const v = document.getElementById('strefaZasieg').value;
+  document.getElementById('strefaZasiegLabel').textContent = formatDystans(+v);
+}
+
 function aktualizujStrefaInfo() {
-  const info = document.getElementById('audStrefaInfo');
+  const info = document.getElementById('strefaWielokatInfo');
   if (!info) return;
   const n = strefaPunkty.length;
   if (n === 0) info.textContent = 'Kliknij „✏️ Rysuj strefę na mapie", potem klikaj punkty po obrysie terenu (min. 3).';
   else if (n < 3) info.textContent = `Postawiono ${n} pkt. — kliknij jeszcze ${3 - n}, żeby zamknąć obszar.`;
   else info.textContent = `Strefa ma ${n} punktów. Możesz dodać więcej, cofnąć ostatni, albo zakończyć.`;
+}
+
+// Odczytaj próbkę komunikatu głosem przeglądarki (test w panelu, bez zapisu)
+function testujMowe() {
+  const tekst = document.getElementById('strefaTekst').value.trim();
+  if (!tekst) { alert('Wpisz najpierw tekst do przeczytania.'); return; }
+  przeczytajTekst(tekst);
 }
 
 // Wyczyść podgląd rysowanej strefy z mapy (wielokąt + markery wierzchołków)
@@ -4129,8 +4310,8 @@ function przerysujPodgladStrefy() {
 function rozpocznijRysowanieStrefy() {
   if (rysowanieStrefyAktywne) return;
   rysowanieStrefyAktywne = true;
-  document.getElementById('panelBackdropAudio').classList.remove('visible');
-  document.getElementById('panelAudio').classList.remove('visible');
+  document.getElementById('panelBackdropStrefa').classList.remove('visible');
+  document.getElementById('panelStrefa').classList.remove('visible');
   if (mapa.dragging) mapa.dragging.disable();
   if (mapa.doubleClickZoom) mapa.doubleClickZoom.disable();
   document.querySelector('#mapa .leaflet-container')?.classList.add('tryb-rysowania');
@@ -4144,8 +4325,8 @@ function anulujRysowanieStrefy() {
   wyczyscPodgladStrefy();
   zakonczTrybRysowaniaStrefyMapa();
   ukryjPasekRysowaniaStrefy();
-  document.getElementById('panelBackdropAudio').classList.add('visible');
-  document.getElementById('panelAudio').classList.add('visible');
+  document.getElementById('panelBackdropStrefa').classList.add('visible');
+  document.getElementById('panelStrefa').classList.add('visible');
   aktualizujStrefaInfo();
 }
 
@@ -4159,8 +4340,8 @@ function zakonczRysowanieStrefy() {
   zakonczTrybRysowaniaStrefyMapa();
   ukryjPasekRysowaniaStrefy();
   przerysujPodgladStrefy();
-  document.getElementById('panelBackdropAudio').classList.add('visible');
-  document.getElementById('panelAudio').classList.add('visible');
+  document.getElementById('panelBackdropStrefa').classList.add('visible');
+  document.getElementById('panelStrefa').classList.add('visible');
   aktualizujStrefaInfo();
 }
 
@@ -4197,14 +4378,6 @@ function ukryjPasekRysowaniaStrefy() {
   if (pasek) pasek.classList.remove('visible');
 }
 
-// Klik na mapę podczas rysowania strefy -> dodaj wierzchołek
-mapa.on('click', (e) => {
-  if (!rysowanieStrefyAktywne) return;
-  strefaPunkty.push([e.latlng.lat, e.latlng.lng]);
-  przerysujPodgladStrefy();
-  aktualizujStrefaInfo();
-});
-
 // Punkt w wielokącie (ray casting) - używane do sprawdzania czy gość jest w strefie tła
 function punktWWielokacie(lat, lng, wielokat) {
   if (!wielokat || wielokat.length < 3) return false;
@@ -4223,6 +4396,120 @@ function srodekWielokata(wielokat) {
   let sumLat = 0, sumLng = 0;
   for (const p of wielokat) { sumLat += p[0]; sumLng += p[1]; }
   return [sumLat / wielokat.length, sumLng / wielokat.length];
+}
+
+function otworzPanelStrefa() {
+  document.getElementById('strefaNazwa').value = '';
+  document.getElementById('strefaPlik').value = '';
+  document.getElementById('strefaTekst').value = '';
+  document.getElementById('strefaPrzyklad').textContent = 'tlo1.mp3';
+  document.getElementById('strefaZasieg').value = 100;
+  aktualizujStrefaZasiegLabel();
+  strefaPunkty = [];
+  wyczyscPodgladStrefy();
+  ustawKsztaltStrefa('kolo');
+  ustawZrodloStrefa('plik');
+  const el = document.getElementById('strefaPozycjaTekst');
+  if (el && kliknietaPozycjaStrefa) el.innerHTML = `📌 <b>${kliknietaPozycjaStrefa[0].toFixed(5)}, ${kliknietaPozycjaStrefa[1].toFixed(5)}</b>`;
+  document.getElementById('panelStrefaTytul').textContent = '🌳 Dodaj strefę tła';
+  document.getElementById('panelBackdropStrefa').classList.add('visible');
+  document.getElementById('panelStrefa').classList.add('visible');
+}
+
+function zamknijPanelStrefa() {
+  document.getElementById('panelBackdropStrefa').classList.remove('visible');
+  document.getElementById('panelStrefa').classList.remove('visible');
+  edytowanyKlucz = null;
+  trybDodawaniaStrefy = false;
+  document.getElementById('btnStrefa')?.classList.remove('aktywny');
+  if (!rysowanieStrefyAktywne) { strefaPunkty = []; wyczyscPodgladStrefy(); }
+  ukryjInfo();
+}
+
+function zatwierdzStrefa() {
+  const nazwa = document.getElementById('strefaNazwa').value.trim();
+  const ksztalt = wybranyKsztaltStrefa;
+  const zrodlo = wybranyZrodloStrefa;
+  const plik = document.getElementById('strefaPlik').value.trim();
+  const tekstMowa = document.getElementById('strefaTekst').value.trim();
+  const zasieg = +document.getElementById('strefaZasieg').value;
+
+  if (!nazwa) { alert('Wpisz przynajmniej Nazwę (tylko dla Ciebie, do rozpoznania na liście).'); return; }
+  if (ksztalt === 'wielokat' && strefaPunkty.length < 3) {
+    alert('Strefa musi mieć narysowany kształt (min. 3 punkty).\n\nKliknij „✏️ Rysuj strefę na mapie".');
+    return;
+  }
+  if (ksztalt === 'kolo' && !kliknietaPozycjaStrefa && !edytowanyKlucz) {
+    alert('Brak lokalizacji — kliknij najpierw miejsce na mapie.');
+    return;
+  }
+  if (zrodlo === 'plik') {
+    if (!plik) { alert('Wpisz nazwę pliku mp3 (np. tlo1).'); return; }
+    if (!/^[a-zA-Z0-9_-]+$/.test(plik)) { alert('Nazwa pliku może zawierać tylko litery a-z, cyfry, myślnik i podkreślenie.'); return; }
+    if (nazwaPlikuZajeta(plik, edytowanyKlucz)) {
+      alert('⚠️ Nazwa pliku „' + plik + '" jest już użyta przez inne miejsce. Zmień nazwę.');
+      return;
+    }
+  } else {
+    if (!tekstMowa) { alert('Wpisz tekst, który ma zostać przeczytany.'); return; }
+  }
+
+  const pozycjaDoZapisu = (ksztalt === 'wielokat') ? srodekWielokata(strefaPunkty) : kliknietaPozycjaStrefa;
+  const punktyDoZapisu = (ksztalt === 'wielokat') ? strefaPunkty.slice() : null;
+
+  if (edytowanyKlucz) {
+    const m = miejsca.find(x => x.klucz === edytowanyKlucz);
+    if (m) {
+      m.nazwa = nazwa; m.ksztalt = ksztalt; m.zasieg = zasieg;
+      m.zrodloTla = zrodlo;
+      m.plik = (zrodlo === 'plik') ? plik : null;
+      m.tekstMowa = (zrodlo === 'mowa') ? tekstMowa : null;
+      m.punkty = punktyDoZapisu;
+      if (pozycjaDoZapisu) m.pozycja = pozycjaDoZapisu;
+    }
+    edytowanyKlucz = null;
+  } else {
+    miejsca.push({
+      klucz: 'strefa-' + Date.now(),
+      typ: 'audio', podtyp: 'tlo',
+      ksztalt: ksztalt, zasieg: zasieg,
+      nazwa: nazwa,
+      zrodloTla: zrodlo,
+      plik: (zrodlo === 'plik') ? plik : null,
+      tekstMowa: (zrodlo === 'mowa') ? tekstMowa : null,
+      punkty: punktyDoZapisu,
+      pozycja: pozycjaDoZapisu
+    });
+  }
+  strefaPunkty = [];
+  wyczyscPodgladStrefy();
+  zapiszMiejsca();
+  renderujMiejsca();
+  zamknijPanelStrefa();
+}
+
+function edytujStrefa(klucz) {
+  const m = miejsca.find(x => x.klucz === klucz);
+  if (!m) return;
+  edytowanyKlucz = klucz;
+  kliknietaPozycjaStrefa = null;
+  document.getElementById('strefaNazwa').value = m.nazwa || '';
+  document.getElementById('strefaPlik').value = m.plik || '';
+  document.getElementById('strefaTekst').value = m.tekstMowa || '';
+  document.getElementById('strefaPrzyklad').textContent = (m.plik || 'tlo1') + '.mp3';
+  document.getElementById('strefaZasieg').value = m.zasieg || 100;
+  aktualizujStrefaZasiegLabel();
+  ustawKsztaltStrefa(m.ksztalt === 'wielokat' ? 'wielokat' : 'kolo');
+  ustawZrodloStrefa(m.zrodloTla === 'mowa' ? 'mowa' : 'plik');
+  strefaPunkty = Array.isArray(m.punkty) ? m.punkty.map(p => [p[0], p[1]]) : [];
+  wyczyscPodgladStrefy();
+  if (strefaPunkty.length) przerysujPodgladStrefy();
+  aktualizujStrefaInfo();
+  const el = document.getElementById('strefaPozycjaTekst');
+  if (el && m.pozycja) el.innerHTML = `📌 <b>${m.pozycja[0].toFixed(5)}, ${m.pozycja[1].toFixed(5)}</b>`;
+  document.getElementById('panelStrefaTytul').textContent = '🌳 Edytuj strefę tła';
+  document.getElementById('panelBackdropStrefa').classList.add('visible');
+  document.getElementById('panelStrefa').classList.add('visible');
 }
 
 function wlaczTrybDodawaniaAudio() {
@@ -4252,10 +4539,6 @@ function otworzPanelAudio() {
   aktualizujZasiegLabel();
   aktualizujFalaLabel();
   ustawTrybAudio('zawsze');
-  strefaPunkty = [];
-  wyczyscPodgladStrefy();
-  ustawTypAudio('wiersz');
-  ustawKsztaltAudio('kolo');
   pokazPozycjeWPanelu('audio');
   document.getElementById('panelAudioTytul').textContent = '🎧 Dodaj kropkę audio';
   document.getElementById('panelBackdropAudio').classList.add('visible');
@@ -4267,7 +4550,6 @@ function zamknijPanelAudio() {
   document.getElementById('panelAudio').classList.remove('visible');
   edytowanyKlucz = null;
   ukryjPodgladZasiegu();
-  if (!rysowanieStrefyAktywne) { strefaPunkty = []; wyczyscPodgladStrefy(); }
 }
 
 function aktualizujZasiegLabel() {
@@ -4320,8 +4602,6 @@ function zatwierdzAudio() {
   const nazwa = document.getElementById('audNazwa').value.trim();
   const plik  = document.getElementById('audPlik').value.trim();
   const kat   = katZSelecta('audKat');
-  const ksztalt = wybranyKsztaltAudio;
-  const podtyp = wybranyTypAudio;
 
   if (!nazwa) { alert('Wpisz przynajmniej Nazwę.'); return; }
   if (!kategoriaOk(kat)) return;
@@ -4336,46 +4616,33 @@ function zatwierdzAudio() {
   if (!plik && !edytowanyKlucz) {
     if (!confirm('Dodajesz kropkę BEZ pliku audio.\n\nNagranie dodasz później — edytuj (🛠) i wpisz nazwę pliku.\n\nDodać teraz?')) return;
   }
-  if (ksztalt === 'wielokat' && strefaPunkty.length < 3) {
-    alert('Strefa tła musi mieć narysowany kształt (min. 3 punkty).\n\nKliknij „✏️ Rysuj strefę na mapie".');
-    return;
-  }
-  if (ksztalt === 'kolo' && !kliknietaPozycja && !edytowanyKlucz) {
+  if (!kliknietaPozycja && !edytowanyKlucz) {
     alert('Brak lokalizacji — kliknij najpierw miejsce na mapie.');
     return;
   }
-
-  const pozycjaDoZapisu = (ksztalt === 'wielokat') ? srodekWielokata(strefaPunkty) : kliknietaPozycja;
-  const punktyDoZapisu = (ksztalt === 'wielokat') ? strefaPunkty.slice() : null;
 
   if (edytowanyKlucz) {
     const m = miejsca.find(x => x.klucz === edytowanyKlucz);
     if (m) {
       m.nazwa = nazwa; m.plik = plik;
       m.kat = kat; // edycja = porządkowanie folderów
-      m.podtyp = podtyp; m.ksztalt = ksztalt;
       m.zasieg = wybranyZasiegAudio; m.tryb = wybranyTrybAudio;
       m.falaZasieg = (wybranyTrybAudio === 'fala') ? wybranyFalaZasieg : null;
-      m.punkty = punktyDoZapisu;
-      if (pozycjaDoZapisu) m.pozycja = pozycjaDoZapisu;
+      if (kliknietaPozycja) m.pozycja = kliknietaPozycja;
     }
     edytowanyKlucz = null;
   } else {
     miejsca.push({
       klucz: 'audio-' + Date.now(),
       typ: 'audio',
-      podtyp: podtyp, ksztalt: ksztalt,
       kat: kat,
       nazwa: nazwa, plik: plik,
       zasieg: wybranyZasiegAudio,
       tryb: wybranyTrybAudio,
       falaZasieg: (wybranyTrybAudio === 'fala') ? wybranyFalaZasieg : null,
-      punkty: punktyDoZapisu,
-      pozycja: pozycjaDoZapisu
+      pozycja: kliknietaPozycja
     });
   }
-  strefaPunkty = [];
-  wyczyscPodgladStrefy();
   zapiszMiejsca();
   renderujMiejsca();
   zamknijPanelAudio();
@@ -4446,6 +4713,10 @@ function odtworzAudio(m) {
     alert('Ta kropka nie ma jeszcze pliku audio.' + (isAdmin ? '\nEdytuj ją (🛠) i wpisz nazwę pliku.' : ''));
     return;
   }
+  // PRIORYTET STREF: jeśli w tle gra zapętlone tło, ścisz je na czas wiersza -
+  // wznowi się samo (albo przełączy na inną strefę) zaraz po zakończeniu.
+  if (audioTlo && !audioTlo.paused) { try { audioTlo.pause(); } catch(e){} }
+
   const sciezka = `audio/${m.plik}.mp3`;
   aktualneAudio = new Audio(sciezka);
 
@@ -4458,24 +4729,35 @@ function odtworzAudio(m) {
 
   aktualneAudio.play().catch(() => {
     info.innerHTML = '🎧 ' + (m.nazwa || '') + ' — ⚠️ brak pliku audio/' + m.plik + '.mp3';
+    wznowTloPoWierszu();
   });
-  aktualneAudio.onended = () => { btn.textContent = '🔁 Odtwórz ponownie'; };
+  aktualneAudio.onended = () => { btn.textContent = '🔁 Odtwórz ponownie'; wznowTloPoWierszu(); };
 }
 function toggleAudioPauza() {
   if (!aktualneAudio) return;
   const btn = document.getElementById('audioPauseBtn');
-  if (aktualneAudio.paused) { aktualneAudio.play(); btn.textContent = '⏸ Pauza'; }
-  else { aktualneAudio.pause(); btn.textContent = '▶ Wznów'; }
+  if (aktualneAudio.paused) {
+    aktualneAudio.play();
+    btn.textContent = '⏸ Pauza';
+    if (audioTlo && !audioTlo.paused) { try { audioTlo.pause(); } catch(e){} }   // wiersz wznowiony -> ścisz tło znów
+  }
+  else {
+    aktualneAudio.pause();
+    btn.textContent = '▶ Wznów';
+    wznowTloPoWierszu();   // wiersz na pauzie -> tło może wrócić
+  }
 }
 function zamknijAudio() {
   if (aktualneAudio) { try { aktualneAudio.pause(); } catch(e){} aktualneAudio = null; }
   document.getElementById('audioPlayer').classList.remove('visible');
+  wznowTloPoWierszu();
 }
 
-// Edycja kropki audio
+// Edycja kropki audio (routing: strefa tła ma osobny panel)
 function edytujAudio(klucz) {
   const m = miejsca.find(x => x.klucz === klucz);
   if (!m) return;
+  if (m.podtyp === 'tlo') { edytujStrefa(klucz); return; }
   edytowanyKlucz = klucz;
   kliknietaPozycja = null;
   document.getElementById('audNazwa').value = m.nazwa || '';
@@ -4488,12 +4770,6 @@ function edytujAudio(klucz) {
   aktualizujZasiegLabel();
   aktualizujFalaLabel();
   ustawTrybAudio(m.tryb || 'zawsze');
-  ustawTypAudio(m.podtyp === 'tlo' ? 'tlo' : 'wiersz');
-  ustawKsztaltAudio(m.ksztalt === 'wielokat' ? 'wielokat' : 'kolo');
-  strefaPunkty = Array.isArray(m.punkty) ? m.punkty.map(p => [p[0], p[1]]) : [];
-  wyczyscPodgladStrefy();
-  if (strefaPunkty.length) przerysujPodgladStrefy();
-  aktualizujStrefaInfo();
   wypelnijKatSelect('audKat', m.kat || '');
   const el = document.getElementById('audPozycjaTekst');
   if (el && m.pozycja) el.innerHTML = `📌 <b>${m.pozycja[0].toFixed(5)}, ${m.pozycja[1].toFixed(5)}</b>`;
@@ -5792,8 +6068,9 @@ function renderujMiejsca() {
         const card = document.createElement('div');
         card.className = 'miejsce-card';
         const opisKsztaltu = jestWielokatem ? `strefa (${m.punkty.length} pkt.)` : `okrąg, zasięg ${formatDystans(m.zasieg || 100)}`;
+        const opisZrodla = (m.zrodloTla === 'mowa') ? '🗣️ Komunikat głosowy' : '📻 Pętla mp3';
         card.innerHTML = `<div class="nazwa"><span class="karta-badge stlo">🌳</span>${escapeHTML(m.nazwa)}</div>
-          <div class="opis">Tło audio (pętla) · ${opisKsztaltu}</div>`;
+          <div class="opis">${opisZrodla} · ${opisKsztaltu}</div>`;
         card.onclick = () => {
           if (pozycjaMarkera) {
             autoCenterAktywny = false;
