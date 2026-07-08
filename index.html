@@ -741,12 +741,17 @@ body:not(.tryb-admin) .gps-btn.tlo-btn{ left:196px; }
 .gps-btn.tlo-btn.active{
   background:linear-gradient(180deg,#4f9a3c,#2c5a20);
   color:#eafbe0;border-color:#6bbf52;
+  animation:ucho-puls 1.6s ease-in-out infinite;
+}
+@keyframes ucho-puls{
+  0%,100%{box-shadow:0 4px 14px rgba(0,0,0,0.5), 0 0 0 0 rgba(107,191,82,0.55)}
+  50%{box-shadow:0 4px 14px rgba(0,0,0,0.5), 0 0 0 9px rgba(107,191,82,0)}
 }
 .gps-btn.tlo-btn:not(.active){
   background:linear-gradient(180deg,var(--panel-2),var(--panel));
   color:var(--tekst-2);opacity:0.55;
 }
-/* Radio wyłączone = przekreślone (ukośna czerwona kreska przez ikonę) */
+/* Wyłączone = przekreślone (ukośna czerwona kreska przez ikonę ucha) */
 .gps-btn.tlo-btn:not(.active)::after{
   content:'';position:absolute;left:8%;top:50%;width:84%;height:2.5px;
   background:#e04b3c;transform:translateY(-50%) rotate(-45deg);
@@ -1765,7 +1770,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 <div class="licznik-pobran" title="Łączna liczba pobranych map">
   <span class="lp-ikona">📥</span>
   <span class="lp-label">Pobrań</span>
-  <span class="lp-liczba" id="lp-liczba">75</span>
+  <span class="lp-liczba" id="lp-liczba">79</span>
 </div>
 
 <!-- Hamburger (dotyk, pion) -->
@@ -1840,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 </div>
 
 <!-- Pasek-podpowiedź gdy włączony tryb dodawania -->
-<div class="tryb-info" id="trybInfo">🌳 Kliknij na mapie, gdzie ma być środek/początek strefy tła.</div>
+<div class="tryb-info" id="trybInfo">🏛️ Kliknij na mapie miejsce, gdzie dodać punkt</div>
 
 <!-- Panel dodawania YT (modal) + przyciemnienie -->
 <div class="panel-backdrop2" id="panelBackdrop2" onclick="zamknijPanelYT()"></div>
@@ -2011,7 +2016,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
      ============================================================ -->
 <div class="panel-backdrop2" id="panelBackdropStrefa" onclick="zamknijPanelStrefa()"></div>
 <div class="panel-modal" id="panelStrefa">
-  <h2 id="panelStrefaTytul">🌳 Dodaj strefę tła</h2>
+  <h2 id="panelStrefaTytul">🌳 Edytuj strefę tła</h2>
 
   <label class="panel-label">Nazwa <span class="opcj">(tylko dla Ciebie, do rozpoznania na liście)</span></label>
   <input type="text" id="strefaNazwa" maxlength="80" placeholder="np. Park miejski / ul. Kościuszki">
@@ -2026,12 +2031,12 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     </div>
   </div>
 
-  <div id="strefaKoloBlok" style="">
+  <div id="strefaKoloBlok">
     <label class="panel-label">Promień strefy: <span id="strefaZasiegLabel" class="akcent-zasieg">1.2 km</span></label>
     <input type="range" id="strefaZasieg" min="20" max="2000" step="10" value="100" class="suwak-zasieg" oninput="aktualizujStrefaZasiegLabel()">
   </div>
 
-  <div id="strefaWielokatBlok" style="display: none;">
+  <div id="strefaWielokatBlok" style="display:none">
     <div class="intro-hint" id="strefaWielokatInfo" style="margin-bottom:10px">Kliknij „✏️ Rysuj strefę na mapie", potem klikaj punkty po obrysie terenu (min. 3).</div>
     <button type="button" class="btn-pozycja" style="width:100%;margin-bottom:12px" onclick="rozpocznijRysowanieStrefy()">✏️ Rysuj strefę na mapie</button>
   </div>
@@ -2095,7 +2100,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <input type="text" id="mscNazwa" maxlength="80" placeholder="np. Kościół św. Anny">
 
   <label class="panel-label">Nazwa pliku (wspólna dla zdjęcia i audio)</label>
-  <input type="text" id="mscPlik" maxlength="80" placeholder="np. kosciol">
+  <input type="text" id="mscPlik" maxlength="80" placeholder="np. kosciol" class="">
 
   <label class="panel-label">Adres YouTube <span class="opcj">(opcjonalnie)</span></label>
   <input type="url" id="mscYT" maxlength="300" placeholder="https://youtube.com/watch?v=...">
@@ -2105,7 +2110,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
     <div class="rozmiar-opcja" data-foto="brak" onclick="ustawFotoMiejsce('brak')">
       <span class="ikona">🚫</span>Brak
     </div>
-    <div class="rozmiar-opcja" data-foto="zwykle" onclick="ustawFotoMiejsce('zwykle')">
+    <div class="rozmiar-opcja wybrany" data-foto="zwykle" onclick="ustawFotoMiejsce('zwykle')">
       <span class="ikona">🖼️</span>Zwykłe
     </div>
     <div class="rozmiar-opcja" data-foto="panorama" onclick="ustawFotoMiejsce('panorama')">
@@ -2115,10 +2120,10 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
   <label class="panel-label">Audio <span class="opcj">(plik {nazwa}.mp3 w folderze audio/)</span></label>
   <div class="rozmiar-wybor" id="mscMp3Wybor">
-    <div class="rozmiar-opcja wybrany" data-mp3="nie" onclick="ustawMp3Miejsce('nie')">
+    <div class="rozmiar-opcja" data-mp3="nie" onclick="ustawMp3Miejsce('nie')">
       <span class="ikona">🚫</span>Brak
     </div>
-    <div class="rozmiar-opcja" data-mp3="tak" onclick="ustawMp3Miejsce('tak')">
+    <div class="rozmiar-opcja wybrany" data-mp3="tak" onclick="ustawMp3Miejsce('tak')">
       <span class="ikona">🎧</span>Jest nagranie
     </div>
   </div>
@@ -2126,15 +2131,15 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
   <label class="panel-label">Opis</label>
   <textarea id="mscOpis" style="min-height:56px;max-height:90px" placeholder="Opis miejsca — kościół, pałac, kapliczka... Akapity oddziel pustą linią."></textarea>
 
-  <label class="panel-label">Zasięg odtwarzania audio: <span id="mscZasiegLabel" class="akcent-zasieg">50 m</span></label>
+  <label class="panel-label">Zasięg odtwarzania audio: <span id="mscZasiegLabel" class="akcent-zasieg">110 m</span></label>
   <input type="range" id="mscZasieg" min="10" max="200" step="10" value="50" class="suwak-zasieg" oninput="aktualizujZasiegMiejsce()">
 
   <label class="panel-label">Kategoria <span class="opcj">(wymagana, gdy mapa ma kategorie)</span></label>
-  <select id="mscKat"><option value="">— bez kategorii —</option></select>
+  <select id="mscKat"><option value="">— bez kategorii —</option><option value="k1783358052016">zabytek</option><option value="k1783358645120">dupa</option><option value="k1783358670120">lisć</option></select>
 
   <label class="panel-label">Lokalizacja</label>
   <div class="pozycja-wiersz">
-    <div class="pozycja-tekst" id="mscPozycjaTekst">Kliknij miejsce na mapie lub użyj GPS</div>
+    <div class="pozycja-tekst" id="mscPozycjaTekst">📌 <b>51.19196, 23.16990</b></div>
     <button class="btn-pozycja" onclick="uzyjMojejPozycji('miejsce')">📍 Moja pozycja</button>
   </div>
 
@@ -2258,7 +2263,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
       <div class="gps-btn active" id="gpsBtn" onclick="togglePozycja()" title="Wyłącz nawigację">🛑</div>
       <div class="mapa-btn" id="mapaBtn" onclick="przelaczMape()" title="Przełącz na widok satelitarny">🛰️</div>
       <div class="center-btn" id="centerBtn" onclick="wysrodkujNaMnie()" title="Wyśrodkuj na mojej pozycji" style="display: flex;">⊙</div>
-      <div class="gps-btn tlo-btn active" id="tloBtn" onclick="przelaczTloAudio()" title="Radio tła: włączone (kliknij, aby wyłączyć)" style="">📻</div>
+      <div class="gps-btn tlo-btn" id="tloBtn" onclick="przelaczTloAudio()" title="Dźwięk stref: wyłączony (kliknij, aby włączyć)" style="">👂</div>
       <div class="gps-status" id="gpsStatus"><span class="ikona-stat">📡</span> <b>Wyszukiwanie pozycji…</b><div class="czas">Łapanie sygnału z satelitów lub sieci.</div></div>
     </div>
 
@@ -2277,7 +2282,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
           <button onclick="menuDodaj('360')" data-tryb="360">📷 Dodaj zdjęcie</button>
           <button onclick="menuDodaj('audio')" data-tryb="audio">🎧 Dodaj kropkę audio</button>
           <button onclick="menuDodaj('rysuj')" data-tryb="rysuj">🎨 Rysuj na mapie</button>
-          <button onclick="menuDodaj('miejsce')" data-tryb="miejsce">🏛️ Miejsce (wszystko naraz)</button>
+          <button onclick="menuDodaj('miejsce')" data-tryb="miejsce" class="aktywny">🏛️ Miejsce (wszystko naraz)</button>
         </div>
         <!-- Pędzel kategorii w wersji mobilnej - renderowany razem z desktopowym -->
         <div class="kat-pedzle ma" id="katPedzleMobile">
@@ -2350,7 +2355,18 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
           <div class="opis">🗣️ Komunikat głosowy · okrąg, zasięg 1.2 km</div><div class="karta-akcje">
     <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('strefa-1783498524586')">🏷</button>
     <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('strefa-1783498524586')">🛠</button>
-    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('strefa-1783498524586')">🗑</button></div></div></div>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('strefa-1783498524586')">🗑</button></div></div><div class="miejsce-card" id="karta-msc-1783503412742">
+          <div class="karta-podglad-wrap" onclick="event.stopPropagation();toggleRozwinMiejsce('msc-1783503412742')">
+            <img class="karta-podglad-miniaturka" alt="" src="img/4.webp" onerror="this.onerror=null;this.src='img/4.png';this.onerror=function(){this.onerror=null;this.src='img/4.webp';this.onerror=function(){this.style.display='none';};};" style="display: none;">
+            <div class="nazwa karta-glowka">
+              <span class="karta-badge smiejsce">📍</span>
+              <span class="karta-nazwa-tekst">próba</span>
+            </div>
+            <div class="karta-podglad-opis">Sprawdziłem też na końcu, że system kropek (odtworzAudio i inne) nigdzie już nie dotyka zmiennej strefy — te dwa systemy są teraz…</div>
+          </div><div class="karta-akcje">
+    <button class="karta-akcja-btn" title="Kategoria: pomaluj aktywnym pędzlem" onclick="event.stopPropagation();przemalujMiejsce('msc-1783503412742')">🏷</button>
+    <button class="karta-akcja-btn" title="Edytuj" onclick="event.stopPropagation();edytujZListy('msc-1783503412742')">🛠</button>
+    <button class="karta-akcja-btn karta-akcja-usun" title="Usuń" onclick="event.stopPropagation();usunZListy('msc-1783503412742')">🗑</button></div></div></div>
     </aside>
   </div>
 
@@ -2389,7 +2405,7 @@ document.addEventListener('DOMContentLoaded', odswiezLicznikPobran);
 
 
 <!-- Osadzone miejsca (wypełniane przy "Zapisz HTML"). Pusta tablica = brak. -->
-<script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]},{"klucz":"rys-1783460756394","typ":"rysunek","ksztalt":"strzalka","start":[53.20899832669915,15.547302262857558],"koniec":[53.14011023699031,15.735168457031252],"kolor":"#e0a955"},{"klucz":"strefa-1783497757146","typ":"audio","podtyp":"tlo","ksztalt":"wielokat","zasieg":100,"nazwa":"i","zrodloTla":"mowa","plik":null,"tekstMowa":"ok","punkty":[[50.67821352380828,19.107044221018445],[50.679302392405376,19.144294739817273],[50.67244209847045,19.143951417063366],[50.66732344833117,19.141204835032113],[50.665362966435566,19.08919143781532],[50.671788684847186,19.10670089826454]],"pozycja":[50.67240551904967,19.122064591501843]},{"klucz":"strefa-1783497910994","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":2000,"nazwa":"f","zrodloTla":"plik","plik":"tlo1","tekstMowa":null,"punkty":null,"pozycja":[50.66449648211102,19.199054719065316]},{"klucz":"strefa-1783498487306","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":1030,"nazwa":"rr","zrodloTla":"mowa","plik":null,"tekstMowa":"Usunąłem tę zbędną linijkę i dodatkowo zabezpieczyłem pozycję twardą regułą na ID przycisku (!important), żeby żadna przyszła zmiana nie mogła jej już przypadkiem nadpisać. Teraz przycisk ma zostać dokładnie w miejscu, niezależnie czy jest włączony, czy przekreślony. Wgraj i sprawdź.","punkty":null,"pozycja":[51.09127791354616,23.280449867379506]},{"klucz":"strefa-1783498524586","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":1230,"nazwa":"ww","zrodloTla":"mowa","plik":null,"tekstMowa":"Usunąłem tę zbędną linijkę i dodatkowo zabezpieczyłem pozycję twardą regułą na ID przycisku (!important), żeby żadna przyszła zmiana nie mogła jej już przypadkiem nadpisać. Teraz przycisk ma zostać dokładnie w miejscu, niezależnie czy jest włączony, czy przekreślony. Wgraj i sprawdź.","punkty":null,"pozycja":[51.1947454193666,23.163608551549267]}]</script>
+<script id="daneMiejsc" type="application/json">[{"typ":"miejsce","kat":"k1783358052016","nazwa":"Krynica","plik":"2","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Kościół i klasztor franciszkanów zostały ufundowane w 1448 r. przez ostatniego księcia opawsko-głubczyckiego z rodu Przemyślidów – Jana Pobożnego. Istniejący obecnie kompleks powstał w latach 1753–70 wg projektu Jana Innocentego Töppera z Prudnika. Obejmuje on budynek klasztoru w formie czworoboku z wirydarzem pośrodku oraz barokowy kościół pw. św św. Idziego i Bernardyna. Nad portalem kościoła dostrzec można płaskorzeźbione godło zakonu franciszkanów: skrzyżowane ramiona Chrystusa i św. Franciszka z Asyżu. Wystrój jednonawowej świątyni utrzymany jest w stylu barokowo-rokokowym. Do klasztoru przylega budynek wzniesiony w 1752 r., w którym niegdyś mieściło się gimnazjum.","zasieg":50,"klucz":"msc-1783359154632","pozycja":[53.11665267739275,15.789550915360453]},{"typ":"miejsce","kat":"k1783358670120","nazwa":"bagno","plik":"3","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"","zasieg":50,"klucz":"msc-1783379723883","pozycja":[53.12078133340499,15.923171999165792]},{"klucz":"rys-1783460756394","typ":"rysunek","ksztalt":"strzalka","start":[53.20899832669915,15.547302262857558],"koniec":[53.14011023699031,15.735168457031252],"kolor":"#e0a955"},{"klucz":"strefa-1783497757146","typ":"audio","podtyp":"tlo","ksztalt":"wielokat","zasieg":100,"nazwa":"i","zrodloTla":"mowa","plik":null,"tekstMowa":"ok","punkty":[[50.67821352380828,19.107044221018445],[50.679302392405376,19.144294739817273],[50.67244209847045,19.143951417063366],[50.66732344833117,19.141204835032113],[50.665362966435566,19.08919143781532],[50.671788684847186,19.10670089826454]],"pozycja":[50.67240551904967,19.122064591501843]},{"klucz":"strefa-1783497910994","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":2000,"nazwa":"f","zrodloTla":"plik","plik":"tlo1","tekstMowa":null,"punkty":null,"pozycja":[50.66449648211102,19.199054719065316]},{"klucz":"strefa-1783498487306","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":1030,"nazwa":"rr","zrodloTla":"mowa","plik":null,"tekstMowa":"Usunąłem tę zbędną linijkę i dodatkowo zabezpieczyłem pozycję twardą regułą na ID przycisku (!important), żeby żadna przyszła zmiana nie mogła jej już przypadkiem nadpisać. Teraz przycisk ma zostać dokładnie w miejscu, niezależnie czy jest włączony, czy przekreślony. Wgraj i sprawdź.","punkty":null,"pozycja":[51.09127791354616,23.280449867379506]},{"klucz":"strefa-1783498524586","typ":"audio","podtyp":"tlo","ksztalt":"kolo","zasieg":1230,"nazwa":"ww","zrodloTla":"mowa","plik":null,"tekstMowa":"Usunąłem tę zbędną linijkę i dodatkowo zabezpieczyłem pozycję twardą regułą na ID przycisku (!important), żeby żadna przyszła zmiana nie mogła jej już przypadkiem nadpisać. Teraz przycisk ma zostać dokładnie w miejscu, niezależnie czy jest włączony, czy przekreślony. Wgraj i sprawdź.","punkty":null,"pozycja":[51.1947454193666,23.163608551549267]},{"typ":"miejsce","kat":"k1783358645120","nazwa":"próba","plik":"4","link":"https://www.youtube.com/watch?v=EkKK4IQakP0","fotoTyp":"zwykle","maMp3":true,"opis":"Sprawdziłem też na końcu, że system kropek (odtworzAudio i inne) nigdzie już nie dotyka zmiennej strefy — te dwa systemy są teraz całkowicie rozłączne, jak ustaliliśmy.","zasieg":110,"klucz":"msc-1783503412742","pozycja":[51.191961329907066,23.169899940621693]}]</script>
 <script id="daneStrony" type="application/json">{"tytul":"Miasto - SDL","opis":"zapomniane źródła ok Kolejność po rozwinięciu: zdjęcie → tekst opisu → przycisk YouTube → „⌃⌃⌃ Zwiń\" na samym dole.\nTo wszystko trzyma się też przy „Zapisz JSON\" / „Zapisz HTML\" — zapisuje się razem z tytułem i resztą, nic nie zginie przy eksporcie.","opisYT":"https://www.youtube.com/watch?v=pEEMi2j6lYE","autor":"mini","intro":true,"kategorie":[{"id":"k1783358052016","nazwa":"zabytek"},{"id":"k1783358645120","nazwa":"dupa"},{"id":"k1783358670120","nazwa":"lisć"}]}</script>
 
 <script>
@@ -2605,8 +2621,8 @@ function pokazPozycje(pos) {
 
   aktualizujListeMiejsc();
   aktualizujWidocznoscWysrodkowania();
-  sprawdzKropkiAudio();   // radar: sprawdź wejście w zasięg kropek audio
-  sprawdzStrefyTla();     // tło audio: sprawdź czy jestem w obrębie strefy zapętlonej
+  try { sprawdzKropkiAudio(); } catch (e) { console.error('sprawdzKropkiAudio:', e); }   // radar: sprawdź wejście w zasięg kropek audio
+  try { sprawdzStrefyTla(); } catch (e) { console.error('sprawdzStrefyTla:', e); }       // tło audio: sprawdź czy jestem w obrębie strefy zapętlonej
   // Fale-wabiki: jeśli zmienił się zestaw widocznych fal, przerysuj kropki
   if (sprawdzFale() && typeof renderujMiejsca === 'function') renderujMiejsca();
 }
@@ -2704,8 +2720,11 @@ function wysrodkujNaMnie() {
 // Wygląd przycisku ⊙ - pulsuje gdy auto-center aktywny
 function aktualizujPrzyciskCenter() {
   const btn = document.getElementById('centerBtn');
-  if (!btn) return;
-  btn.classList.toggle('sledzi', autoCenterAktywny);
+  if (btn) btn.classList.toggle('sledzi', autoCenterAktywny);
+  // Wyśrodkowanie to trzeci warunek stref tła (obok zasięgu i ucha) -
+  // każda jego zmiana (klik pinezki gdzie indziej, przeciągnięcie mapy,
+  // powrót przez ⊙) natychmiast przelicza, czy strefa ma grać.
+  if (typeof sprawdzStrefyTla === 'function') sprawdzStrefyTla();
 }
 
 // Pokaż ⊙ tylko gdy mamy pozycję
@@ -3912,8 +3931,10 @@ function resetRadarAudio() {
   kropkiOdwiedzone = new Set();
   kropkiWZasiegu = new Set();
   faleWidoczne = new Set();        // wyłączenie nawigacji = fale-wabiki gasną
-  wierszCzekaKlucz = null;         // bez GPS nie ma sensu odtwarzać odłożonego wiersza później
   strefyMowaWewnatrz.clear();      // wyzeruj "byłem w strefie głosowej" - przy nawigacji od nowa
+  if (mowaAktywnaKlucz) { try { speechSynthesis.cancel(); } catch (e) {} }
+  mowaAktywnaKlucz = null;
+  mowaTloScisznieteBylo = false;
   zamknijSzufladkeWykryto();
   if (typeof renderujMiejsca === 'function') renderujMiejsca();   // kropki wracają do fioletu
 }
@@ -3989,12 +4010,10 @@ function sprawdzKropkiAudio() {
     // Auto włączony -> graj tę kropkę raz (pomiń kropki bez pliku - bez alertu w terenie)
     if (autoAudioWlaczony && !kropkiOdsluchane.has(klucz)) {
       kropkiOdsluchane.add(klucz);
-      if (k && k.plik) {
-        // PRIORYTET STREF: jeśli właśnie gra zapętlone tło, nie przerywamy go -
-        // odkładamy ten wiersz, zagra automatycznie zaraz po tym jak tło ucichnie.
-        if (audioTloKlucz) wierszCzekaKlucz = klucz;
-        else odtworzAudio(k);
-      }
+      // Kropki (wiersze) i strefy tła (ucho) to dwie CAŁKOWICIE niezależne
+      // funkcje - jeśli się zejdą, grają razem. Turysta sam decyduje, czy
+      // chce słuchać obu naraz, czy wyciszy ucho.
+      if (k && k.plik) odtworzAudio(k);
     }
   }
 
@@ -4005,33 +4024,68 @@ function sprawdzKropkiAudio() {
 // =====================================================================
 // === TŁO AUDIO - odtwarzanie w pętli, gdy gość jest w strefie ========
 // =====================================================================
-let tloWlaczone = true;      // globalny przełącznik 📻 - domyślnie ON
+let tloWlaczone = false;     // globalny przełącznik 👂 - DOMYŚLNIE WYŁĄCZONY.
+// Strefa NIGDY nie odpala się sama - musi być spełniony i fizyczny zasięg,
+// I świadome kliknięcie gościa w to ucho. Bez kliknięcia = całkowita cisza,
+// nawet stojąc w środku strefy.
 let audioTlo = null;         // aktualnie grający obiekt Audio (osobny kanał od "wiersza")
 let audioTloKlucz = null;    // klucz strefy MP3, której dźwięk teraz gra
-let wierszCzekaKlucz = null; // klucz "wiersza", który radar odłożył (strefa miała pierwszeństwo) - zagra po jej zakończeniu
-let strefyMowaWewnatrz = new Set(); // klucze stref głosowych, w których user AKTUALNIE stoi (żeby nie powtarzać w kółko)
+let strefyMowaWewnatrz = new Set(); // klucze stref głosowych, w których user AKTUALNIE fizycznie stoi
+let mowaAktywnaKlucz = null;  // klucz strefy, której komunikat jest W TOKU (czytany LUB spauzowany) - null gdy skończony/nic nie gra
+let mowaTloScisznieteBylo = false; // czy tło mp3 było ściszone dla aktywnego/spauzowanego komunikatu (do wznowienia)
 
 // Wywoływane przy każdej aktualizacji pozycji GPS - sprawdza czy user jest
 // w obrębie którejś strefy tła (koło ALBO rysowany wielokąt) i odtwarza/
 // zatrzymuje zapętlony dźwięk (mp3) albo czyta komunikat (mowa) odpowiednio.
 function sprawdzStrefyTla() {
-  if (!tloWlaczone || !userPozycja) {
+  if (!tloWlaczone) {
+    // Ucho fizycznie wyłączone -> PEŁNY STOP. Po ponownym włączeniu zacznie
+    // od zera z aktualnej strefy (nie wznawia starej wypowiedzi).
     zatrzymajAudioTlo();
+    if (mowaAktywnaKlucz) { try { speechSynthesis.cancel(); } catch (e) {} }
+    mowaAktywnaKlucz = null;
+    mowaTloScisznieteBylo = false;
     strefyMowaWewnatrz.clear();
     return;
   }
+
+  if (!userPozycja || !autoCenterAktywny) {
+    // GPS jeszcze nie widzi pozycji ALBO user ogląda inną pinezkę na mapie
+    // (kliknął kartę/marker gdzieś indziej -> wyśrodkowanie samo się wyłącza,
+    // patrz card.onclick). To NIE jest fizyczne opuszczenie strefy - user
+    // może dalej tam stać - więc tylko MIĘKKA PAUZA, ucho dalej nasłuchuje
+    // i wszystko wznowi się samo, jak tylko wróci wyśrodkowanie (⊙).
+    if (audioTlo && !audioTlo.paused) { try { audioTlo.pause(); } catch (e) {} }
+    if (mowaAktywnaKlucz) { try { speechSynthesis.pause(); } catch (e) {} }
+    return;
+  }
+
   const strefy = miejsca.filter(m => m.typ === 'audio' && m.podtyp === 'tlo' && (m.plik || m.tekstMowa));
 
-  // --- KOMUNIKATY GŁOSOWE: przeczytaj RAZ przy każdym nowym wejściu do strefy ---
+  // --- KOMUNIKATY GŁOSOWE ---
+  // Wejście do strefy, w której komunikat był w toku (spauzowany bo wcześniej
+  // stąd wyszedłem) -> WZNÓW dokładnie tam, gdzie się urwał.
+  // Wejście do INNEJ strefy (albo tej samej, ale już wcześniej całkiem
+  // dokończonej) -> zacznij czytać ją OD NOWA.
+  // Wyjście ze strefy, która właśnie mówi -> PAUZA (nie stop) - można wrócić.
+  // Wciąż fizycznie w tej samej strefie, ale mowa spauzowana z innego powodu
+  // (wyśrodkowanie było chwilowo wyłączone, np. oglądałem inną pinezkę)
+  // -> WZNÓW, bo żadna transakcja wejścia/wyjścia się tu nie wydarzyła.
+  if (mowaAktywnaKlucz && speechSynthesis.paused && strefyMowaWewnatrz.has(mowaAktywnaKlucz)) {
+    wznowMowe();
+  }
   for (const m of strefy) {
     if (m.zrodloTla !== 'mowa' || !m.tekstMowa) continue;
     const wSrodku = jestWStrefie(userPozycja, m);
     const bylWSrodku = strefyMowaWewnatrz.has(m.klucz);
+
     if (wSrodku && !bylWSrodku) {
       strefyMowaWewnatrz.add(m.klucz);
-      przeczytajTekst(m.tekstMowa);
+      if (m.klucz === mowaAktywnaKlucz) wznowMowe();
+      else rozpocznijMowe(m);
     } else if (!wSrodku && bylWSrodku) {
       strefyMowaWewnatrz.delete(m.klucz);
+      if (m.klucz === mowaAktywnaKlucz) zapauzujMowe();
     }
   }
 
@@ -4041,7 +4095,12 @@ function sprawdzStrefyTla() {
   // Czy user jest nadal w strefie, która już gra? (unikamy przełączania na granicy)
   if (audioTloKlucz) {
     const aktualna = strefyMp3.find(m => m.klucz === audioTloKlucz);
-    if (aktualna && jestWStrefie(userPozycja, aktualna)) return;   // nic się nie zmienia
+    if (aktualna && jestWStrefie(userPozycja, aktualna)) {
+      // Nadal ta sama strefa - jeśli była spauzowana (np. po powrocie z
+      // "oglądania innej pinezki"), wznów odtwarzanie.
+      if (audioTlo && audioTlo.paused && !mowaAktywnaKlucz) { try { audioTlo.play().catch(() => {}); } catch (e) {} }
+      return;
+    }
   }
 
   const trafienie = strefyMp3.find(m => jestWStrefie(userPozycja, m));
@@ -4060,20 +4119,74 @@ function jestWStrefie(pozUser, m) {
   return dystansMetry(pozUser.lat, pozUser.lng, m.pozycja[0], m.pozycja[1]) <= promien;
 }
 
-// Przeczytaj tekst głosem przeglądarki (polski głos, jeśli dostępny). Ścisza
-// na chwilę pętlę mp3 tła, żeby komunikat było wyraźnie słychać, i wznawia po nim.
+// Zacznij czytać komunikat OD NOWA (nowa strefa, albo ta sama już wcześniej dokończona)
+function rozpocznijMowe(m) {
+  if (!('speechSynthesis' in window) || !m.tekstMowa) return;
+  try { speechSynthesis.cancel(); } catch (e) {}   // przerwij cokolwiek innego, co mogło mówić
+
+  mowaTloScisznieteBylo = !!(audioTlo && !audioTlo.paused);
+  if (mowaTloScisznieteBylo) { try { audioTlo.pause(); } catch (e) {} }
+
+  const mow = () => {
+    try {
+      const u = new SpeechSynthesisUtterance(m.tekstMowa);
+      u.lang = 'pl-PL';
+      u.rate = 0.95;
+      u.onend = u.onerror = () => {
+        // Naturalnie dokończony - jeśli user nadal tu stoi, następne wejście
+        // (np. po wyjściu i powrocie) przeczyta go znów od początku.
+        mowaAktywnaKlucz = null;
+        if (mowaTloScisznieteBylo && audioTlo) { try { audioTlo.play().catch(() => {}); } catch (e) {} }
+        mowaTloScisznieteBylo = false;
+      };
+      mowaAktywnaKlucz = m.klucz;
+      speechSynthesis.speak(u);
+    } catch (e) {
+      mowaAktywnaKlucz = null;
+      if (mowaTloScisznieteBylo && audioTlo) { try { audioTlo.play().catch(() => {}); } catch (e) {} }
+      mowaTloScisznieteBylo = false;
+    }
+  };
+
+  // Lista głosów czasem ładuje się z opóźnieniem (zwłaszcza za pierwszym razem
+  // po otwarciu strony) - jeśli jeszcze pusta, poczekaj na nią max. 1s.
+  if (speechSynthesis.getVoices().length === 0) {
+    let juzMowil = false;
+    const naGlosy = () => { if (juzMowil) return; juzMowil = true; mow(); };
+    speechSynthesis.addEventListener('voiceschanged', naGlosy, { once: true });
+    setTimeout(naGlosy, 1000);
+  } else {
+    mow();
+  }
+}
+
+// User wyszedł ze strefy, której komunikat właśnie mówił -> pauza (nie stop).
+// Wznawiamy tło mp3 BEZPOŚREDNIO (bez ponownego wywoływania sprawdzStrefyTla,
+// żeby uniknąć rekurencji) - sekcja MP3 tuż niżej i tak zaraz doprecyzuje stan.
+function zapauzujMowe() {
+  try { speechSynthesis.pause(); } catch (e) {}
+  if (mowaTloScisznieteBylo && audioTlo) { try { audioTlo.play().catch(() => {}); } catch (e) {} }
+  mowaTloScisznieteBylo = false;
+}
+
+// User wrócił do strefy, której komunikat był spauzowany -> wznów dokładnie stamtąd
+function wznowMowe() {
+  mowaTloScisznieteBylo = !!(audioTlo && !audioTlo.paused);
+  if (mowaTloScisznieteBylo) { try { audioTlo.pause(); } catch (e) {} }
+  try { speechSynthesis.resume(); } catch (e) {}
+}
+
+// Test w panelu admina ("🔊 Odsłuchaj próbkę") - proste odczytanie bez
+// mechaniki stref (nie ma tu żadnej fizycznej strefy do pauzowania/wznawiania).
 function przeczytajTekst(tekst) {
   if (!('speechSynthesis' in window) || !tekst) return;
-  const tloGralo = (audioTlo && !audioTlo.paused);
-  if (tloGralo) { try { audioTlo.pause(); } catch (e) {} }
   try {
-    speechSynthesis.cancel();   // przerwij ewentualną poprzednią wypowiedź
+    speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(tekst);
     u.lang = 'pl-PL';
     u.rate = 0.95;
-    u.onend = u.onerror = () => { if (tloGralo) wznowTloPoWierszu(); };
     speechSynthesis.speak(u);
-  } catch (e) { if (tloGralo) wznowTloPoWierszu(); }
+  } catch (e) {}
 }
 
 function odtworzAudioTlo(m) {
@@ -4095,52 +4208,28 @@ function zatrzymajAudioTlo() {
     audioTlo = null;
   }
   audioTloKlucz = null;
-  // Strefa właśnie ucichła (wyjście / radio wyłączone) - jeśli czekał na to
-  // jakiś "wiersz" (radar go odłożył, bo strefa miała pierwszeństwo), teraz może zagrać.
-  if (wierszCzekaKlucz) {
-    const klucz = wierszCzekaKlucz;
-    wierszCzekaKlucz = null;
-    const m = miejsca.find(x => x.klucz === klucz);
-    if (m) odtworzAudio(m);
-  }
 }
 
 // Wywoływane po zakończeniu/zamknięciu/pauzie "wiersza" LUB komunikatu głosowego
 // - oddaje głos tłu mp3. Sprawdza aktualną pozycję na nowo (mogłem wyjść ze strefy).
-function wznowTloPoWierszu() {
-  if (!tloWlaczone) return;
-  if (audioTlo && audioTloKlucz && userPozycja) {
-    const strefa = miejsca.find(m => m.klucz === audioTloKlucz);
-    if (strefa && jestWStrefie(userPozycja, strefa)) {
-      try { audioTlo.play().catch(() => {}); } catch (e) {}
-      return;
-    }
-  }
-  audioTloKlucz = null;
-  audioTlo = null;
-  sprawdzStrefyTla();
-}
-
-// Przycisk 🌳 (widoczny u gościa tylko gdy mapa ma choć jedną strefę tła)
+// Przycisk 👂 (widoczny u gościa tylko gdy mapa ma choć jedną strefę tła)
 function przelaczTloAudio() {
   tloWlaczone = !tloWlaczone;
   const btn = document.getElementById('tloBtn');
   if (btn) {
     btn.classList.toggle('active', tloWlaczone);
     btn.title = tloWlaczone
-      ? 'Radio tła: włączone (kliknij, aby wyłączyć)'
-      : 'Radio tła: wyłączone — słychać tylko kropki (kliknij, aby włączyć)';
+      ? 'Dźwięk stref: włączony (kliknij, aby wyłączyć)'
+      : 'Dźwięk stref: wyłączony — słychać tylko kropki (kliknij, aby włączyć)';
   }
   if (tloWlaczone) {
-    // Rozgrzej silnik audio (gest usera) - żeby przeglądarka pozwoliła
+    // Rozgrzej silniki audio/mowy (gest usera) - żeby przeglądarka pozwoliła
     // grać dźwięk automatycznie, gdy user wejdzie w strefę.
     try { const t = new Audio(); t.volume = 0.01; t.play().catch(() => {}); } catch (e) {}
-    sprawdzStrefyTla();
-  } else {
-    // Wyłączenie radia = wyłącza strefy. zatrzymajAudioTlo() zaraz też odpali
-    // odłożony wiersz (jeśli jakiś czekał) - dzięki temu "słychać kropki" od razu.
-    zatrzymajAudioTlo();
   }
+  // sprawdzStrefyTla() sama rozróżnia: ucho OFF = pełny stop (mp3 + mowa,
+  // od zera przy następnym włączeniu); ucho ON = start od aktualnej strefy.
+  sprawdzStrefyTla();
 }
 
 // Pokaż przycisk 🌳 tylko gdy na mapie jest choć jedna strefa tła
@@ -4707,16 +4796,15 @@ function odtworzAudioKlucz(klucz) {
 }
 
 // Odtwórz nagranie kropki (płatek 🎧 Posłuchaj)
+// Odtwórz nagranie kropki (płatek 🎧 Posłuchaj). Całkowicie niezależne od
+// stref tła (👂) - jeśli obie grają naraz, po prostu słychać obie na raz;
+// turysta sam decyduje, czy to lubi, czy wyciszy ucho.
 function odtworzAudio(m) {
   if (aktualneAudio) { try { aktualneAudio.pause(); } catch(e){} aktualneAudio = null; }
   if (!m.plik) {
     alert('Ta kropka nie ma jeszcze pliku audio.' + (isAdmin ? '\nEdytuj ją (🛠) i wpisz nazwę pliku.' : ''));
     return;
   }
-  // PRIORYTET STREF: jeśli w tle gra zapętlone tło, ścisz je na czas wiersza -
-  // wznowi się samo (albo przełączy na inną strefę) zaraz po zakończeniu.
-  if (audioTlo && !audioTlo.paused) { try { audioTlo.pause(); } catch(e){} }
-
   const sciezka = `audio/${m.plik}.mp3`;
   aktualneAudio = new Audio(sciezka);
 
@@ -4729,28 +4817,18 @@ function odtworzAudio(m) {
 
   aktualneAudio.play().catch(() => {
     info.innerHTML = '🎧 ' + (m.nazwa || '') + ' — ⚠️ brak pliku audio/' + m.plik + '.mp3';
-    wznowTloPoWierszu();
   });
-  aktualneAudio.onended = () => { btn.textContent = '🔁 Odtwórz ponownie'; wznowTloPoWierszu(); };
+  aktualneAudio.onended = () => { btn.textContent = '🔁 Odtwórz ponownie'; };
 }
 function toggleAudioPauza() {
   if (!aktualneAudio) return;
   const btn = document.getElementById('audioPauseBtn');
-  if (aktualneAudio.paused) {
-    aktualneAudio.play();
-    btn.textContent = '⏸ Pauza';
-    if (audioTlo && !audioTlo.paused) { try { audioTlo.pause(); } catch(e){} }   // wiersz wznowiony -> ścisz tło znów
-  }
-  else {
-    aktualneAudio.pause();
-    btn.textContent = '▶ Wznów';
-    wznowTloPoWierszu();   // wiersz na pauzie -> tło może wrócić
-  }
+  if (aktualneAudio.paused) { aktualneAudio.play(); btn.textContent = '⏸ Pauza'; }
+  else { aktualneAudio.pause(); btn.textContent = '▶ Wznów'; }
 }
 function zamknijAudio() {
   if (aktualneAudio) { try { aktualneAudio.pause(); } catch(e){} aktualneAudio = null; }
   document.getElementById('audioPlayer').classList.remove('visible');
-  wznowTloPoWierszu();
 }
 
 // Edycja kropki audio (routing: strefa tła ma osobny panel)
