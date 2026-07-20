@@ -5752,6 +5752,12 @@ html.tryb-admin #editorPasek { display: block; }
      Jego funkcje przejmuje pasek edytora. */
   html.tryb-admin #adminList { display: none !important; }
 
+  /* Wszystko pod mapą (akordeon "O stronie", powrót, stopka) - niepotrzebne
+     w Strefach Audio, mapa ma zostać sama i zająć całą przestrzeń. */
+  html.tryb-admin .accordion { display: none !important; }
+  html.tryb-admin .bottomnav { display: none !important; }
+  html.tryb-admin footer { display: none !important; }
+
   /* --- POZYCJA PASKA --- */
   html.tryb-admin #editorPasek {
     margin: 0 0 22px 0;
@@ -5880,7 +5886,7 @@ html.tryb-admin #editorPasek { display: block; }
     grid-template-columns: minmax(0,1fr);
     gap: 22px;
   }
-  html.tryb-admin #mapa    { height: 600px !important; }
+  html.tryb-admin #mapa    { height: 80vh !important; }
 
   /* --- MAPA: ciemna złota ramka --- */
   html.tryb-admin #mapa {
@@ -6282,7 +6288,7 @@ async function zliczPobranieHTML() {
 <div id="splashWelcome" class="splash-welcome splash-poeta visible">
   <!-- Audio w tle - próbuje grać od razu po załadowaniu. Jeśli przeglądarka zablokuje,
        pokazuje się dyskretny przycisk 🎵 do włączenia ręcznego. -->
-  <audio id="splashPoetaAudio" src="audio/artysta.mp3" loop preload="auto"></audio>
+  <audio id="splashPoetaAudio" src="audio/strefa.mp3" loop preload="auto"></audio>
 
   <div class="splash-poeta-karta">
     <!-- ZDJĘCIE ARTYSTY (z fallbackiem na gradient + emoji) -->
@@ -6291,13 +6297,13 @@ async function zliczPobranieHTML() {
       <img id="splashPoetaImg" src="img/artysta.jpg" alt="Artysta" onerror="splashSprobujKolejneZdjecie(this)">
       <!-- Fallback - gradient + emoji - widoczny TYLKO gdy obraz nie ładuje się -->
       <div class="splash-poeta-fallback" id="splashPoetaFallback">
-        <div class="splash-poeta-fallback-emoji">✍️</div>
+        <div class="splash-poeta-fallback-emoji">🎧</div>
         <div class="splash-poeta-fallback-tekst">Wrzuć zdjęcie artysty<br>do folderu <code>img/artysta.jpg</code></div>
       </div>
       <!-- Nakładka z tytułem i opisem (od środka w dół) -->
       <div class="splash-poeta-nakladka">
-        <div class="splash-poeta-tytul" id="splashPoetaTytul">Audio-poezja</div>
-        <div class="splash-poeta-opis" id="splashPoetaOpis">Włącz lokalizację i ruszaj na poetycki spacer</div>
+        <div class="splash-poeta-tytul" id="splashPoetaTytul">Audio - strefy</div>
+        <div class="splash-poeta-opis" id="splashPoetaOpis">Włącz lokalizację i posłuchaj co słychać w twojej strefie</div>
       </div>
       <!-- UKRYTY magazyn linków poety - NIE wyświetlany na splash, tylko nośnik danych.
            Czytany przy starcie do localStorage, podmieniany przy zapisie pliku. -->
@@ -6507,7 +6513,6 @@ async function zliczPobranieHTML() {
         <div style="font-size:11px;color:var(--ink-muted);margin-top:4px">Klik w mapę = dodaj<br>Klik w pinezkę → 🛠 = edytuj</div>
         <button onclick="pobierzNowyIndex(false)" style="background:#22c55e;font-size:11px" title="Plik do dalszej pracy i na serwer - edytor zostaje (?admin=1 działa)">💾 Pobierz index.html (roboczy)</button>
         <button onclick="pobierzNowyIndex(true)" style="background:#0ea5e9;font-size:11px" title="Plik bez edytora - dla turystów. Twoje szkice zostają nietknięte">🌍 Wersja publiczna (bez edytora)</button>
-        <button id="nazwaStronyBtn" onclick="otworzModalEdytora('strona')" style="background:#a04510;font-size:11px">✏️ Nazwa i opis strony</button>
 
         <!-- === SPLASH POETY - tytuł i opis pokazywany na ekranie startowym === -->
         <button id="splashPoetyBtn" onclick="otworzEdytorSplashPoety()" style="background:#7c3aed;font-size:11px">🎭 Splash poety</button>
@@ -6519,9 +6524,9 @@ async function zliczPobranieHTML() {
     <aside class="sidebar">
       <!-- SEKCJA POETY - tytuł + opis (te same dane co splash i menu hamburgera) -->
       <div class="sidebar-poeta" id="sidebarPoeta">
-        <div class="sidebar-poeta-tytul" id="sidebarPoetaTytul">Audio-poezja</div>
+        <div class="sidebar-poeta-tytul" id="sidebarPoetaTytul">Audio - strefy</div>
         <div class="sidebar-poeta-ramka">
-          <div class="sidebar-poeta-opis" id="sidebarPoetaOpis">Włącz lokalizację i ruszaj na poetycki spacer</div>
+          <div class="sidebar-poeta-opis" id="sidebarPoetaOpis">Włącz lokalizację i posłuchaj co słychać w twojej strefie</div>
         </div>
         <!-- Linki do innych opowieści - widoczne tylko gdy admin coś wpisał -->
         <div class="sidebar-poeta-linki" id="sidebarPoetaLinki" style="display:none"></div>
@@ -6554,10 +6559,10 @@ async function zliczPobranieHTML() {
 
       <!-- SEKCJA POETY - tytuł audio-wiersza + opis (te same dane co splash) -->
       <div class="menu-poeta" id="menuPoeta">
-        <div class="menu-poeta-tytul" id="menuPoetaTytul">Audio-poezja</div>
+        <div class="menu-poeta-tytul" id="menuPoetaTytul">Audio - strefy</div>
         <div class="menu-poeta-ramka">
           <img class="menu-poeta-foto" id="menuPoetaFoto" src="img/artysta.jpg" alt="" onerror="menuPoetaSprobujFoto(this)">
-          <div class="menu-poeta-opis" id="menuPoetaOpis">Włącz lokalizację i ruszaj na poetycki spacer</div>
+          <div class="menu-poeta-opis" id="menuPoetaOpis">Włącz lokalizację i posłuchaj co słychać w twojej strefie</div>
         </div>
 
         <!-- Linki do innych opowieści - widoczne tylko gdy admin coś wpisał -->
@@ -10260,16 +10265,6 @@ function zamknijEdytorSplashPoety() {
   if (modal) modal.classList.remove('visible');
 }
 
-// --- Modal informacyjny "Pliki przewodnika" (tylko do czytania) ---
-function otworzEdytorPlikow() {
-  const modal = document.getElementById('plikiPrzewodnikaModal');
-  if (modal) modal.classList.add('visible');
-}
-function zamknijEdytorPlikow() {
-  const modal = document.getElementById('plikiPrzewodnikaModal');
-  if (modal) modal.classList.remove('visible');
-}
-
 function zapiszSplashPoety() {
   // Zapisz do localStorage (funkcja już istnieje)
   zapiszDanePoety();
@@ -11559,7 +11554,6 @@ function wytnijAdmina(tekst) {
     ['ADMIN-HELPER:START', 'ADMIN-HELPER:END'],   // formularz dodawania kropki
     ['ADMIN-LIST:START',   'ADMIN-LIST:END'],     // panel admina (liczniki, przyciski)
     ['ADMIN-MODAL:START',  'ADMIN-MODAL:END'],    // modal Splash poety
-    ['ADMIN-PLIKI:START',  'ADMIN-PLIKI:END'],    // modal informacyjny "Pliki przewodnika"
     ['ADMIN-LICZNIK:START','ADMIN-LICZNIK:END']   // widget licznika pobrań (prawy górny róg)
   ];
   for (const [start, end] of blokiDoWyciecia) {
@@ -12651,16 +12645,7 @@ function zbudujPasekEdytora() {
 
   pasek.innerHTML = `
     <div class="ed-tytul-blok">
-      <h2 class="ed-tytul-nazwa" id="edPasekNazwa">Nazwa strony</h2>
-      <div class="ed-tytul-podpis">tryb edytora — kliknij przycisk poniżej</div>
-
       <div class="ed-przyciski">
-        <button class="ed-btn ed-btn-nazwa" onclick="otworzModalEdytora('strona')">
-          <span class="ed-btn-ikona">✏️</span><span>Nazwa i opis strony</span>
-        </button>
-        <button class="ed-btn ed-btn-kategorie" onclick="otworzEdytorPlikow()">
-          <span class="ed-btn-ikona">📁</span><span>Info o plikach</span>
-        </button>
         <button class="ed-btn ed-btn-splash" onclick="otworzEdytorSplashPoety()">
           <span class="ed-btn-ikona">🎭</span><span>Splash poety</span>
         </button>
@@ -15702,12 +15687,12 @@ inicjalizujRysunki();
   document.body.style.overflow = 'hidden';
 
   // === SPRÓBUJ ODTWORZYĆ MUZYKĘ W TLE ===
-  // Plik: audio/artysta.mp3 - opcjonalny. Jeśli przeglądarka zablokuje autoplay,
+  // Plik: audio/strefa.mp3 - opcjonalny. Jeśli przeglądarka zablokuje autoplay,
   // pokażemy dyskretny przycisk 🎵 do ręcznego uruchomienia.
   splashSprobujOdtworzycMuzyke();
 })();
 
-// Sprawdza czy plik artysta.mp3 istnieje i próbuje go odtworzyć
+// Sprawdza czy plik strefa.mp3 istnieje i próbuje go odtworzyć
 function splashSprobujOdtworzycMuzyke() {
   const audio = document.getElementById('splashPoetaAudio');
   if (!audio) return;
@@ -15715,7 +15700,7 @@ function splashSprobujOdtworzycMuzyke() {
   // Głośność średnia - tło dźwiękowe, nie ma zagłuszać
   audio.volume = 0.45;
 
-  // onerror = plik artysta.mp3 nie istnieje na serwerze - cicho ignoruj
+  // onerror = plik strefa.mp3 nie istnieje na serwerze - cicho ignoruj
   audio.addEventListener('error', () => {
     // Brak pliku - nie pokazuj przycisku, splash zostaje cichy
     const btn = document.getElementById('splashPoetaMuzykaBtn');
@@ -15913,36 +15898,6 @@ function splashStartBezGPS() { splashPoetaStart(); }
   </div>
 </div>
 <!-- ADMIN-MODAL:END -->
-
-<!-- MODAL INFORMACYJNY - jakie pliki wrzucić do przewodnika (admin) -->
-<!-- ADMIN-PLIKI:START --><!-- (marker dla generowania wersji publicznej - nie usuwać) -->
-<div class="splash-poety-modal-backdrop" id="plikiPrzewodnikaModal" onclick="if(event.target===this)zamknijEdytorPlikow()">
-  <div class="splash-poety-modal">
-    <button class="splash-poety-modal-close" onclick="zamknijEdytorPlikow()" aria-label="Zamknij">✕</button>
-    <h2>📁 Pliki przewodnika</h2>
-    <p class="splash-poety-modal-sub">Jakie pliki wrzucić i pod jaką nazwą, żeby przewodnik je rozpoznał.</p>
-
-    <div class="splash-poety-modal-pole">
-      <label>📷 Zdjęcie startowe:</label>
-      <p class="splash-poety-modal-info">Wrzuć plik do folderu <code>/img/</code> pod nazwą <code>artysta.jpg</code><br>(obsługiwane też: <code>.png</code>, <code>.webp</code>)<br>Zdjęcie artysty lub okładka strony — pokazuje się na ekranie powitalnym.</p>
-    </div>
-
-    <div class="splash-poety-modal-pole">
-      <label>🎵 Muzyka w tle splash (opcjonalnie):</label>
-      <p class="splash-poety-modal-info">Wrzuć plik do folderu <code>/audio/</code> pod nazwą <code>artysta.mp3</code><br>Gra w pętli przez czas widoczności ekranu powitalnego. Po kliknięciu <b>ZACZYNAMY</b> wycisza się płynnie wraz z panelem (~5s).</p>
-    </div>
-
-    <div class="splash-poety-modal-pole">
-      <label>🎧 Audio stref:</label>
-      <p class="splash-poety-modal-info">Wrzuć pliki do folderu <code>/audio/</code> pod nazwą numeru strefy: <code>1.mp3</code>, <code>2.mp3</code>, <code>3.mp3</code>…<br>Każda strefa audio odtwarza plik o swoim numerze.</p>
-    </div>
-
-    <div class="splash-poety-modal-akcje">
-      <button class="splash-poety-modal-anuluj" onclick="zamknijEdytorPlikow()">Zamknij</button>
-    </div>
-  </div>
-</div>
-<!-- ADMIN-PLIKI:END -->
 
 <!-- MODAL PICKER EMOJI - wybór ikony miejsca -->
 <div class="emoji-modal-backdrop" id="emojiModalBackdrop" onclick="if(event.target===this)zamknijPickerEmoji()">
