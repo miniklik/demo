@@ -8439,8 +8439,8 @@ function renderujKropkiAudio() {
     marker.addTo(mapa);
     audioMarkery.push(marker);
 
-    // Obrys strefy GPS - TYLKO dla admina (turysta nie potrzebuje widzieć stref).
-    if (isAdmin) {
+    // Obrys strefy GPS - widoczny dla wszystkich (turysta widzi gdzie są strefy).
+    {
       const kolorObrysu = (typK === 'tlo') ? '#16a34a' : '#7c3aed';
       const kolorWypelnienia = (typK === 'tlo') ? '#4ade80' : '#a78bfa';
       let krag;
@@ -13243,6 +13243,7 @@ function toggleMenu() {
 document.addEventListener('click', function(e) {
   const menu = document.getElementById('filters-menu');
   const ham = document.getElementById('hamburger');
+  if (!menu || !ham) return; // te elementy nie istnieją w tej wersji - nic nie robimy
   if (!menu.contains(e.target) && !ham.contains(e.target)) {
     menu.classList.remove('open');
     ham.classList.remove('open');
