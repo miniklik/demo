@@ -3488,15 +3488,16 @@ footer{
 /* === RADAR PANEL "📡 W zasięgu" (Krok B) === */
 .radar-panel{
   position:absolute;
-  bottom:14px;
-  right:14px;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
   z-index:500;
   background:linear-gradient(180deg, var(--paper-2) 0%, var(--paper-3) 100%);
   border:1px solid var(--gold);
   border-radius:8px;
   box-shadow:var(--shadow-deep);
-  min-width:220px;
-  max-width:300px;
+  min-width:260px;
+  max-width:340px;
   overflow:hidden;
   font-family:'EB Garamond', serif;
   display:none; /* domyślnie ukryty - pojawi się gdy są kropki w zasięgu */
@@ -3644,9 +3645,11 @@ footer{
   .radar-panel{
     left:14px !important;
     right:14px !important;
+    top:50% !important;
+    bottom:auto !important;
+    transform:translateY(-50%) !important;
     min-width:auto !important;
     max-width:none !important;
-    bottom:calc(env(safe-area-inset-bottom, 0px) + 100px) !important;
   }
   .radar-mini-text{font-size:13px}
   .radar-item-nazwa{font-size:15px}
@@ -6486,7 +6489,7 @@ async function zliczPobranieHTML() {
       <div class="radar-panel" id="radarPanel">
         <div class="radar-mini" id="radarMini" onclick="toggleRadarPanel()">
           <span class="radar-icon">📡</span>
-          <span class="radar-mini-text">W zasięgu: <span id="radarCount">0</span></span>
+          <span class="radar-mini-text">Wykryto strefy: <span id="radarCount">0</span></span>
           <span class="radar-arrow" id="radarArrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
         </div>
         <div class="radar-lista" id="radarLista"></div>
@@ -14677,7 +14680,9 @@ function aktualizujPanelRadaru() {
     lista.innerHTML = '';
     return;
   }
+  const bylWidoczny = panel.classList.contains('visible');
   panel.classList.add('visible');
+  if (!bylWidoczny) panel.classList.add('expanded'); // otwiera się od razu przy nowym wykryciu
 
   // Jeśli auto włączone i nic nie gra - spróbuj wystartować
   // (np. właśnie wjechaliśmy w nową strefę po pustym polu)
@@ -14750,7 +14755,7 @@ function aktualizujPanelRadaru() {
       segmenty.push({ kropka: k, odl, numer });
     }
   }
-  // Sortuj po dystansie
+  // Sortuj po dystansie (żeby przy wielu segmentach tej samej strefy wybrać najbliższy)
   segmenty.sort((a, b) => a.odl - b.odl);
   // Bierz tylko pierwszą (najbliższą) z każdego numeru
   for (const seg of segmenty) {
@@ -14758,6 +14763,8 @@ function aktualizujPanelRadaru() {
     numeryDodane.add(seg.numer);
     wpisy.push({ kropka: seg.kropka, odl: seg.odl });
   }
+  // Finalna kolejność w panelu: od najmniejszego numeru audio
+  wpisy.sort((a, b) => a.kropka.numer - b.kropka.numer);
 
   // Render pozycji
   for (const { kropka } of wpisy) {
@@ -14840,6 +14847,8 @@ function pobierzListeWZasiegu() {
     numeryDodane.add(seg.numer);
     wynik.push(seg.kropka);
   }
+  // Kolejność odtwarzania: od najmniejszego numeru audio
+  wynik.sort((a, b) => a.numer - b.numer);
   return wynik;
 }
 
